@@ -42,6 +42,7 @@
             "outputPath": "dist/creador-iconos-svg",
             "index": "src/index.html",
             "browser": "src/main.ts",
+            "namedChunks": true,
             "polyfills": [
               "zone.js"
             ],

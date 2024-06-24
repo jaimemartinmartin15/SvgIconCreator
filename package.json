@@ -1,12 +1,10 @@
 {
   "name": "creador-iconos-svg",
-  "version": "0.0.0",
+  "version": "1.0.0",
   "scripts": {
-    "ng": "ng",
-    "start": "ng serve",
-    "build": "ng build",
-    "watch": "ng build --watch --configuration development",
-    "test": "ng test"
+    "start": "ng serve -o",
+    "start:public": "ng serve -o --host 0.0.0.0 --port 80",
+    "build": "ng build --base-href /creador-iconos-svg/"
   },
   "private": true,
   "dependencies": {
