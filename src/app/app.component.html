@@ -1,7 +1,6 @@
 <div class="canvas-and-buttons-container">
-  <canvas id="canvas" #canvas>
-    Tu navegador no admite el elemento &lt;canvas&gt;.
-  </canvas>
+  <svg id="canvas" #canvas>
+  </svg>
 
   <div class="buttons-container">
     <button>Descargar svg</button>
@@ -15,13 +14,12 @@
   </div>
 
   <div>
-    <!-- TODO cambiar por el tamaño de la imagen en px o el viewbox del svg, y calcular el aspect ratio a partir de ello -->
-    Relación de aspecto:
-    <input type="number" min="1" id="aspect-ratio-width-input" name="aspect-ratio-width" [(ngModel)]="aspectRatioWidth"
-      (ngModelChange)="onChangeAspectRatio()">
+    Tamaño del viewBox o imagen en píxeles:
+    <input type="number" min="1" id="canvas-width-input" name="canvas-width" [(ngModel)]="canvasWidth"
+      (ngModelChange)="onChangeCanvasSize()">
     :
-    <input type="number" min="1" id="aspect-ratio-height-input" name="aspect-ratio-height" [(ngModel)]="aspectRatioHeight"
-      (ngModelChange)="onChangeAspectRatio()">
+    <input type="number" min="1" id="canvas-height-input" name="canvas-height" [(ngModel)]="canvasHeight"
+      (ngModelChange)="onChangeCanvasSize()">
   </div>
 
   <div class="shapes-container">

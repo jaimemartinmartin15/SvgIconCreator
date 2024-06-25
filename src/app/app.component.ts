@@ -10,49 +10,54 @@ import { FormsModule } from '@angular/forms';
   styleUrl: './app.component.scss',
 })
 export class AppComponent implements AfterViewInit {
-  public aspectRatioWidth = 1;
-  public aspectRatioHeight = 1;
+  public canvasWidth = 100;
+  public canvasHeight = 100;
 
   public selectedShape: string = 'rect';
 
   @ViewChild('canvas')
-  private canvasRef: ElementRef<HTMLCanvasElement>;
+  private canvasRef: ElementRef<SVGElement>;
   private get canvas() {
     return this.canvasRef.nativeElement;
   }
 
   public ngAfterViewInit(): void {
     // default aspect ration 1:1
-    this.canvas.height = this.canvas.width = 100;
+    this.canvas.setAttribute('viewBox', ' 0 0 100 100');
   }
 
   public onUpdateBackgroundImage(e: Event) {
-    const inputEl = e.target as HTMLInputElement;
-    let ctx = this.canvas.getContext('2d');
-    let img = new Image();
-    img.src = URL.createObjectURL(inputEl.files![0]);
-    img.onload = () => {
-      ctx!.drawImage(
-        img,
-        0,
-        0,
-        img.width,
-        img.height,
-        0,
-        0,
-        this.canvas.width,
-        this.canvas.height
-      );
-    };
+    // const inputEl = e.target as HTMLInputElement;
+    // let ctx = this.canvas.getContext('2d');
+    // let img = new Image();
+    // img.src = URL.createObjectURL(inputEl.files![0]);
+    // img.onload = () => {
+    //   ctx!.drawImage(
+    //     img,
+    //     0,
+    //     0,
+    //     img.width,
+    //     img.height,
+    //     0,
+    //     0,
+    //     this.canvas.width,
+    //     this.canvas.height
+    //   );
+    // };
   }
 
-  public onChangeAspectRatio() {
+  public onChangeCanvasSize() {
+    this.canvas.setAttribute(
+      'viewBox',
+      `0 0 ${this.canvasWidth} ${this.canvasHeight}`
+    );
+
     const parentCssWidth = this.canvas.parentElement!.clientWidth;
-    let aspRat = parentCssWidth / this.aspectRatioWidth;
-    if (aspRat * this.aspectRatioHeight > window.innerHeight) {
-      aspRat = window.innerHeight / this.aspectRatioHeight;
+    let aspRat = parentCssWidth / this.canvasWidth;
+    if (aspRat * this.canvasHeight > window.innerHeight) {
+      aspRat = window.innerHeight / this.canvasHeight;
     }
-    this.canvas.style.width = `${aspRat * this.aspectRatioWidth}px`;
-    this.canvas.style.height = `${aspRat * this.aspectRatioHeight}px`;
+    this.canvas.style.width = `${aspRat * this.canvasWidth}px`;
+    this.canvas.style.height = `${aspRat * this.canvasHeight}px`;
   }
 }
