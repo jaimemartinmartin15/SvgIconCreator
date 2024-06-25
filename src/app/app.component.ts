@@ -27,23 +27,20 @@ export class AppComponent implements AfterViewInit {
   }
 
   public onUpdateBackgroundImage(e: Event) {
-    // const inputEl = e.target as HTMLInputElement;
-    // let ctx = this.canvas.getContext('2d');
-    // let img = new Image();
-    // img.src = URL.createObjectURL(inputEl.files![0]);
-    // img.onload = () => {
-    //   ctx!.drawImage(
-    //     img,
-    //     0,
-    //     0,
-    //     img.width,
-    //     img.height,
-    //     0,
-    //     0,
-    //     this.canvas.width,
-    //     this.canvas.height
-    //   );
-    // };
+    const inputEl = e.target as HTMLInputElement;
+    const file = inputEl.files![0];
+
+    const imageBg = document.createElementNS(
+      'http://www.w3.org/2000/svg',
+      'image'
+    ) as SVGImageElement;
+
+    imageBg.setAttribute('x', '0');
+    imageBg.setAttribute('y', '0');
+    imageBg.setAttribute('width', `${this.canvasWidth}`);
+    imageBg.setAttribute('height', `${this.canvasHeight}`);
+    imageBg.setAttribute('href', URL.createObjectURL(file));
+    this.canvas.append(imageBg);
   }
 
   public onChangeCanvasSize() {
