@@ -13,6 +13,8 @@ export class AppComponent implements AfterViewInit {
   public aspectRatioWidth = 1;
   public aspectRatioHeight = 1;
 
+  public selectedShape: string = 'rect';
+
   @ViewChild('canvas')
   private canvasRef: ElementRef<HTMLCanvasElement>;
   private get canvas() {
@@ -38,8 +40,8 @@ export class AppComponent implements AfterViewInit {
         img.height,
         0,
         0,
-        this.aspectRatioWidth,
-        this.aspectRatioHeight
+        this.canvas.width,
+        this.canvas.height
       );
     };
   }

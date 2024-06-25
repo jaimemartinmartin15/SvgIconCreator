@@ -27,11 +27,12 @@
     <div>Figuras</div>
 
     <div class="options-container">
-      <label><input type="radio" name="shape" checked>rect</label>
-      <label><input type="radio" name="shape">line</label>
-      <label><input type="radio" name="shape">path</label>
-      <label><input type="radio" name="shape">circle</label>
-      <label><input type="radio" name="shape">text</label>
+      <label><input type="radio" name="shape" value="rect" [(ngModel)]="selectedShape">rect</label>
+      <label><input type="radio" name="shape" value="line" [(ngModel)]="selectedShape">line</label>
+      <label><input type="radio" name="shape" value="path" [(ngModel)]="selectedShape">path</label>
+      <label><input type="radio" name="shape" value="circle" [(ngModel)]="selectedShape">circle</label>
+      <label><input type="radio" name="shape" value="text" [(ngModel)]="selectedShape">text</label>
+      <label><input type="radio" name="shape" value="cubic-bezier" [(ngModel)]="selectedShape">cubic bezier</label>
     </div>
   </div>
 </form>
