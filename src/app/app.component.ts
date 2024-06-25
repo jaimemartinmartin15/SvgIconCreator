@@ -57,4 +57,41 @@ export class AppComponent implements AfterViewInit {
     this.canvas.style.width = `${aspRat * this.canvasWidth}px`;
     this.canvas.style.height = `${aspRat * this.canvasHeight}px`;
   }
+
+  public downloadSvg() {
+    // convert the svg element to string
+    const svgString = new XMLSerializer().serializeToString(this.canvas);
+    var textFileAsBlob = new Blob([svgString], { type: 'text/plain' });
+
+    // download the file with the svg string
+    var downloadLink = document.createElement('a');
+    // TODO allow to set custom name
+    downloadLink.download = 'jaimeelingeniero-creador-de-iconos-svg.png';
+    downloadLink.href = window.webkitURL.createObjectURL(textFileAsBlob);
+    downloadLink.click();
+  }
+
+  public downloadImage() {
+    const svgString = new XMLSerializer().serializeToString(this.canvas);
+
+    const canvas = document.createElement('canvas');
+    const ctx = canvas.getContext('2d')!;
+    const img = new Image();
+
+    img.onload = function () {
+      canvas.width = img.width;
+      canvas.height = img.height;
+      ctx.drawImage(img, 0, 0);
+
+      const enlace = document.createElement('a');
+      enlace.href = canvas.toDataURL('image/png');
+      // TODO allow to set custom name
+      enlace.download = 'jaimeelingeniero-creador-de-iconos-svg.png';
+      enlace.click();
+    };
+
+    img.src = `data:image/svg+xml;base64,${btoa(
+      unescape(encodeURIComponent(svgString))
+    )}`;
+  }
 }
