@@ -81,4 +81,18 @@
       }
     }
   }
+
+  .rect-options {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+
+    input {
+      width: 40px;
+      border: 2px solid black;
+      border-radius: 5px;
+      padding: 5px;
+      text-align: center;
+    }
+  }
 }

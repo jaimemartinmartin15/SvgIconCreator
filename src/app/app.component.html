@@ -15,6 +15,7 @@
   </div>
 
   <div>
+    <!-- TODO cambiar por el tamaño de la imagen en px o el viewbox del svg, y calcular el aspect ratio a partir de ello -->
     Relación de aspecto:
     <input type="number" min="1" id="aspect-ratio-width-input" name="aspect-ratio-width" [(ngModel)]="aspectRatioWidth"
       (ngModelChange)="onChangeAspectRatio()">
@@ -33,6 +34,22 @@
       <label><input type="radio" name="shape" value="circle" [(ngModel)]="selectedShape">circle</label>
       <label><input type="radio" name="shape" value="text" [(ngModel)]="selectedShape">text</label>
       <label><input type="radio" name="shape" value="cubic-bezier" [(ngModel)]="selectedShape">cubic bezier</label>
+    </div>
+  </div>
+
+  <div class="shape-options-container">
+    <div *ngIf="selectedShape === 'rect'" class="rect-options">
+      <label>x1: <input type="number"></label>
+
+      <label>x2: <input type="number"></label>
+
+      <label>width: <input type="number"></label>
+
+      <label>height: <input type="number"></label>
+
+      <label>round corner x: <input type="number"></label>
+
+      <label>round corner y: <input type="number"></label>
     </div>
   </div>
 </form>
