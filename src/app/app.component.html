@@ -26,20 +26,22 @@
     <div>Figuras</div>
 
     <div class="options-container">
-      <label><input type="radio" name="shape" value="rect" [(ngModel)]="selectedShape">rect</label>
-      <label><input type="radio" name="shape" value="line" [(ngModel)]="selectedShape">line</label>
-      <label><input type="radio" name="shape" value="path" [(ngModel)]="selectedShape">path</label>
-      <label><input type="radio" name="shape" value="circle" [(ngModel)]="selectedShape">circle</label>
-      <label><input type="radio" name="shape" value="text" [(ngModel)]="selectedShape">text</label>
-      <label><input type="radio" name="shape" value="cubic-bezier" [(ngModel)]="selectedShape">cubic bezier</label>
+      <label><input type="radio" name="shape" [value]="Shape.RECT" [(ngModel)]="selectedShape">rect</label>
+      <label><input type="radio" name="shape" [value]="Shape.LINE" [(ngModel)]="selectedShape">line</label>
+      <label><input type="radio" name="shape" [value]="Shape.PATH" [(ngModel)]="selectedShape">path</label>
+      <label><input type="radio" name="shape" [value]="Shape.CIRCLE" [(ngModel)]="selectedShape">circle</label>
+      <label><input type="radio" name="shape" [value]="Shape.TEXT" [(ngModel)]="selectedShape">text</label>
+      <label><input type="radio" name="shape" [value]="Shape.CUBIC_BEZIER" [(ngModel)]="selectedShape">
+        cubic bezier
+      </label>
     </div>
   </div>
 
   <div class="shape-options-container">
-    <div *ngIf="selectedShape === 'rect'" class="rect-options">
-      <label>x1: <input type="number"></label>
+    <div *ngIf="selectedShape === Shape.RECT" class="rect-options">
+      <label>x: <input type="number"></label>
 
-      <label>x2: <input type="number"></label>
+      <label>y: <input type="number"></label>
 
       <label>width: <input type="number"></label>
 
