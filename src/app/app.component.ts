@@ -1,7 +1,10 @@
 import { CommonModule } from '@angular/common';
 import { AfterViewInit, Component, ElementRef, ViewChild } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { CirclePainter } from './painters/circle.painter';
+import { LinePainter } from './painters/line.painter';
 import { RectPainter } from './painters/rect.painter';
+import { ShapePainter } from './painters/shape.painter';
 import { Shape } from './shapes';
 
 @Component({
@@ -17,7 +20,7 @@ export class AppComponent implements AfterViewInit {
 
   public Shape = Shape;
   public selectedShape: Shape = Shape.RECT;
-  private shapeDrawer?: RectPainter;
+  private shapeDrawer?: ShapePainter;
 
   @ViewChild('canvas')
   private canvasRef: ElementRef<SVGElement>;
@@ -49,10 +52,12 @@ export class AppComponent implements AfterViewInit {
   private instantiateShapeDrawer() {
     switch (this.selectedShape) {
       case Shape.LINE:
+        this.shapeDrawer = new LinePainter(this.canvas);
         break;
       case Shape.PATH:
         break;
       case Shape.CIRCLE:
+        this.shapeDrawer = new CirclePainter(this.canvas);
         break;
       case Shape.TEXT:
         break;

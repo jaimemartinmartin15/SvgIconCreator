@@ -27,8 +27,8 @@ export class RectPainter implements ShapePainter {
 
     const width = Math.abs(this.startCoord!.x - coord.x);
     const height = Math.abs(this.startCoord!.y - coord.y);
-    this.rectEl.setAttribute('width', `${+width.toFixed(1)}`);
-    this.rectEl.setAttribute('height', `${+height.toFixed(1)}`);
+    this.rectEl.setAttribute('width', width.toFixed(1));
+    this.rectEl.setAttribute('height', height.toFixed(1));
 
     this.rectEl.setAttribute('x', `${Math.min(coord.x, this.startCoord!.x)}`);
     this.rectEl.setAttribute('y', `${Math.min(coord.y, this.startCoord!.y)}`);
@@ -41,8 +41,8 @@ export class RectPainter implements ShapePainter {
 
     const width = Math.abs(this.startCoord!.x - coord.x);
     const height = Math.abs(this.startCoord!.y - coord.y);
-    this.rectEl.setAttribute('width', `${+width.toFixed(1)}`);
-    this.rectEl.setAttribute('height', `${+height.toFixed(1)}`);
+    this.rectEl.setAttribute('width', width.toFixed(1));
+    this.rectEl.setAttribute('height', height.toFixed(1));
 
     this.rectEl.setAttribute('x', `${Math.min(coord.x, this.startCoord!.x)}`);
     this.rectEl.setAttribute('y', `${Math.min(coord.y, this.startCoord!.y)}`);
