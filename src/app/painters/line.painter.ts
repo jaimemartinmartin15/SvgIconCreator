@@ -41,4 +41,8 @@ export class LinePainter implements ShapePainter {
 
     // TODO set input options too
   }
+
+  public isShapeCompleted() {
+    return true;
+  }
 }

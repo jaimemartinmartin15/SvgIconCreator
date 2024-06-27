@@ -26,12 +26,33 @@
     <div>Figuras</div>
 
     <div class="options-container">
-      <label><input type="radio" name="shape" [value]="Shape.RECT" [(ngModel)]="selectedShape">rect</label>
-      <label><input type="radio" name="shape" [value]="Shape.LINE" [(ngModel)]="selectedShape">line</label>
-      <label><input type="radio" name="shape" [value]="Shape.PATH" [(ngModel)]="selectedShape">path</label>
-      <label><input type="radio" name="shape" [value]="Shape.CIRCLE" [(ngModel)]="selectedShape">circle</label>
-      <label><input type="radio" name="shape" [value]="Shape.TEXT" [(ngModel)]="selectedShape">text</label>
-      <label><input type="radio" name="shape" [value]="Shape.CUBIC_BEZIER" [(ngModel)]="selectedShape">
+      <label><input type="radio" name="shape" [value]="Shape.RECT" [(ngModel)]="selectedShape"
+          (ngModelChange)="onChangeShape()">
+        rect
+      </label>
+
+      <label><input type="radio" name="shape" [value]="Shape.LINE" [(ngModel)]="selectedShape"
+          (ngModelChange)="onChangeShape()">
+        line
+      </label>
+
+      <label><input type="radio" name="shape" [value]="Shape.PATH" [(ngModel)]="selectedShape"
+          (ngModelChange)="onChangeShape()">
+        path
+      </label>
+
+      <label><input type="radio" name="shape" [value]="Shape.CIRCLE" [(ngModel)]="selectedShape"
+          (ngModelChange)="onChangeShape()">
+        circle
+      </label>
+
+      <label><input type="radio" name="shape" [value]="Shape.TEXT" [(ngModel)]="selectedShape"
+          (ngModelChange)="onChangeShape()">
+        text
+      </label>
+
+      <label><input type="radio" name="shape" [value]="Shape.CUBIC_BEZIER" [(ngModel)]="selectedShape"
+          (ngModelChange)="onChangeShape()">
         cubic bezier
       </label>
     </div>

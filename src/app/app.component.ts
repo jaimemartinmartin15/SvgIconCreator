@@ -3,6 +3,7 @@ import { AfterViewInit, Component, ElementRef, ViewChild } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { CirclePainter } from './painters/circle.painter';
 import { LinePainter } from './painters/line.painter';
+import { PathPainter } from './painters/path.painter';
 import { RectPainter } from './painters/rect.painter';
 import { ShapePainter } from './painters/shape.painter';
 import { Shape } from './shapes';
@@ -49,12 +50,17 @@ export class AppComponent implements AfterViewInit {
     return { x: +xInViewBox.toFixed(1), y: +yInViewBox.toFixed(1) };
   }
 
+  public onChangeShape() {
+    this.shapeDrawer = undefined;
+  }
+
   private instantiateShapeDrawer() {
     switch (this.selectedShape) {
       case Shape.LINE:
         this.shapeDrawer = new LinePainter(this.canvas);
         break;
       case Shape.PATH:
+        this.shapeDrawer = new PathPainter(this.canvas);
         break;
       case Shape.CIRCLE:
         this.shapeDrawer = new CirclePainter(this.canvas);
@@ -71,7 +77,9 @@ export class AppComponent implements AfterViewInit {
   }
 
   private onPointerDown(e: PointerEvent) {
-    this.instantiateShapeDrawer();
+    if (this.shapeDrawer === undefined || this.shapeDrawer.isShapeCompleted()) {
+      this.instantiateShapeDrawer();
+    }
     this.shapeDrawer?.onMouseDown(this.getCoordsInViewBox(e));
   }
 
@@ -81,7 +89,9 @@ export class AppComponent implements AfterViewInit {
 
   private onPointerUp(e: PointerEvent) {
     this.shapeDrawer?.onMouseUp(this.getCoordsInViewBox(e));
-    this.shapeDrawer = undefined;
+    if (this.shapeDrawer?.isShapeCompleted()) {
+      this.shapeDrawer = undefined;
+    }
   }
 
   public onUpdateBackgroundImage(e: Event) {

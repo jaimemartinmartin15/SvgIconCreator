@@ -49,4 +49,8 @@ export class RectPainter implements ShapePainter {
 
     // TODO set input options too
   }
+
+  public isShapeCompleted() {
+    return true;
+  }
 }
