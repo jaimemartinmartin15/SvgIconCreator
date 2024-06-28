@@ -2,6 +2,7 @@ import { CommonModule } from '@angular/common';
 import { AfterViewInit, Component, ElementRef, ViewChild } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { CirclePainter } from './painters/circle.painter';
+import { CubicBezierPainter } from './painters/cubic-bezier.painter';
 import { LinePainter } from './painters/line.painter';
 import { PathPainter } from './painters/path.painter';
 import { RectPainter } from './painters/rect.painter';
@@ -68,6 +69,7 @@ export class AppComponent implements AfterViewInit {
       case Shape.TEXT:
         break;
       case Shape.CUBIC_BEZIER:
+        this.shapeDrawer = new CubicBezierPainter(this.canvas);
         break;
       case Shape.RECT:
       default:
@@ -128,7 +130,7 @@ export class AppComponent implements AfterViewInit {
     // download the file with the svg string
     var downloadLink = document.createElement('a');
     // TODO allow to set custom name
-    downloadLink.download = 'jaimeelingeniero-creador-de-iconos-svg.png';
+    downloadLink.download = 'jaimeelingeniero-creador-de-iconos-svg.svg';
     downloadLink.href = window.webkitURL.createObjectURL(textFileAsBlob);
     downloadLink.click();
   }
