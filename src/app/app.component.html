@@ -59,7 +59,7 @@
   </div>
 
   <div class="shape-options-container">
-    <form *ngIf="selectedShape === Shape.RECT && shapePainter.isShapeStarted()" class="rect-options"
+    <form *ngIf="shapePainter.shape === Shape.RECT && shapePainter.isShapeStarted()" class="rect-options"
       [formGroup]="shapePainter.options">
       <label>x: <input type="number" formControlName="x"></label>
 
@@ -72,6 +72,17 @@
       <label>round corner x: <input type="number" min="0" formControlName="roundCornerX"></label>
 
       <label>round corner y: <input type="number" min="0" formControlName="roundCornerY"></label>
+    </form>
+
+    <form *ngIf="shapePainter.shape === Shape.LINE && shapePainter.isShapeStarted()" class="line-options"
+      [formGroup]="shapePainter.options">
+      <label>x1: <input type="number" formControlName="x1"></label>
+
+      <label>y1: <input type="number" formControlName="y1"></label>
+
+      <label>x2: <input type="number" formControlName="x2"></label>
+
+      <label>y2: <input type="number" formControlName="y2"></label>
     </form>
   </div>
 

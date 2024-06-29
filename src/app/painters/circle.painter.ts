@@ -1,5 +1,6 @@
 import { FormControl, FormGroup } from '@angular/forms';
 import { Coord } from '../coord';
+import { Shape } from '../shapes';
 import { ShapePainter } from './shape.painter';
 
 export class CirclePainter implements ShapePainter {
@@ -13,6 +14,7 @@ export class CirclePainter implements ShapePainter {
   private startCoord: Coord;
   private endCoord: Coord;
 
+  public shape = Shape.CIRCLE;
   public name = 'circle';
   public options: FormGroup = new FormGroup({
     cx: new FormControl(0),

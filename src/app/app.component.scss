@@ -89,7 +89,8 @@
     padding: 10px;
   }
 
-  .rect-options {
+  .rect-options,
+  .line-options {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 15px;

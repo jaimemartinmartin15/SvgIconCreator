@@ -1,5 +1,6 @@
 import { FormControl, FormGroup } from '@angular/forms';
 import { Coord } from '../coord';
+import { Shape } from '../shapes';
 import { ShapePainter } from './shape.painter';
 
 export class TextPainter implements ShapePainter {
@@ -11,6 +12,7 @@ export class TextPainter implements ShapePainter {
   private isTextSelected = false;
   private isMouseDown = false;
 
+  public shape = Shape.TEXT;
   public name = 'text';
   public options: FormGroup = new FormGroup({
     x: new FormControl(0),

@@ -1,5 +1,6 @@
 import { FormControl, FormGroup } from '@angular/forms';
 import { Coord } from '../coord';
+import { Shape } from '../shapes';
 import { ShapePainter } from './shape.painter';
 
 export class RectPainter implements ShapePainter {
@@ -15,6 +16,7 @@ export class RectPainter implements ShapePainter {
   private svgEditPoints: SVGCircleElement[] = [];
   private svgSelectedEditPointIndex: number = -1;
 
+  public shape = Shape.RECT;
   public name = 'rect';
   public options: FormGroup = new FormGroup({
     x: new FormControl(0),

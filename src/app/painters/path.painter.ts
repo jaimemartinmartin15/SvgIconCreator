@@ -1,5 +1,6 @@
 import { FormArray, FormGroup } from '@angular/forms';
 import { Coord } from '../coord';
+import { Shape } from '../shapes';
 import { ShapePainter } from './shape.painter';
 
 export class PathPainter implements ShapePainter {
@@ -12,6 +13,7 @@ export class PathPainter implements ShapePainter {
   private isMouseDown = false;
   private points: Coord[] = [];
 
+  public shape = Shape.PATH;
   public name = 'path';
   public options: FormGroup = new FormGroup({
     points: new FormArray([]),

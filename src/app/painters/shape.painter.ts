@@ -1,8 +1,10 @@
 import { FormGroup } from '@angular/forms';
 import { Coord } from '../coord';
+import { Shape } from '../shapes';
 
 export interface ShapePainter {
   // form
+  shape: Shape;
   name: string;
   options: FormGroup;
 

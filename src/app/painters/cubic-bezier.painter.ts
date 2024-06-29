@@ -1,5 +1,6 @@
 import { FormControl, FormGroup } from '@angular/forms';
 import { Coord } from '../coord';
+import { Shape } from '../shapes';
 import { ShapePainter } from './shape.painter';
 
 export class CubicBezierPainter implements ShapePainter {
@@ -13,6 +14,7 @@ export class CubicBezierPainter implements ShapePainter {
   private points: Coord[] = [];
   private state: number = 0; // 0 -> no points added, 1 -> start point added, 2 -> end point added, 3 -> control point 1 added, 4 -> control point 2 added
 
+  public shape = Shape.CUBIC_BEZIER;
   public name = 'cubic-bezier';
   public options: FormGroup = new FormGroup({
     x1: new FormControl(0),
