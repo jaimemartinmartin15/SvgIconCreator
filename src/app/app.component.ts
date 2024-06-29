@@ -7,6 +7,7 @@ import { LinePainter } from './painters/line.painter';
 import { PathPainter } from './painters/path.painter';
 import { RectPainter } from './painters/rect.painter';
 import { ShapePainter } from './painters/shape.painter';
+import { TextPainter } from './painters/text.painter';
 import { Shape } from './shapes';
 
 @Component({
@@ -77,7 +78,7 @@ export class AppComponent implements AfterViewInit {
         this.shapePainter = new CirclePainter();
         break;
       case Shape.TEXT:
-        // this.shapePainter = new TextPainter();
+        this.shapePainter = new TextPainter();
         break;
       case Shape.CUBIC_BEZIER:
         this.shapePainter = new CubicBezierPainter();
