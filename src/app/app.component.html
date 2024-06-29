@@ -59,18 +59,19 @@
   </div>
 
   <div class="shape-options-container">
-    <div *ngIf="selectedShape === Shape.RECT" class="rect-options">
-      <label>x: <input type="number"></label>
+    <form *ngIf="selectedShape === Shape.RECT && shapePainter.isShapeStarted()" class="rect-options"
+      [formGroup]="shapePainter.options">
+      <label>x: <input type="number" formControlName="x"></label>
 
-      <label>y: <input type="number"></label>
+      <label>y: <input type="number" formControlName="y"></label>
 
-      <label>width: <input type="number"></label>
+      <label>width: <input type="number" min="0" formControlName="width"></label>
 
-      <label>height: <input type="number"></label>
+      <label>height: <input type="number" min="0" formControlName="height"></label>
 
-      <label>round corner x: <input type="number"></label>
+      <label>round corner x: <input type="number" min="0" formControlName="roundCornerX"></label>
 
-      <label>round corner y: <input type="number"></label>
-    </div>
+      <label>round corner y: <input type="number" min="0" formControlName="roundCornerY"></label>
+    </form>
   </div>
 </form>

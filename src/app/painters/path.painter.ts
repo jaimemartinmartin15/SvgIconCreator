@@ -1,19 +1,28 @@
+import { FormArray, FormGroup } from '@angular/forms';
 import { Coord } from '../coord';
 import { ShapePainter } from './shape.painter';
 
 export class PathPainter implements ShapePainter {
+  private canvas: SVGElement;
   private pathEl: SVGPathElement;
-  private points: Coord[] = [];
+
+  private isPathStarted = false;
   private isPathCompleted: boolean = false;
   private isMouseDown = false;
+  private points: Coord[] = [];
 
-  public constructor(private readonly canvas: SVGElement) {
-    this.pathEl = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-    this.canvas.append(this.pathEl);
+  public options: FormGroup = new FormGroup({
+    points: new FormArray([]),
+  });
 
-    this.pathEl.setAttribute('fill', 'none'); // TODO
-    this.pathEl.setAttribute('stroke', 'black'); // TODO
+  public constructor() {
+    this.options.valueChanges.subscribe((value) => {
+      // TODO
+      console.log('Path form values');
+    });
   }
+
+  //#region mouse-events
 
   public onMouseDown(coord: Coord) {
     this.isMouseDown = true;
@@ -21,7 +30,12 @@ export class PathPainter implements ShapePainter {
 
     this.pathEl.setAttribute('d', `M${this.points.map((p) => `${p.x},${p.y}`).join(' ')}`);
 
-    // TODO set input options too
+    this.options.patchValue(
+      {
+        points: this.points,
+      },
+      { emitEvent: false }
+    );
   }
 
   public onMouseMove(coord: Coord) {
@@ -35,7 +49,12 @@ export class PathPainter implements ShapePainter {
 
     this.pathEl.setAttribute('d', `M${this.points.map((p) => `${p.x},${p.y}`).join(' ')}`);
 
-    // TODO set input options too
+    this.options.patchValue(
+      {
+        points: this.points,
+      },
+      { emitEvent: false }
+    );
   }
 
   public onMouseUp(coord: Coord) {
@@ -44,12 +63,43 @@ export class PathPainter implements ShapePainter {
 
     this.pathEl.setAttribute('d', `M${this.points.map((p) => `${p.x},${p.y}`).join(' ')}`);
 
-    // TODO set input options too
+    this.options.patchValue(
+      {
+        points: this.points,
+      },
+      { emitEvent: false }
+    );
+  }
+
+  //#endregion mouse-events
+
+  //#region shape-state
+
+  public isShapeStarted(): boolean {
+    return this.isPathStarted;
+  }
+
+  public setPathCompleted() {
+    this.isPathCompleted = true;
   }
 
   public isShapeCompleted() {
-    // TODO: create variable that indicates the path has finished to start a new one
-    // for example, pressing a key, finishes the path and allows to start a new one
     return this.isPathCompleted;
+  }
+
+  public isShapeSelected(): boolean {
+    throw new Error('Method not implemented.');
+  }
+
+  //#endregion shape-state
+
+  public addToCanvas(canvas: SVGElement) {
+    this.canvas = canvas;
+    this.pathEl = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+    this.canvas.append(this.pathEl);
+    this.isPathStarted = true;
+
+    this.pathEl.setAttribute('fill', 'none'); // TODO
+    this.pathEl.setAttribute('stroke', 'orange'); // TODO
   }
 }

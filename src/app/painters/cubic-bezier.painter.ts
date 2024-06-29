@@ -1,18 +1,36 @@
+import { FormControl, FormGroup } from '@angular/forms';
 import { Coord } from '../coord';
 import { ShapePainter } from './shape.painter';
 
 export class CubicBezierPainter implements ShapePainter {
-  private cubicBezier: SVGPathElement;
+  private canvas: SVGElement;
+  private cubicBezierEl: SVGPathElement;
+
+  private isCubicBezierStarted = false;
+  private isCubicBezierCompleted = false;
+  private isMouseDown = false;
   private points: Coord[] = [];
   private state: number = 0; // 0 -> no points added, 1 -> start point added, 2 -> end point added, 3 -> control point 1 added, 4 -> control point 2 added
-  private isMouseDown = false;
 
-  public constructor(private readonly canvas: SVGElement) {
-    this.cubicBezier = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-    this.canvas.append(this.cubicBezier);
+  public options: FormGroup = new FormGroup({
+    x1: new FormControl(0),
+    y1: new FormControl(0),
+    c1x: new FormControl(0),
+    c1y: new FormControl(0),
+    c2x: new FormControl(0),
+    c2y: new FormControl(0),
+    x2: new FormControl(0),
+    y2: new FormControl(0),
+  });
 
-    this.cubicBezier.setAttribute('fill', 'none'); // TODO
-    this.cubicBezier.setAttribute('stroke', 'black'); // TODO
+  public constructor() {
+    this.options.valueChanges.subscribe((value) => {
+      this.points[0] = { x: value.x1, y: value.y1 };
+      this.points[1] = { x: value.c1x, y: value.c1y };
+      this.points[2] = { x: value.c2x, y: value.c2y };
+      this.points[3] = { x: value.x2, y: value.y2 };
+      this.cubicBezierEl.setAttribute('d', this.calculatePath());
+    });
   }
 
   private calculatePath() {
@@ -23,26 +41,40 @@ export class CubicBezierPainter implements ShapePainter {
     return `M${p1.x},${p1.y}C${p2.x},${p2.y} ${p3.x},${p3.y} ${p4.x},${p4.y}`;
   }
 
+  //#region mouse-events
+
   public onMouseDown(coord: Coord) {
     this.isMouseDown = true;
 
     if (this.state === 0) {
-      this.points[0] = coord;
+      this.points[0] = this.points[1] = this.points[2] = this.points[3] = coord;
       this.state = 1;
-      this.cubicBezier.setAttribute('d', this.calculatePath());
+      this.cubicBezierEl.setAttribute('d', this.calculatePath());
     }
 
     if (this.state === 2) {
       this.points[1] = coord;
-      this.cubicBezier.setAttribute('d', this.calculatePath());
+      this.cubicBezierEl.setAttribute('d', this.calculatePath());
     }
 
     if (this.state === 3) {
       this.points[2] = coord;
-      this.cubicBezier.setAttribute('d', this.calculatePath());
+      this.cubicBezierEl.setAttribute('d', this.calculatePath());
     }
 
-    // TODO set input options too
+    this.options.patchValue(
+      {
+        x1: this.points[0].x,
+        y1: this.points[0].y,
+        c1x: this.points[1].x,
+        c1y: this.points[1].y,
+        c2x: this.points[2].x,
+        c2y: this.points[2].y,
+        x2: this.points[3].x,
+        y2: this.points[3].y,
+      },
+      { emitEvent: false }
+    );
   }
 
   public onMouseMove(coord: Coord) {
@@ -52,20 +84,32 @@ export class CubicBezierPainter implements ShapePainter {
 
     if (this.state === 1) {
       this.points[1] = this.points[2] = this.points[3] = coord;
-      this.cubicBezier.setAttribute('d', this.calculatePath());
+      this.cubicBezierEl.setAttribute('d', this.calculatePath());
     }
 
     if (this.state === 2) {
       this.points[1] = coord;
-      this.cubicBezier.setAttribute('d', this.calculatePath());
+      this.cubicBezierEl.setAttribute('d', this.calculatePath());
     }
 
     if (this.state === 3) {
       this.points[2] = coord;
-      this.cubicBezier.setAttribute('d', this.calculatePath());
+      this.cubicBezierEl.setAttribute('d', this.calculatePath());
     }
 
-    // TODO set input options too
+    this.options.patchValue(
+      {
+        x1: this.points[0].x,
+        y1: this.points[0].y,
+        c1x: this.points[1].x,
+        c1y: this.points[1].y,
+        c2x: this.points[2].x,
+        c2y: this.points[2].y,
+        x2: this.points[3].x,
+        y2: this.points[3].y,
+      },
+      { emitEvent: false }
+    );
   }
 
   public onMouseUp(coord: Coord) {
@@ -74,27 +118,62 @@ export class CubicBezierPainter implements ShapePainter {
     if (this.state === 3) {
       this.points[2] = coord;
       this.state = 4;
-      this.cubicBezier.setAttribute('d', this.calculatePath());
+      this.cubicBezierEl.setAttribute('d', this.calculatePath());
+      this.isCubicBezierCompleted = true;
     }
 
     if (this.state === 2) {
       this.points[1] = coord;
       this.state = 3;
-      this.cubicBezier.setAttribute('d', this.calculatePath());
+      this.cubicBezierEl.setAttribute('d', this.calculatePath());
     }
 
     if (this.state === 1) {
       this.points[1] = this.points[2] = this.points[3] = coord;
       this.state = 2;
-      this.cubicBezier.setAttribute('d', this.calculatePath());
+      this.cubicBezierEl.setAttribute('d', this.calculatePath());
     }
 
-    // TODO set input options too
+    this.options.patchValue(
+      {
+        x1: this.points[0].x,
+        y1: this.points[0].y,
+        c1x: this.points[1].x,
+        c1y: this.points[1].y,
+        c2x: this.points[2].x,
+        c2y: this.points[2].y,
+        x2: this.points[3].x,
+        y2: this.points[3].y,
+      },
+      { emitEvent: false }
+    );
+  }
+
+  //#endregion mouse-events
+
+  //#region shape-state
+
+  public isShapeStarted(): boolean {
+    return this.isCubicBezierStarted;
   }
 
   public isShapeCompleted() {
-    // TODO: create variable that indicates the path has finished to start a new one
-    // for example, pressing a key, finishes the path and allows to start a new one
-    return this.state >= 4;
+    return this.isCubicBezierCompleted;
+  }
+
+  public isShapeSelected(): boolean {
+    throw new Error('Method not implemented.');
+  }
+
+  //#endregion shape-state
+
+  public addToCanvas(canvas: SVGElement) {
+    this.canvas = canvas;
+    this.cubicBezierEl = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+    this.canvas.append(this.cubicBezierEl);
+    this.isCubicBezierStarted = true;
+
+    this.cubicBezierEl.setAttribute('fill', 'none'); // TODO
+    this.cubicBezierEl.setAttribute('stroke', 'blue'); // TODO
   }
 }
