@@ -83,6 +83,12 @@
     }
   }
 
+  .shape-options-container {
+    background-color: aliceblue;
+    border-radius: 20px;
+    padding: 10px;
+  }
+
   .rect-options {
     display: grid;
     grid-template-columns: 1fr 1fr;

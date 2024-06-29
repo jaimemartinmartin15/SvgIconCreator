@@ -75,6 +75,7 @@
     </form>
   </div>
 
+  <div>Figuras en el lienzo</div>
   <div class="shape-list" *ngIf="shapeList.length > 0">
     <div *ngFor="let shapePainter of shapeList" (click)="selectShapePainter(shapePainter)"
       [ngClass]="{'shape-item': true, selected: shapePainter.isShapeSelected()}">
