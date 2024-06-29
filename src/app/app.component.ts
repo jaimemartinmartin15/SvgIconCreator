@@ -134,6 +134,7 @@ export class AppComponent implements AfterViewInit {
       this.selectedShapePainter = undefined;
     } else {
       this.selectedShapePainter = shapePainter;
+      this.shapePainter = shapePainter;
       this.selectedShapePainter.setShapeSelected(true);
     }
   }
