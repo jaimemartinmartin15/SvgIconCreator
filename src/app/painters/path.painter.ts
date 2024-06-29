@@ -8,9 +8,11 @@ export class PathPainter implements ShapePainter {
 
   private isPathStarted = false;
   private isPathCompleted: boolean = false;
+  private isPathSelected: boolean = false;
   private isMouseDown = false;
   private points: Coord[] = [];
 
+  public name = 'path';
   public options: FormGroup = new FormGroup({
     points: new FormArray([]),
   });
@@ -73,6 +75,20 @@ export class PathPainter implements ShapePainter {
 
   //#endregion mouse-events
 
+  //#region mouse-events-edit
+
+  public onMouseDownEdit(coord: Coord): void {
+    // TODO
+  }
+  public onMouseMoveEdit(coord: Coord): void {
+    // TODO
+  }
+  public onMouseUpEdit(coord: Coord): void {
+    // TODO
+  }
+
+  //#endregion mouse-events-edit
+
   //#region shape-state
 
   public isShapeStarted(): boolean {
@@ -88,7 +104,11 @@ export class PathPainter implements ShapePainter {
   }
 
   public isShapeSelected(): boolean {
-    throw new Error('Method not implemented.');
+    return this.isPathSelected;
+  }
+
+  public setShapeSelected(selected: boolean): void {
+    this.isPathSelected = selected;
   }
 
   //#endregion shape-state

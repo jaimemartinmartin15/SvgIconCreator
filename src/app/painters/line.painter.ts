@@ -8,8 +8,10 @@ export class LinePainter implements ShapePainter {
 
   private isLineStarted = false;
   private isLineCompleted = false;
+  private isLineSelected = false;
   private isMouseDown = false;
 
+  public name = 'line';
   public options: FormGroup = new FormGroup({
     x1: new FormControl(0),
     y1: new FormControl(0),
@@ -85,6 +87,20 @@ export class LinePainter implements ShapePainter {
 
   //#endregion mouse-events
 
+  //#region mouse-events-edit
+
+  public onMouseDownEdit(coord: Coord): void {
+    // TODO
+  }
+  public onMouseMoveEdit(coord: Coord): void {
+    // TODO
+  }
+  public onMouseUpEdit(coord: Coord): void {
+    // TODO
+  }
+
+  //#endregion mouse-events-edit
+
   //#region shape-state
 
   public isShapeStarted(): boolean {
@@ -96,7 +112,11 @@ export class LinePainter implements ShapePainter {
   }
 
   public isShapeSelected(): boolean {
-    throw new Error('Method not implemented.');
+    return this.isLineSelected;
+  }
+
+  public setShapeSelected(selected: boolean): void {
+    this.isLineSelected = selected;
   }
 
   //#endregion shape-state

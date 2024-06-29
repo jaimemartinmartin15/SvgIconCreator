@@ -8,10 +8,12 @@ export class CubicBezierPainter implements ShapePainter {
 
   private isCubicBezierStarted = false;
   private isCubicBezierCompleted = false;
+  private isCubicBezierSelected = false;
   private isMouseDown = false;
   private points: Coord[] = [];
   private state: number = 0; // 0 -> no points added, 1 -> start point added, 2 -> end point added, 3 -> control point 1 added, 4 -> control point 2 added
 
+  public name = 'cubic-bezier';
   public options: FormGroup = new FormGroup({
     x1: new FormControl(0),
     y1: new FormControl(0),
@@ -151,6 +153,20 @@ export class CubicBezierPainter implements ShapePainter {
 
   //#endregion mouse-events
 
+  //#region mouse-events-edit
+
+  public onMouseDownEdit(coord: Coord): void {
+    // TODO
+  }
+  public onMouseMoveEdit(coord: Coord): void {
+    // TODO
+  }
+  public onMouseUpEdit(coord: Coord): void {
+    // TODO
+  }
+
+  //#endregion mouse-events-edit
+
   //#region shape-state
 
   public isShapeStarted(): boolean {
@@ -162,7 +178,11 @@ export class CubicBezierPainter implements ShapePainter {
   }
 
   public isShapeSelected(): boolean {
-    throw new Error('Method not implemented.');
+    return this.isCubicBezierSelected;
+  }
+
+  public setShapeSelected(selected: boolean): void {
+    this.isCubicBezierSelected = selected;
   }
 
   //#endregion shape-state

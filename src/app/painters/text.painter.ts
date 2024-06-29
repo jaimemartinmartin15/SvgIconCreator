@@ -8,8 +8,10 @@ export class TextPainter implements ShapePainter {
 
   private isTextStarted = false;
   private isTextCompleted = false;
+  private isTextSelected = false;
   private isMouseDown = false;
 
+  public name = 'text';
   public options: FormGroup = new FormGroup({
     x: new FormControl(0),
     y: new FormControl(0),
@@ -77,6 +79,20 @@ export class TextPainter implements ShapePainter {
 
   //#endregion mouse-events
 
+  //#region mouse-events-edit
+
+  public onMouseDownEdit(coord: Coord): void {
+    // TODO
+  }
+  public onMouseMoveEdit(coord: Coord): void {
+    // TODO
+  }
+  public onMouseUpEdit(coord: Coord): void {
+    // TODO
+  }
+
+  //#endregion mouse-events-edit
+
   //#region shape-state
 
   public isShapeStarted(): boolean {
@@ -88,7 +104,11 @@ export class TextPainter implements ShapePainter {
   }
 
   public isShapeSelected(): boolean {
-    throw new Error('Method not implemented.');
+    return this.isTextSelected;
+  }
+
+  public setShapeSelected(selected: boolean): void {
+    this.isTextSelected = selected;
   }
 
   //#endregion shape-state

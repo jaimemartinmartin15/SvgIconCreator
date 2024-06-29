@@ -8,10 +8,12 @@ export class CirclePainter implements ShapePainter {
 
   private isCircleStarted = false;
   private isCircleCompleted = false;
+  private isCircleSelected = false;
   private isMouseDown = false;
   private startCoord: Coord;
   private endCoord: Coord;
 
+  public name = 'circle';
   public options: FormGroup = new FormGroup({
     cx: new FormControl(0),
     cy: new FormControl(0),
@@ -98,6 +100,20 @@ export class CirclePainter implements ShapePainter {
 
   //#endregion mouse-events
 
+  //#region mouse-events-edit
+
+  public onMouseDownEdit(coord: Coord): void {
+    // TODO
+  }
+  public onMouseMoveEdit(coord: Coord): void {
+    // TODO
+  }
+  public onMouseUpEdit(coord: Coord): void {
+    // TODO
+  }
+
+  //#endregion mouse-events-edit
+
   //#region shape-state
 
   public isShapeStarted(): boolean {
@@ -109,7 +125,11 @@ export class CirclePainter implements ShapePainter {
   }
 
   public isShapeSelected(): boolean {
-    throw new Error('Method not implemented.');
+    return this.isCircleSelected;
+  }
+
+  public setShapeSelected(selected: boolean): void {
+    this.isCircleSelected = selected;
   }
 
   //#endregion shape-state

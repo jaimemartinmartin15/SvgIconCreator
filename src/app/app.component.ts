@@ -24,6 +24,8 @@ export class AppComponent implements AfterViewInit {
   public Shape = Shape;
   public selectedShape: Shape = Shape.RECT;
   public shapePainter: ShapePainter = new RectPainter();
+  public selectedShapePainter?: ShapePainter;
+  public shapeList: ShapePainter[] = [];
 
   @ViewChild('canvas')
   private canvasRef: ElementRef<SVGElement>;
@@ -63,50 +65,77 @@ export class AppComponent implements AfterViewInit {
   }
 
   public onChangeShape() {
-    this.instantiateShapePainter();
+    this.shapePainter = this.instantiateShapePainter();
   }
 
-  private instantiateShapePainter() {
+  private instantiateShapePainter(): ShapePainter {
     switch (this.selectedShape) {
       case Shape.LINE:
-        this.shapePainter = new LinePainter();
-        break;
+        return (this.shapePainter = new LinePainter());
       case Shape.PATH:
-        this.shapePainter = new PathPainter();
-        break;
+        return (this.shapePainter = new PathPainter());
       case Shape.CIRCLE:
-        this.shapePainter = new CirclePainter();
-        break;
+        return (this.shapePainter = new CirclePainter());
       case Shape.TEXT:
-        this.shapePainter = new TextPainter();
-        break;
+        return (this.shapePainter = new TextPainter());
       case Shape.CUBIC_BEZIER:
-        this.shapePainter = new CubicBezierPainter();
-        break;
+        return (this.shapePainter = new CubicBezierPainter());
       case Shape.RECT:
       default:
-        this.shapePainter = new RectPainter();
-        break;
+        return (this.shapePainter = new RectPainter());
     }
   }
 
   private onPointerDown(e: PointerEvent) {
+    if (this.selectedShapePainter) {
+      this.selectedShapePainter.onMouseDownEdit(this.getCoordsInViewBox(e));
+      return;
+    }
+
     if (this.shapePainter.isShapeCompleted()) {
       // if the shape before is completed, create a new one
-      this.instantiateShapePainter();
+      this.shapePainter = this.instantiateShapePainter();
+      this.shapeList.push(this.shapePainter);
     }
+
     if (!this.shapePainter.isShapeStarted()) {
       this.shapePainter.addToCanvas(this.canvas);
     }
+
+    if (!this.shapeList.includes(this.shapePainter)) {
+      this.shapeList.push(this.shapePainter);
+    }
+
     this.shapePainter.onMouseDown(this.getCoordsInViewBox(e));
   }
 
   private onPointerMove(e: PointerEvent) {
+    if (this.selectedShapePainter) {
+      this.selectedShapePainter.onMouseMoveEdit(this.getCoordsInViewBox(e));
+      return;
+    }
     this.shapePainter.onMouseMove(this.getCoordsInViewBox(e));
   }
 
   private onPointerUp(e: PointerEvent) {
+    if (this.selectedShapePainter) {
+      this.selectedShapePainter.onMouseUpEdit(this.getCoordsInViewBox(e));
+      return;
+    }
     this.shapePainter.onMouseUp(this.getCoordsInViewBox(e));
+  }
+
+  public selectShapePainter(shapePainter: ShapePainter) {
+    if (this.selectedShapePainter) {
+      this.selectedShapePainter.setShapeSelected(false);
+    }
+
+    if (this.selectedShapePainter === shapePainter) {
+      this.selectedShapePainter = undefined;
+    } else {
+      this.selectedShapePainter = shapePainter;
+      this.selectedShapePainter.setShapeSelected(true);
+    }
   }
 
   public onUpdateBackgroundImage(e: Event) {

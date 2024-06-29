@@ -8,9 +8,11 @@ export class RectPainter implements ShapePainter {
 
   private isRectStarted = false;
   private isRectCompleted = false;
+  private isRectSelected = false;
   private isMouseDown = false;
   private startCoord: Coord;
 
+  public name = 'rect';
   public options: FormGroup = new FormGroup({
     x: new FormControl(0),
     y: new FormControl(0),
@@ -107,6 +109,20 @@ export class RectPainter implements ShapePainter {
 
   //#endregion mouse-events
 
+  //#region mouse-events-edit
+
+  public onMouseDownEdit(coord: Coord): void {
+    // TODO
+  }
+  public onMouseMoveEdit(coord: Coord): void {
+    // TODO
+  }
+  public onMouseUpEdit(coord: Coord): void {
+    // TODO
+  }
+
+  //#endregion mouse-events-edit
+
   //#region shape-state
 
   public isShapeStarted(): boolean {
@@ -118,7 +134,11 @@ export class RectPainter implements ShapePainter {
   }
 
   public isShapeSelected(): boolean {
-    throw new Error('Method not implemented.');
+    return this.isRectSelected;
+  }
+
+  public setShapeSelected(selected: boolean): void {
+    this.isRectSelected = selected;
   }
 
   //#endregion shape-state
