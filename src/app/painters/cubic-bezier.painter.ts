@@ -17,6 +17,10 @@ export class CubicBezierPainter implements ShapePainter {
   public shape = Shape.CUBIC_BEZIER;
   public name = 'cubic-bezier';
   public options: FormGroup = new FormGroup({
+    name: new FormControl(this.name),
+    stroke: new FormControl('#000000'),
+    strokeWidth: new FormControl(1),
+    fill: new FormControl('#FFFFFF'),
     x1: new FormControl(0),
     y1: new FormControl(0),
     c1x: new FormControl(0),
@@ -28,12 +32,16 @@ export class CubicBezierPainter implements ShapePainter {
   });
 
   public constructor() {
-    this.options.valueChanges.subscribe((value) => {
-      this.points[0] = { x: value.x1, y: value.y1 };
-      this.points[1] = { x: value.c1x, y: value.c1y };
-      this.points[2] = { x: value.c2x, y: value.c2y };
-      this.points[3] = { x: value.x2, y: value.y2 };
+    this.options.valueChanges.subscribe((v) => {
+      this.name = v.name;
+      this.points[0] = { x: v.x1, y: v.y1 };
+      this.points[1] = { x: v.c1x, y: v.c1y };
+      this.points[2] = { x: v.c2x, y: v.c2y };
+      this.points[3] = { x: v.x2, y: v.y2 };
       this.cubicBezierEl.setAttribute('d', this.calculatePath());
+      this.cubicBezierEl.setAttribute('stroke', v.stroke);
+      this.cubicBezierEl.setAttribute('stroke-width', v.strokeWidth);
+      this.cubicBezierEl.setAttribute('fill', v.fill);
     });
   }
 
@@ -194,8 +202,5 @@ export class CubicBezierPainter implements ShapePainter {
     this.cubicBezierEl = document.createElementNS('http://www.w3.org/2000/svg', 'path');
     this.canvas.append(this.cubicBezierEl);
     this.isCubicBezierStarted = true;
-
-    this.cubicBezierEl.setAttribute('fill', 'none'); // TODO
-    this.cubicBezierEl.setAttribute('stroke', 'blue'); // TODO
   }
 }

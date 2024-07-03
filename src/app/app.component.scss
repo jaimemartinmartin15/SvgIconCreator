@@ -2,11 +2,81 @@
   display: flex;
   justify-content: center;
   gap: 20px;
+  padding-top: 20px;
   max-width: 1200px;
   margin: 0 auto;
+
+  --border: 1px solid #bbbfc5;
 }
 
-.canvas-and-buttons-container {
+label {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.9rem;
+  font-weight: bold;
+  color: #595959;
+  position: relative;
+  cursor: pointer;
+
+  input[type="number"]::-webkit-outer-spin-button,
+  input[type="number"]::-webkit-inner-spin-button {
+    /* hide arrows */
+    -webkit-appearance: none;
+  }
+
+  input[type="text"],
+  input[type="number"] {
+    height: 40px;
+    width: 90px;
+    padding: 0 8px;
+    border: var(--border);
+    border-radius: 5px;
+    text-align: center;
+    font-size: 100%;
+    font-weight: bold;
+    box-sizing: border-box;
+  }
+
+  input[type="number"]:focus {
+    border: 3px solid black;
+  }
+
+  input[type="file"],
+  input[type="color"],
+  input[type="radio"] {
+    /* make them no visible */
+    visibility: hidden;
+    width: 0;
+    height: 0;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    pointer-events: none;
+  }
+
+  .mock-input-color {
+    width: 90px;
+    height: 40px;
+    border-radius: 5px;
+    border: var(--border);
+  }
+
+  .mock-input-file {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 40px;
+    min-width: 90px;
+    border-radius: 5px;
+    border: var(--border);
+    padding: 0 10px;
+  }
+}
+
+.left-side {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -29,7 +99,7 @@
     justify-content: space-evenly;
     width: 100%;
 
-    button {
+    .download-button {
       border: none;
       padding: 10px 15px;
       border-radius: 5px;
@@ -39,88 +109,72 @@
   }
 }
 
-.panel-options-container {
+.right-side {
   display: flex;
   flex-direction: column;
   flex-shrink: 0;
   gap: 20px;
   width: calc(50% - 10px);
 
-  #canvas-width-input,
-  #canvas-height-input {
-    width: 40px;
-    border: 2px solid black;
-    border-radius: 5px;
-    padding: 5px;
-    text-align: center;
+  .canvas-config-options {
+    display: flex;
+    justify-content: center;
+    gap: 40px;
   }
 
-  .shapes-container {
-    .options-container {
-      margin-top: 10px;
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
+  .shapes-radio-buttons-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    width: 100%;
 
-      label {
-        padding: 5px 10px;
-        background-color: rgb(244, 244, 244);
-        border: 2px solid black;
-        border-radius: 5px;
-        cursor: pointer;
+    label {
+      padding: 5px 10px;
+      border: var(--border);
+      border-radius: 5px;
+      flex: 1;
+      text-align: center;
 
-        input {
-          appearance: none;
-          position: fixed;
-          opacity: 0;
-          pointer-events: none;
-        }
-
-        &:has(:checked) {
-          background-color: orange;
-        }
+      &:has(:checked) {
+        background-color: #f0f1f2;
       }
     }
   }
 
-  .shape-options-container {
-    background-color: aliceblue;
-    border-radius: 20px;
-    padding: 10px;
-  }
-
-  .rect-options,
-  .line-options {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 15px;
-
-    input {
-      width: 40px;
-      border: 2px solid black;
-      border-radius: 5px;
-      padding: 5px;
-      text-align: center;
-    }
+  .common-shape-options {
+    margin-top: 30px;
+    display: flex;
+    justify-content: space-evenly;
+    gap: 20px;
   }
 
   .shape-list {
-    border: 2px solid black;
-    border-radius: 5px;
-    max-height: 50vh;
-    overflow: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
 
-    .shape-item {
-      padding: 10px 5px;
-      background-color: aliceblue;
-
-      &:hover {
-        background-color: rgb(168, 214, 255);
-        cursor: pointer;
-      }
+    .shape-collapsible {
+      border: var(--border);
+      border-radius: 5px;
 
       &.selected {
-        background-color: rgb(168, 196, 255);
+        background-color: #f0f1f2;
+        border-left: var(--border);
+      }
+
+      .invoker {
+        padding: 10px;
+
+        &.selected {
+          border-bottom: var(--border);
+        }
+      }
+
+      .shape-options {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 30px;
+        padding: 10px;
       }
     }
   }

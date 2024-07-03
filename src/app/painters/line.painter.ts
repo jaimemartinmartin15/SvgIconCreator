@@ -19,6 +19,10 @@ export class LinePainter implements ShapePainter {
   public shape = Shape.LINE;
   public name = 'line';
   public options: FormGroup = new FormGroup({
+    name: new FormControl(this.name),
+    stroke: new FormControl('#000000'),
+    strokeWidth: new FormControl(1),
+    fill: new FormControl('#FFFFFF'),
     x1: new FormControl(0),
     y1: new FormControl(0),
     x2: new FormControl(0),
@@ -27,7 +31,11 @@ export class LinePainter implements ShapePainter {
 
   public constructor() {
     this.options.valueChanges.subscribe((v) => {
+      this.name = v.name;
       this.drawLine(v.x1, v.y1, v.x2, v.y2);
+      this.lineEl.setAttribute('stroke', v.stroke);
+      this.lineEl.setAttribute('stroke-width', v.strokeWidth);
+      this.lineEl.setAttribute('fill', v.fill);
       if (this.isShapeSelected()) {
         // adapt the position of the edit points
         this.svgEditPoints[0].setAttribute('cx', `${v.x1}`);

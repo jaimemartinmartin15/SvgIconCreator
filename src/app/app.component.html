@@ -1,96 +1,161 @@
-<div class="canvas-and-buttons-container">
+<div class="left-side">
   <svg id="canvas" #canvas>
   </svg>
 
   <div class="buttons-container">
-    <button (click)="downloadSvg()">Descargar svg</button>
-    <button (click)="downloadImage()">Descargar png</button>
+    <button class="download-button" (click)="downloadSvg()">Descargar svg</button>
+    <button class="download-button" (click)="downloadPng()">Descargar png</button>
   </div>
 </div>
 
-<form class="panel-options-container">
-  <div>
-    Subir imagen de fondo: <input type="file" name="background-image" (change)="onUpdateBackgroundImage($event)">
+<form class="right-side">
+  <div class="canvas-config-options">
+    <label>
+      <span>FONDO</span>
+      <input type="file" (change)="onUpdateBackgroundImage($event)">
+      <div class="mock-input-file">{{backgroundImageFile?.name ?? 'Selecciona un fondo'}}</div>
+    </label>
+
+    <label>
+      <span>TAMAÑO LIENZO</span>
+      <div>
+        <input type="number" min="1" id="canvas-width-input" name="canvas-width" [(ngModel)]="canvasWidth"
+          (ngModelChange)="onChangeCanvasSize()">
+        :
+        <input type="number" min="1" id="canvas-height-input" name="canvas-height" [(ngModel)]="canvasHeight"
+          (ngModelChange)="onChangeCanvasSize()">
+      </div>
+    </label>
   </div>
 
-  <div>
-    Tamaño del viewBox o imagen en píxeles:
-    <input type="number" min="1" id="canvas-width-input" name="canvas-width" [(ngModel)]="canvasWidth"
-      (ngModelChange)="onChangeCanvasSize()">
-    :
-    <input type="number" min="1" id="canvas-height-input" name="canvas-height" [(ngModel)]="canvasHeight"
-      (ngModelChange)="onChangeCanvasSize()">
-  </div>
+  <label>
+    <span>FIGURAS</span>
 
-  <div class="shapes-container">
-    <div>Figuras</div>
-
-    <div class="options-container">
-      <label><input type="radio" name="shape" [value]="Shape.RECT" [(ngModel)]="selectedShape"
+    <div class="shapes-radio-buttons-container">
+      <label>
+        <input type="radio" name="shape" [value]="Shape.RECT" [(ngModel)]="selectedShape"
           (ngModelChange)="onChangeShape()">
-        rect
+        <span>rect</span>
       </label>
 
-      <label><input type="radio" name="shape" [value]="Shape.LINE" [(ngModel)]="selectedShape"
+      <label>
+        <input type="radio" name="shape" [value]="Shape.LINE" [(ngModel)]="selectedShape"
           (ngModelChange)="onChangeShape()">
-        line
+        <span>line</span>
       </label>
 
-      <label><input type="radio" name="shape" [value]="Shape.PATH" [(ngModel)]="selectedShape"
+      <label>
+        <input type="radio" name="shape" [value]="Shape.PATH" [(ngModel)]="selectedShape"
           (ngModelChange)="onChangeShape()">
-        path
+        <span>path</span>
       </label>
 
-      <label><input type="radio" name="shape" [value]="Shape.CIRCLE" [(ngModel)]="selectedShape"
+      <label>
+        <input type="radio" name="shape" [value]="Shape.CIRCLE" [(ngModel)]="selectedShape"
           (ngModelChange)="onChangeShape()">
-        circle
+        <span>circle</span>
       </label>
 
-      <label><input type="radio" name="shape" [value]="Shape.TEXT" [(ngModel)]="selectedShape"
+      <label>
+        <input type="radio" name="shape" [value]="Shape.TEXT" [(ngModel)]="selectedShape"
           (ngModelChange)="onChangeShape()">
-        text
+        <span>text</span>
       </label>
 
-      <label><input type="radio" name="shape" [value]="Shape.CUBIC_BEZIER" [(ngModel)]="selectedShape"
+      <label>
+        <input type="radio" name="shape" [value]="Shape.CUBIC_BEZIER" [(ngModel)]="selectedShape"
           (ngModelChange)="onChangeShape()">
-        cubic bezier
+        <span>cubic bezier</span>
       </label>
     </div>
-  </div>
+  </label>
 
-  <div class="shape-options-container">
-    <form *ngIf="shapePainter.shape === Shape.RECT && shapePainter.isShapeStarted()" class="rect-options"
-      [formGroup]="shapePainter.options">
-      <label>x: <input type="number" formControlName="x"></label>
+  <form class="common-shape-options" [formGroup]="shapePainter.options">
+    <label>
+      <span>STROKE WIDTH</span>
+      <input type="number" min="0" formControlName="strokeWidth">
+    </label>
 
-      <label>y: <input type="number" formControlName="y"></label>
+    <label>
+      <span>STROKE</span>
+      <input type="color" formControlName="stroke">
+      <div class="mock-input-color" [style]="{backgroundColor: shapePainter.options.controls['stroke'].value}"></div>
+    </label>
 
-      <label>width: <input type="number" min="0" formControlName="width"></label>
+    <label>
+      <span>FILL</span>
+      <input type="color" formControlName="fill">
+      <div class="mock-input-color" [style]="{backgroundColor: shapePainter.options.controls['fill'].value}"></div>
+    </label>
+  </form>
 
-      <label>height: <input type="number" min="0" formControlName="height"></label>
+  <div class="shape-list">
+    <app-collapsible *ngFor="let shapePainter of shapeList" class="shape-collapsible"
+      [class.selected]="shapePainter.isShapeSelected()">
 
-      <label>round corner x: <input type="number" min="0" formControlName="roundCornerX"></label>
+      <div appCollapsibleToggleAction (click)="selectShapePainter(shapePainter)" class="invoker"
+        [class.selected]="shapePainter.isShapeSelected()">
+        {{shapePainter.name}}
+      </div>
 
-      <label>round corner y: <input type="number" min="0" formControlName="roundCornerY"></label>
-    </form>
+      <form appCollapsibleContent [formGroup]="shapePainter.options">
+        <ng-container [ngSwitch]="shapePainter.shape">
+          <div class="shape-options" *ngSwitchCase="Shape.RECT">
+            <label>
+              <span>X</span>
+              <input type="number" formControlName="x">
+            </label>
 
-    <form *ngIf="shapePainter.shape === Shape.LINE && shapePainter.isShapeStarted()" class="line-options"
-      [formGroup]="shapePainter.options">
-      <label>x1: <input type="number" formControlName="x1"></label>
+            <label>
+              <span>Y</span>
+              <input type="number" formControlName="y">
+            </label>
 
-      <label>y1: <input type="number" formControlName="y1"></label>
+            <label>
+              <span>WIDTH</span>
+              <input type="number" min="0" formControlName="width">
+            </label>
 
-      <label>x2: <input type="number" formControlName="x2"></label>
+            <label>
+              <span>HEIGHT</span>
+              <input type="number" min="0" formControlName="height">
+            </label>
 
-      <label>y2: <input type="number" formControlName="y2"></label>
-    </form>
-  </div>
+            <label>
+              <span>RX</span>
+              <input type="number" min="0" formControlName="roundCornerX">
+            </label>
 
-  <div>Figuras en el lienzo</div>
-  <div class="shape-list" *ngIf="shapeList.length > 0">
-    <div *ngFor="let shapePainter of shapeList" (click)="selectShapePainter(shapePainter)"
-      [ngClass]="{'shape-item': true, selected: shapePainter.isShapeSelected()}">
-      {{shapePainter.name}}
-    </div>
+            <label>
+              <span>RY</span>
+              <input type="number" min="0" formControlName="roundCornerY">
+            </label>
+
+            <label>
+              <span>NOMBRE</span>
+              <input type="text" formControlName="name">
+            </label>
+          </div>
+
+          <div *ngSwitchCase="Shape.LINE" class="shape-options">
+            <label>
+              <span>X1</span>
+              <input type="number" formControlName="x1"></label>
+
+            <label>
+              <span>Y1</span>
+              <input type="number" formControlName="y1"></label>
+
+            <label>
+              <span>X2</span>
+              <input type="number" formControlName="x2"></label>
+
+            <label>
+              <span>Y2</span>
+              <input type="number" formControlName="y2"></label>
+          </div>
+        </ng-container>
+      </form>
+    </app-collapsible>
   </div>
 </form>

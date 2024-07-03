@@ -15,16 +15,24 @@ export class TextPainter implements ShapePainter {
   public shape = Shape.TEXT;
   public name = 'text';
   public options: FormGroup = new FormGroup({
+    name: new FormControl(this.name),
+    stroke: new FormControl('#000000'),
+    strokeWidth: new FormControl(1),
+    fill: new FormControl('#FFFFFF'),
     x: new FormControl(0),
     y: new FormControl(0),
     text: new FormControl('text'),
   });
 
   public constructor() {
-    this.options.valueChanges.subscribe((value) => {
-      this.textEl.setAttribute('x', `${value.x}`);
-      this.textEl.setAttribute('y', `${value.y}`);
-      this.textEl.innerHTML = value.text;
+    this.options.valueChanges.subscribe((v) => {
+      this.name = v.name;
+      this.textEl.setAttribute('x', `${v.x}`);
+      this.textEl.setAttribute('y', `${v.y}`);
+      this.textEl.setAttribute('stroke', v.stroke);
+      this.textEl.setAttribute('stroke-width', v.strokeWidth);
+      this.textEl.setAttribute('fill', v.fill);
+      this.textEl.innerHTML = v.text;
     });
   }
 

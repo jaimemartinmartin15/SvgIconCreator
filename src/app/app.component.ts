@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { AfterViewInit, Component, ElementRef, HostListener, ViewChild } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { CollapsibleModule } from '@jaimemartinmartin15/jei-devkit-angular-shared';
 import { CirclePainter } from './painters/circle.painter';
 import { CubicBezierPainter } from './painters/cubic-bezier.painter';
 import { LinePainter } from './painters/line.painter';
@@ -13,11 +14,13 @@ import { Shape } from './shapes';
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [CommonModule, FormsModule, ReactiveFormsModule],
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, CollapsibleModule],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss',
 })
 export class AppComponent implements AfterViewInit {
+  public backgroundImageFile?: File;
+
   public canvasWidth = 100;
   public canvasHeight = 100;
 
@@ -141,7 +144,7 @@ export class AppComponent implements AfterViewInit {
 
   public onUpdateBackgroundImage(e: Event) {
     const inputEl = e.target as HTMLInputElement;
-    const file = inputEl.files![0];
+    this.backgroundImageFile = inputEl.files![0];
 
     const imageBg = document.createElementNS('http://www.w3.org/2000/svg', 'image') as SVGImageElement;
 
@@ -149,7 +152,7 @@ export class AppComponent implements AfterViewInit {
     imageBg.setAttribute('y', '0');
     imageBg.setAttribute('width', `${this.canvasWidth}`);
     imageBg.setAttribute('height', `${this.canvasHeight}`);
-    imageBg.setAttribute('href', URL.createObjectURL(file));
+    imageBg.setAttribute('href', URL.createObjectURL(this.backgroundImageFile));
     this.canvas.append(imageBg);
   }
 
@@ -178,7 +181,7 @@ export class AppComponent implements AfterViewInit {
     downloadLink.click();
   }
 
-  public downloadImage() {
+  public downloadPng() {
     const svgString = new XMLSerializer().serializeToString(this.canvas);
 
     const canvas = document.createElement('canvas');

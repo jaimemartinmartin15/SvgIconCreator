@@ -17,16 +17,24 @@ export class CirclePainter implements ShapePainter {
   public shape = Shape.CIRCLE;
   public name = 'circle';
   public options: FormGroup = new FormGroup({
+    name: new FormControl(this.name),
+    stroke: new FormControl('#000000'),
+    strokeWidth: new FormControl(1),
+    fill: new FormControl('#FFFFFF'),
     cx: new FormControl(0),
     cy: new FormControl(0),
     r: new FormControl(0),
   });
 
   public constructor() {
-    this.options.valueChanges.subscribe((value) => {
-      this.circleEl.setAttribute('cx', `${value.cx}`);
-      this.circleEl.setAttribute('cy', `${value.cy}`);
-      this.circleEl.setAttribute('r', `${value.r}`);
+    this.options.valueChanges.subscribe((v) => {
+      this.name = v.name;
+      this.circleEl.setAttribute('cx', `${v.cx}`);
+      this.circleEl.setAttribute('cy', `${v.cy}`);
+      this.circleEl.setAttribute('r', `${v.r}`);
+      this.circleEl.setAttribute('stroke', v.stroke);
+      this.circleEl.setAttribute('stroke-width', v.strokeWidth);
+      this.circleEl.setAttribute('fill', v.fill);
     });
   }
 

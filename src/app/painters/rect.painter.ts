@@ -19,6 +19,10 @@ export class RectPainter implements ShapePainter {
   public shape = Shape.RECT;
   public name = 'rect';
   public options: FormGroup = new FormGroup({
+    name: new FormControl(this.name),
+    stroke: new FormControl('#000000'),
+    strokeWidth: new FormControl(1),
+    fill: new FormControl('#FFFFFF'),
     x: new FormControl(0),
     y: new FormControl(0),
     width: new FormControl(0),
@@ -29,7 +33,11 @@ export class RectPainter implements ShapePainter {
 
   public constructor() {
     this.options.valueChanges.subscribe((v) => {
+      this.name = v.name;
       this.drawRect(v.x, v.y, v.width, v.height, v.roundCornerX, v.roundCornerY);
+      this.rectEl.setAttribute('stroke', v.stroke);
+      this.rectEl.setAttribute('stroke-width', v.strokeWidth);
+      this.rectEl.setAttribute('fill', v.fill);
       if (this.isShapeSelected()) {
         // adapt the position of the edit points
         this.svgEditPoints[0].setAttribute('cx', `${v.x}`);

@@ -1,4 +1,4 @@
-import { FormArray, FormGroup } from '@angular/forms';
+import { FormArray, FormControl, FormGroup } from '@angular/forms';
 import { Coord } from '../coord';
 import { Shape } from '../shapes';
 import { ShapePainter } from './shape.painter';
@@ -16,11 +16,20 @@ export class PathPainter implements ShapePainter {
   public shape = Shape.PATH;
   public name = 'path';
   public options: FormGroup = new FormGroup({
+    name: new FormControl(this.name),
+    stroke: new FormControl('#000000'),
+    strokeWidth: new FormControl(1),
+    fill: new FormControl('#FFFFFF'),
     points: new FormArray([]),
   });
 
   public constructor() {
-    this.options.valueChanges.subscribe((value) => {
+    this.options.valueChanges.subscribe((v) => {
+      this.name = v.name;
+      this.pathEl.setAttribute('stroke', v.stroke);
+      this.pathEl.setAttribute('stroke-width', v.strokeWidth);
+      this.pathEl.setAttribute('fill', v.fill);
+
       // TODO
       console.log('Path form values');
     });
@@ -120,8 +129,5 @@ export class PathPainter implements ShapePainter {
     this.pathEl = document.createElementNS('http://www.w3.org/2000/svg', 'path');
     this.canvas.append(this.pathEl);
     this.isPathStarted = true;
-
-    this.pathEl.setAttribute('fill', 'none'); // TODO
-    this.pathEl.setAttribute('stroke', 'orange'); // TODO
   }
 }
