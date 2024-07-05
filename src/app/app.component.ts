@@ -25,9 +25,8 @@ export class AppComponent implements AfterViewInit {
   public canvasHeight = 100;
 
   public Shape = Shape;
-  public selectedShape: Shape = Shape.RECT;
+  public shapeToDraw: Shape = Shape.RECT;
   public shapePainter: ShapePainter = new RectPainter();
-  public selectedShapePainter?: ShapePainter;
   public shapeList: ShapePainter[] = [];
 
   @ViewChild('canvas')
@@ -37,7 +36,6 @@ export class AppComponent implements AfterViewInit {
   }
 
   public ngAfterViewInit(): void {
-    // default aspect ration 1:1
     this.canvas.setAttribute('viewBox', `0 0 ${this.canvasWidth} ${this.canvasHeight}`);
 
     this.canvas.addEventListener('pointerdown', this.onPointerDown.bind(this));
@@ -67,12 +65,13 @@ export class AppComponent implements AfterViewInit {
     return { x: +xInViewBox.toFixed(1), y: +yInViewBox.toFixed(1) };
   }
 
-  public onChangeShape() {
+  public onChangeShapeToDraw() {
+    this.shapePainter.setShapeSelected(false);
     this.shapePainter = this.instantiateShapePainter();
   }
 
   private instantiateShapePainter(): ShapePainter {
-    switch (this.selectedShape) {
+    switch (this.shapeToDraw) {
       case Shape.LINE:
         return (this.shapePainter = new LinePainter());
       case Shape.PATH:
@@ -90,22 +89,18 @@ export class AppComponent implements AfterViewInit {
   }
 
   private onPointerDown(e: PointerEvent) {
-    if (this.selectedShapePainter) {
-      this.selectedShapePainter.onMouseDownEdit(this.getCoordsInViewBox(e));
+    if (this.shapePainter.isShapeSelected()) {
+      this.shapePainter.onMouseDownEdit(this.getCoordsInViewBox(e));
       return;
     }
 
     if (this.shapePainter.isShapeCompleted()) {
       // if the shape before is completed, create a new one
       this.shapePainter = this.instantiateShapePainter();
-      this.shapeList.push(this.shapePainter);
     }
 
     if (!this.shapePainter.isShapeStarted()) {
       this.shapePainter.addToCanvas(this.canvas);
-    }
-
-    if (!this.shapeList.includes(this.shapePainter)) {
       this.shapeList.push(this.shapePainter);
     }
 
@@ -113,33 +108,31 @@ export class AppComponent implements AfterViewInit {
   }
 
   private onPointerMove(e: PointerEvent) {
-    if (this.selectedShapePainter) {
-      this.selectedShapePainter.onMouseMoveEdit(this.getCoordsInViewBox(e));
+    if (this.shapePainter.isShapeSelected()) {
+      this.shapePainter.onMouseMoveEdit(this.getCoordsInViewBox(e));
       return;
     }
     this.shapePainter.onMouseMove(this.getCoordsInViewBox(e));
   }
 
   private onPointerUp(e: PointerEvent) {
-    if (this.selectedShapePainter) {
-      this.selectedShapePainter.onMouseUpEdit(this.getCoordsInViewBox(e));
+    if (this.shapePainter.isShapeSelected()) {
+      this.shapePainter.onMouseUpEdit(this.getCoordsInViewBox(e));
       return;
     }
     this.shapePainter.onMouseUp(this.getCoordsInViewBox(e));
   }
 
   public selectShapePainter(shapePainter: ShapePainter) {
-    if (this.selectedShapePainter) {
-      this.selectedShapePainter.setShapeSelected(false);
+    if (shapePainter.isShapeSelected()) {
+      shapePainter.setShapeSelected(false);
+      this.shapePainter = this.instantiateShapePainter();
+      return;
     }
 
-    if (this.selectedShapePainter === shapePainter) {
-      this.selectedShapePainter = undefined;
-    } else {
-      this.selectedShapePainter = shapePainter;
-      this.shapePainter = shapePainter;
-      this.selectedShapePainter.setShapeSelected(true);
-    }
+    this.shapePainter.setShapeSelected(false);
+    shapePainter.setShapeSelected(true);
+    this.shapePainter = shapePainter;
   }
 
   public onUpdateBackgroundImage(e: Event) {

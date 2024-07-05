@@ -2,6 +2,10 @@
   <svg id="canvas" #canvas>
   </svg>
 
+  <div class="canvas-message" *ngIf="shapePainter.shape === Shape.PATH && shapePainter.isShapeStarted() && !shapePainter.isShapeCompleted()">
+    Presiona la tecla F para terminar la figura y empezar una nueva.
+  </div>
+
   <div class="buttons-container">
     <button class="download-button" (click)="downloadSvg()">Descargar svg</button>
     <button class="download-button" (click)="downloadPng()">Descargar png</button>
@@ -33,38 +37,38 @@
 
     <div class="shapes-radio-buttons-container">
       <label>
-        <input type="radio" name="shape" [value]="Shape.RECT" [(ngModel)]="selectedShape"
-          (ngModelChange)="onChangeShape()">
+        <input type="radio" name="shape" [value]="Shape.RECT" [(ngModel)]="shapeToDraw"
+          (ngModelChange)="onChangeShapeToDraw()">
         <span>rect</span>
       </label>
 
       <label>
-        <input type="radio" name="shape" [value]="Shape.LINE" [(ngModel)]="selectedShape"
-          (ngModelChange)="onChangeShape()">
+        <input type="radio" name="shape" [value]="Shape.LINE" [(ngModel)]="shapeToDraw"
+          (ngModelChange)="onChangeShapeToDraw()">
         <span>line</span>
       </label>
 
       <label>
-        <input type="radio" name="shape" [value]="Shape.PATH" [(ngModel)]="selectedShape"
-          (ngModelChange)="onChangeShape()">
+        <input type="radio" name="shape" [value]="Shape.PATH" [(ngModel)]="shapeToDraw"
+          (ngModelChange)="onChangeShapeToDraw()">
         <span>path</span>
       </label>
 
       <label>
-        <input type="radio" name="shape" [value]="Shape.CIRCLE" [(ngModel)]="selectedShape"
-          (ngModelChange)="onChangeShape()">
+        <input type="radio" name="shape" [value]="Shape.CIRCLE" [(ngModel)]="shapeToDraw"
+          (ngModelChange)="onChangeShapeToDraw()">
         <span>circle</span>
       </label>
 
       <label>
-        <input type="radio" name="shape" [value]="Shape.TEXT" [(ngModel)]="selectedShape"
-          (ngModelChange)="onChangeShape()">
+        <input type="radio" name="shape" [value]="Shape.TEXT" [(ngModel)]="shapeToDraw"
+          (ngModelChange)="onChangeShapeToDraw()">
         <span>text</span>
       </label>
 
       <label>
-        <input type="radio" name="shape" [value]="Shape.CUBIC_BEZIER" [(ngModel)]="selectedShape"
-          (ngModelChange)="onChangeShape()">
+        <input type="radio" name="shape" [value]="Shape.CUBIC_BEZIER" [(ngModel)]="shapeToDraw"
+          (ngModelChange)="onChangeShapeToDraw()">
         <span>cubic bezier</span>
       </label>
     </div>
@@ -91,10 +95,9 @@
 
   <div class="shape-list">
     <app-collapsible *ngFor="let shapePainter of shapeList" class="shape-collapsible"
-      [class.selected]="shapePainter.isShapeSelected()">
+      [class.selected]="shapePainter.isShapeSelected()" (click)="selectShapePainter(shapePainter)">
 
-      <div appCollapsibleToggleAction (click)="selectShapePainter(shapePainter)" class="invoker"
-        [class.selected]="shapePainter.isShapeSelected()">
+      <div appCollapsibleToggleAction class="invoker" [class.selected]="shapePainter.isShapeSelected()">
         {{shapePainter.name}}
       </div>
 
@@ -103,56 +106,77 @@
           <div class="shape-options" *ngSwitchCase="Shape.RECT">
             <label>
               <span>X</span>
-              <input type="number" formControlName="x">
+              <input type="number" formControlName="x" (click)="$event.stopPropagation()">
             </label>
 
             <label>
               <span>Y</span>
-              <input type="number" formControlName="y">
+              <input type="number" formControlName="y" (click)="$event.stopPropagation()">
             </label>
 
             <label>
               <span>WIDTH</span>
-              <input type="number" min="0" formControlName="width">
+              <input type="number" min="0" formControlName="width" (click)="$event.stopPropagation()">
             </label>
 
             <label>
               <span>HEIGHT</span>
-              <input type="number" min="0" formControlName="height">
+              <input type="number" min="0" formControlName="height" (click)="$event.stopPropagation()">
             </label>
 
             <label>
               <span>RX</span>
-              <input type="number" min="0" formControlName="roundCornerX">
+              <input type="number" min="0" formControlName="roundCornerX" (click)="$event.stopPropagation()">
             </label>
 
             <label>
               <span>RY</span>
-              <input type="number" min="0" formControlName="roundCornerY">
+              <input type="number" min="0" formControlName="roundCornerY" (click)="$event.stopPropagation()">
             </label>
 
             <label>
               <span>NOMBRE</span>
-              <input type="text" formControlName="name">
+              <input type="text" formControlName="name" (click)="$event.stopPropagation()">
             </label>
           </div>
 
           <div *ngSwitchCase="Shape.LINE" class="shape-options">
             <label>
               <span>X1</span>
-              <input type="number" formControlName="x1"></label>
+              <input type="number" formControlName="x1" (click)="$event.stopPropagation()">
+            </label>
 
             <label>
               <span>Y1</span>
-              <input type="number" formControlName="y1"></label>
+              <input type="number" formControlName="y1" (click)="$event.stopPropagation()">
+            </label>
 
             <label>
               <span>X2</span>
-              <input type="number" formControlName="x2"></label>
+              <input type="number" formControlName="x2" (click)="$event.stopPropagation()">
+            </label>
 
             <label>
               <span>Y2</span>
-              <input type="number" formControlName="y2"></label>
+              <input type="number" formControlName="y2" (click)="$event.stopPropagation()">
+            </label>
+          </div>
+
+          <div *ngSwitchCase="Shape.CIRCLE" class="shape-options">
+            <label>
+              <span>CX</span>
+              <input type="number" formControlName="cx" (click)="$event.stopPropagation()">
+            </label>
+
+            <label>
+              <span>CY</span>
+              <input type="number" formControlName="cy" (click)="$event.stopPropagation()">
+            </label>
+
+            <label>
+              <span>R</span>
+              <input type="number" formControlName="r" (click)="$event.stopPropagation()">
+            </label>
           </div>
         </ng-container>
       </form>
