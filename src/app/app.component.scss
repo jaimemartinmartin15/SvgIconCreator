@@ -157,6 +157,8 @@ label {
     display: flex;
     flex-direction: column;
     gap: 10px;
+    max-height: 70vh;
+    overflow: auto;
 
     .shape-collapsible {
       border: var(--border);
