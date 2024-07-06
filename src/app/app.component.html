@@ -2,7 +2,8 @@
   <svg id="canvas" #canvas>
   </svg>
 
-  <div class="canvas-message" *ngIf="shapePainter.shape === Shape.PATH && shapePainter.isShapeStarted() && !shapePainter.isShapeCompleted()">
+  <div class="canvas-message"
+    *ngIf="shapePainter.shape === Shape.PATH && shapePainter.isShapeStarted() && !shapePainter.isShapeCompleted()">
     Presiona la tecla F para terminar la figura y empezar una nueva.
   </div>
 
@@ -176,6 +177,28 @@
             <label>
               <span>R</span>
               <input type="number" formControlName="r" (click)="$event.stopPropagation()">
+            </label>
+          </div>
+
+          <div *ngSwitchCase="Shape.TEXT" class="shape-options">
+            <label>
+              <span>X</span>
+              <input type="number" formControlName="x" (click)="$event.stopPropagation()">
+            </label>
+
+            <label>
+              <span>Y</span>
+              <input type="number" formControlName="y" (click)="$event.stopPropagation()">
+            </label>
+
+            <label>
+              <span>TEXT</span>
+              <input type="text" formControlName="text" (click)="$event.stopPropagation()">
+            </label>
+
+            <label>
+              <span>FONT SIZE</span>
+              <input type="number" formControlName="fontSize" (click)="$event.stopPropagation()">
             </label>
           </div>
         </ng-container>
