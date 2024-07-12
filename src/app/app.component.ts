@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { AfterViewInit, Component, ElementRef, HostListener, ViewChild } from '@angular/core';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { AbstractControl, FormArray, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { CollapsibleModule } from '@jaimemartinmartin15/jei-devkit-angular-shared';
 import { CirclePainter } from './painters/circle.painter';
 import { CubicBezierPainter } from './painters/cubic-bezier.painter';
@@ -194,5 +194,9 @@ export class AppComponent implements AfterViewInit {
     };
 
     img.src = `data:image/svg+xml;base64,${btoa(svgString)}`;
+  }
+
+  public getAsFormArray(form: AbstractControl): FormArray {
+    return form as FormArray;
   }
 }

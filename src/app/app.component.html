@@ -201,6 +201,18 @@
               <input type="number" formControlName="fontSize" (click)="$event.stopPropagation()">
             </label>
           </div>
+
+          <div *ngSwitchCase="Shape.PATH" class="shape-options" formArrayName="points">
+            <label
+              *ngFor="let control of getAsFormArray(shapePainter.options.controls['points']).controls; let i = index"
+              formGroupName="{{i}}">
+              <span>P{{i}}</span>
+              <div class="point-input">
+                <input type="number" formControlName="x" (click)="$event.stopPropagation()">
+                <input type="number" formControlName="y" (click)="$event.stopPropagation()">
+              </div>
+            </label>
+          </div>
         </ng-container>
       </form>
     </app-collapsible>

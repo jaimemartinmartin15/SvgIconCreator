@@ -182,6 +182,16 @@ label {
         flex-wrap: wrap;
         gap: 30px;
         padding: 10px;
+
+        .point-input {
+          display: flex;
+          gap: 5px;
+
+          input[type="number"] {
+            width: 45px;
+            padding: 0;
+          }
+        }
       }
     }
   }
