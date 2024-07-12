@@ -124,9 +124,8 @@ export class PathPainter implements ShapePainter {
       x: coord.x,
       y: coord.y,
     });
-    this.svgEditPoints[this.svgSelectedEditPointIndex].setAttribute('cx', `${coord.x}`);
-    this.svgEditPoints[this.svgSelectedEditPointIndex].setAttribute('cy', `${coord.y}`);
   }
+
   public onMouseUpEdit(coord: Coord): void {
     if (this.svgSelectedEditPointIndex === -1) return;
 
@@ -135,8 +134,6 @@ export class PathPainter implements ShapePainter {
       x: coord.x,
       y: coord.y,
     });
-    this.svgEditPoints[this.svgSelectedEditPointIndex].setAttribute('cx', `${coord.x}`);
-    this.svgEditPoints[this.svgSelectedEditPointIndex].setAttribute('cy', `${coord.y}`);
 
     this.svgSelectedEditPointIndex = -1;
   }

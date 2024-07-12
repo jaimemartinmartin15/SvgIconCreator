@@ -4,15 +4,26 @@ import { Shape } from '../shapes';
 import { ShapePainter } from './shape.painter';
 
 export class CubicBezierPainter implements ShapePainter {
-  private canvas: SVGElement;
+  private canvas: SVGSVGElement;
   private cubicBezierEl: SVGPathElement;
 
   private isCubicBezierStarted = false;
   private isCubicBezierCompleted = false;
   private isCubicBezierSelected = false;
+
   private isMouseDown = false;
-  private points: Coord[] = [];
-  private state: number = 0; // 0 -> no points added, 1 -> start point added, 2 -> end point added, 3 -> control point 1 added, 4 -> control point 2 added
+
+  /*
+   * 0 -> no points added
+   * 1 -> start point added
+   * 2 -> end point added
+   * 3 -> control point 1 added
+   * 4 -> control point 2 added
+   */
+  private state: number = 0;
+
+  private svgEditPoints: SVGCircleElement[] = [];
+  private svgSelectedEditPointIndex: number = -1;
 
   public shape = Shape.CUBIC_BEZIER;
   public name = 'cubic-bezier';
@@ -34,23 +45,37 @@ export class CubicBezierPainter implements ShapePainter {
   public constructor() {
     this.options.valueChanges.subscribe((v) => {
       this.name = v.name;
-      this.points[0] = { x: v.x1, y: v.y1 };
-      this.points[1] = { x: v.c1x, y: v.c1y };
-      this.points[2] = { x: v.c2x, y: v.c2y };
-      this.points[3] = { x: v.x2, y: v.y2 };
-      this.cubicBezierEl.setAttribute('d', this.calculatePath());
+      this.drawCubizBezier(v.x1, v.y1, v.c1x, v.c1y, v.c2x, v.c2y, v.x2, v.y2);
       this.cubicBezierEl.setAttribute('stroke', v.stroke);
       this.cubicBezierEl.setAttribute('stroke-width', v.strokeWidth);
       this.cubicBezierEl.setAttribute('fill', v.fill);
+      if (this.isShapeSelected()) {
+        this.drawDotsForControlPoints();
+      }
     });
   }
 
-  private calculatePath() {
-    const p1 = this.points[0]; // start point
-    const p2 = this.points[1] ?? p1; // point control 1
-    const p3 = this.points[2] ?? p1; // point control 2
-    const p4 = this.points[3] ?? p1; // end point
-    return `M${p1.x},${p1.y}C${p2.x},${p2.y} ${p3.x},${p3.y} ${p4.x},${p4.y}`;
+  private drawDotsForControlPoints() {
+    const points = this.getPathPointsFromAttribute();
+    points.forEach((coord, i) => {
+      this.svgEditPoints[i].setAttribute('cx', `${coord.x}`);
+      this.svgEditPoints[i].setAttribute('cy', `${coord.y}`);
+    });
+  }
+
+  private drawCubizBezier(x1: number, y1: number, c1x: number, c1y: number, c2x: number, c2y: number, x2: number, y2: number) {
+    this.cubicBezierEl.setAttribute('d', `M${x1},${y1}C${c1x},${c1y} ${c2x},${c2y} ${x2},${y2}`);
+  }
+
+  private getPathPointsFromAttribute(): Coord[] {
+    const pointsString = (this.cubicBezierEl.getAttribute('d') ?? '').substring(1).replace('C', ' ');
+    return pointsString
+      .split(' ')
+      .filter((s) => s.includes(','))
+      .map((pointString) => ({
+        x: +pointString.split(',')[0],
+        y: +pointString.split(',')[1],
+      }));
   }
 
   //#region mouse-events
@@ -59,106 +84,53 @@ export class CubicBezierPainter implements ShapePainter {
     this.isMouseDown = true;
 
     if (this.state === 0) {
-      this.points[0] = this.points[1] = this.points[2] = this.points[3] = coord;
       this.state = 1;
-      this.cubicBezierEl.setAttribute('d', this.calculatePath());
+      this.options.patchValue({ x1: coord.x, y1: coord.y, c1x: coord.x, c1y: coord.y, c2x: coord.x, c2y: coord.y, x2: coord.x, y2: coord.y });
     }
 
     if (this.state === 2) {
-      this.points[1] = coord;
-      this.cubicBezierEl.setAttribute('d', this.calculatePath());
+      this.options.patchValue({ c1x: coord.x, c1y: coord.y, c2x: coord.x, c2y: coord.y });
     }
 
     if (this.state === 3) {
-      this.points[2] = coord;
-      this.cubicBezierEl.setAttribute('d', this.calculatePath());
+      this.options.patchValue({ c2x: coord.x, c2y: coord.y });
     }
-
-    this.options.patchValue(
-      {
-        x1: this.points[0].x,
-        y1: this.points[0].y,
-        c1x: this.points[1].x,
-        c1y: this.points[1].y,
-        c2x: this.points[2].x,
-        c2y: this.points[2].y,
-        x2: this.points[3].x,
-        y2: this.points[3].y,
-      },
-      { emitEvent: false }
-    );
   }
 
   public onMouseMove(coord: Coord) {
-    if (!this.isMouseDown) {
-      return;
-    }
+    if (!this.isMouseDown) return;
 
     if (this.state === 1) {
-      this.points[1] = this.points[2] = this.points[3] = coord;
-      this.cubicBezierEl.setAttribute('d', this.calculatePath());
+      this.options.patchValue({ x2: coord.x, y2: coord.y });
     }
 
     if (this.state === 2) {
-      this.points[1] = coord;
-      this.cubicBezierEl.setAttribute('d', this.calculatePath());
+      this.options.patchValue({ c1x: coord.x, c1y: coord.y, c2x: coord.x, c2y: coord.y });
     }
 
     if (this.state === 3) {
-      this.points[2] = coord;
-      this.cubicBezierEl.setAttribute('d', this.calculatePath());
+      this.options.patchValue({ c2x: coord.x, c2y: coord.y });
     }
-
-    this.options.patchValue(
-      {
-        x1: this.points[0].x,
-        y1: this.points[0].y,
-        c1x: this.points[1].x,
-        c1y: this.points[1].y,
-        c2x: this.points[2].x,
-        c2y: this.points[2].y,
-        x2: this.points[3].x,
-        y2: this.points[3].y,
-      },
-      { emitEvent: false }
-    );
   }
 
   public onMouseUp(coord: Coord) {
     this.isMouseDown = false;
 
     if (this.state === 3) {
-      this.points[2] = coord;
+      this.options.patchValue({ c2x: coord.x, c2y: coord.y });
       this.state = 4;
-      this.cubicBezierEl.setAttribute('d', this.calculatePath());
       this.isCubicBezierCompleted = true;
     }
 
     if (this.state === 2) {
-      this.points[1] = coord;
+      this.options.patchValue({ c1x: coord.x, c1y: coord.y, c2x: coord.x, c2y: coord.y });
       this.state = 3;
-      this.cubicBezierEl.setAttribute('d', this.calculatePath());
     }
 
     if (this.state === 1) {
-      this.points[1] = this.points[2] = this.points[3] = coord;
+      this.options.patchValue({ x2: coord.x, y2: coord.y });
       this.state = 2;
-      this.cubicBezierEl.setAttribute('d', this.calculatePath());
     }
-
-    this.options.patchValue(
-      {
-        x1: this.points[0].x,
-        y1: this.points[0].y,
-        c1x: this.points[1].x,
-        c1y: this.points[1].y,
-        c2x: this.points[2].x,
-        c2y: this.points[2].y,
-        x2: this.points[3].x,
-        y2: this.points[3].y,
-      },
-      { emitEvent: false }
-    );
   }
 
   //#endregion mouse-events
@@ -166,13 +138,39 @@ export class CubicBezierPainter implements ShapePainter {
   //#region mouse-events-edit
 
   public onMouseDownEdit(coord: Coord): void {
-    // TODO
+    const existingCoords = this.getPathPointsFromAttribute();
+    this.svgSelectedEditPointIndex = existingCoords.findIndex(
+      (p) => Math.abs(p.x - coord.x) < this.pointControlWidth() && Math.abs(p.y - coord.y) < this.pointControlWidth()
+    );
   }
+
   public onMouseMoveEdit(coord: Coord): void {
-    // TODO
+    if (this.svgSelectedEditPointIndex === -1) return;
+
+    if (this.svgSelectedEditPointIndex === 0) {
+      this.options.patchValue({ x1: coord.x, y1: coord.y });
+    }
+
+    if (this.svgSelectedEditPointIndex === 1) {
+      this.options.patchValue({ c1x: coord.x, c1y: coord.y });
+    }
+
+    if (this.svgSelectedEditPointIndex === 2) {
+      this.options.patchValue({ c2x: coord.x, c2y: coord.y });
+    }
+
+    if (this.svgSelectedEditPointIndex === 3) {
+      this.options.patchValue({ x2: coord.x, y2: coord.y });
+    }
+
+    this.svgEditPoints[this.svgSelectedEditPointIndex].setAttribute('cx', `${coord.x}`);
+    this.svgEditPoints[this.svgSelectedEditPointIndex].setAttribute('cy', `${coord.y}`);
   }
+
   public onMouseUpEdit(coord: Coord): void {
-    // TODO
+    this.onMouseMove(coord);
+
+    this.svgSelectedEditPointIndex = -1;
   }
 
   //#endregion mouse-events-edit
@@ -193,11 +191,37 @@ export class CubicBezierPainter implements ShapePainter {
 
   public setShapeSelected(selected: boolean): void {
     this.isCubicBezierSelected = selected;
+    if (selected) {
+      const coords = this.getPathPointsFromAttribute();
+      coords.forEach((p) => {
+        const svgPoint = this.createPointControl({ x: p.x, y: p.y });
+        this.svgEditPoints.push(svgPoint);
+        this.canvas.append(svgPoint);
+      });
+    } else {
+      this.svgEditPoints.forEach((e) => e.remove());
+      this.svgEditPoints.length = 0;
+    }
   }
 
   //#endregion shape-state
 
-  public addToCanvas(canvas: SVGElement) {
+  private createPointControl(coord: Coord): SVGCircleElement {
+    const c1 = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+    c1.setAttribute('cx', `${coord.x}`);
+    c1.setAttribute('cy', `${coord.y}`);
+    c1.setAttribute('r', this.pointControlWidth().toFixed(1));
+    c1.setAttribute('stroke', 'blue');
+    c1.setAttribute('stroke-width', (this.pointControlWidth() / 2).toFixed(1));
+    c1.setAttribute('fill', 'white');
+    return c1;
+  }
+
+  private pointControlWidth(): number {
+    return this.canvas.viewBox.baseVal.width * 0.01;
+  }
+
+  public addToCanvas(canvas: SVGSVGElement) {
     this.canvas = canvas;
     this.cubicBezierEl = document.createElementNS('http://www.w3.org/2000/svg', 'path');
     this.canvas.append(this.cubicBezierEl);
