@@ -1,24 +1,20 @@
 import { FormArray, FormControl, FormGroup } from '@angular/forms';
 import { Coord } from '../coord';
 import { Shape } from '../shapes';
+import { ShapePainterMapping } from './shape-painter-mapping';
 import { ShapePainter } from './shape.painter';
 
-export class PathPainter implements ShapePainter {
-  private canvas: SVGSVGElement;
-  private pathEl: SVGPathElement;
+export class PathPainter extends ShapePainter {
+  protected override shapeEl: SVGPathElement;
 
   private isPathStarted = false;
   private isPathCompleted: boolean = false;
   private isPathSelected: boolean = false;
 
-  private isMouseDown = false;
-
-  private svgEditPoints: SVGCircleElement[] = [];
-  private svgSelectedEditPointIndex: number = -1;
-
   public shape = Shape.PATH;
   public name = 'path';
-  public options: FormGroup = new FormGroup({
+
+  public override options: FormGroup = new FormGroup({
     name: new FormControl(this.name),
     stroke: new FormControl('#000000'),
     strokeWidth: new FormControl(1),
@@ -26,13 +22,17 @@ export class PathPainter implements ShapePainter {
     points: new FormArray([]),
   });
 
-  public constructor() {
+  public constructor(protected override readonly canvas: SVGSVGElement) {
+    super();
+
+    this.shapeEl = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+
     this.options.valueChanges.subscribe((v) => {
       this.name = v.name;
       this.drawPath(v.points);
-      this.pathEl.setAttribute('stroke', v.stroke);
-      this.pathEl.setAttribute('stroke-width', v.strokeWidth);
-      this.pathEl.setAttribute('fill', v.fill);
+      this.shapeEl.setAttribute('stroke', v.stroke);
+      this.shapeEl.setAttribute('stroke-width', v.strokeWidth);
+      this.shapeEl.setAttribute('fill', v.fill);
 
       if (this.isShapeSelected()) {
         v.points.forEach((p: Coord, i: number) => {
@@ -44,11 +44,11 @@ export class PathPainter implements ShapePainter {
   }
 
   private drawPath(coords: Coord[]) {
-    this.pathEl.setAttribute('d', `M${coords.map((p) => `${p.x},${p.y}`).join(' ')}`);
+    this.shapeEl.setAttribute('d', `M${coords.map((p) => `${p.x},${p.y}`).join(' ')}`);
   }
 
   private getPathPointsFromAttribute(): Coord[] {
-    const pointsString = (this.pathEl.getAttribute('d') ?? '').substring(1);
+    const pointsString = (this.shapeEl.getAttribute('d') ?? '').substring(1);
     return pointsString
       .split(' ')
       .filter((s) => s.includes(','))
@@ -60,7 +60,7 @@ export class PathPainter implements ShapePainter {
 
   //#region mouse-events
 
-  public onMouseDown(coord: Coord) {
+  public override onMouseDown(coord: Coord) {
     this.isMouseDown = true;
 
     const coords = this.getPathPointsFromAttribute();
@@ -74,7 +74,7 @@ export class PathPainter implements ShapePainter {
     );
   }
 
-  public onMouseMove(coord: Coord) {
+  public override onMouseMove(coord: Coord) {
     if (!this.isMouseDown) return;
 
     const pointsFormArray: FormArray = this.options.controls['points'] as FormArray;
@@ -96,7 +96,7 @@ export class PathPainter implements ShapePainter {
     });
   }
 
-  public onMouseUp(coord: Coord) {
+  public override onMouseUp(coord: Coord) {
     this.isMouseDown = false;
 
     const lastCoordIndex = (this.options.controls['points'] as FormArray).controls.length - 1;
@@ -110,13 +110,13 @@ export class PathPainter implements ShapePainter {
 
   //#region mouse-events-edit
 
-  public onMouseDownEdit(coord: Coord): void {
+  public override onMouseDownEdit(coord: Coord): void {
     const existingCoords = this.getPathPointsFromAttribute();
     this.svgSelectedEditPointIndex = existingCoords.findIndex(
       (p) => Math.abs(p.x - coord.x) < this.pointControlWidth() && Math.abs(p.y - coord.y) < this.pointControlWidth()
     );
   }
-  public onMouseMoveEdit(coord: Coord): void {
+  public override onMouseMoveEdit(coord: Coord): void {
     if (this.svgSelectedEditPointIndex === -1) return;
 
     const pointsFormArray: FormArray = this.options.controls['points'] as FormArray;
@@ -126,7 +126,7 @@ export class PathPainter implements ShapePainter {
     });
   }
 
-  public onMouseUpEdit(coord: Coord): void {
+  public override onMouseUpEdit(coord: Coord): void {
     if (this.svgSelectedEditPointIndex === -1) return;
 
     const pointsFormArray: FormArray = this.options.controls['points'] as FormArray;
@@ -142,7 +142,7 @@ export class PathPainter implements ShapePainter {
 
   //#region shape-state
 
-  public isShapeStarted(): boolean {
+  public override isShapeStarted(): boolean {
     return this.isPathStarted;
   }
 
@@ -150,15 +150,15 @@ export class PathPainter implements ShapePainter {
     this.isPathCompleted = true;
   }
 
-  public isShapeCompleted() {
+  public override isShapeCompleted() {
     return this.isPathCompleted;
   }
 
-  public isShapeSelected(): boolean {
+  public override isShapeSelected(): boolean {
     return this.isPathSelected;
   }
 
-  public setShapeSelected(selected: boolean): void {
+  public override setShapeSelected(selected: boolean): void {
     this.isPathSelected = selected;
     if (selected) {
       const coords = this.getPathPointsFromAttribute();
@@ -175,25 +175,12 @@ export class PathPainter implements ShapePainter {
 
   //#endregion shape-state
 
-  private createPointControl(coord: Coord): SVGCircleElement {
-    const c1 = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
-    c1.setAttribute('cx', `${coord.x}`);
-    c1.setAttribute('cy', `${coord.y}`);
-    c1.setAttribute('r', this.pointControlWidth().toFixed(1));
-    c1.setAttribute('stroke', 'blue');
-    c1.setAttribute('stroke-width', (this.pointControlWidth() / 2).toFixed(1));
-    c1.setAttribute('fill', 'white');
-    return c1;
+  public override isShapeType<T extends keyof typeof ShapePainterMapping>(shape: T): this is InstanceType<(typeof ShapePainterMapping)[T]> {
+    return shape === Shape.PATH;
   }
 
-  private pointControlWidth(): number {
-    return this.canvas.viewBox.baseVal.width * 0.01;
-  }
-
-  public addToCanvas(canvas: SVGSVGElement) {
-    this.canvas = canvas;
-    this.pathEl = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-    this.canvas.append(this.pathEl);
+  public override addToCanvas() {
+    this.canvas.append(this.shapeEl);
     this.isPathStarted = true;
   }
 }

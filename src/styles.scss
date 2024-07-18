@@ -4,3 +4,70 @@ body {
   font-family: "ProximaNova", sans-serif;
   font-size: 1.125rem;
 }
+
+label {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.9rem;
+  font-weight: bold;
+  color: #595959;
+  position: relative;
+  cursor: pointer;
+
+  input[type="number"]::-webkit-outer-spin-button,
+  input[type="number"]::-webkit-inner-spin-button {
+    /* hide arrows */
+    -webkit-appearance: none;
+  }
+
+  input[type="text"],
+  input[type="number"] {
+    height: 40px;
+    width: 90px;
+    padding: 0 8px;
+    border: var(--border);
+    border-radius: 5px;
+    text-align: center;
+    font-size: 100%;
+    font-weight: bold;
+    box-sizing: border-box;
+  }
+
+  input[type="number"]:focus {
+    border: 3px solid black;
+  }
+
+  input[type="file"],
+  input[type="color"],
+  input[type="radio"] {
+    /* make them no visible */
+    visibility: hidden;
+    width: 0;
+    height: 0;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    pointer-events: none;
+  }
+
+  .mock-input-color {
+    width: 90px;
+    height: 40px;
+    border-radius: 5px;
+    border: var(--border);
+  }
+
+  .mock-input-file {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 40px;
+    min-width: 90px;
+    border-radius: 5px;
+    border: var(--border);
+    padding: 0 10px;
+  }
+}

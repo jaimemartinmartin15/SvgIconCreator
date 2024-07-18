@@ -1,0 +1,44 @@
+<app-collapsible [isOpen]="rectPainter.isShapeSelected()">
+  <div class="invoker" [class.selected]="rectPainter.isShapeSelected()">
+    {{rectPainter.name}}
+  </div>
+
+  <form appCollapsibleContent [formGroup]="rectPainter.options">
+    <div class="shape-options-form">
+      <label>
+        <span>X</span>
+        <input type="number" formControlName="x" (click)="$event.stopPropagation()">
+      </label>
+
+      <label>
+        <span>Y</span>
+        <input type="number" formControlName="y" (click)="$event.stopPropagation()">
+      </label>
+
+      <label>
+        <span>WIDTH</span>
+        <input type="number" min="0" formControlName="width" (click)="$event.stopPropagation()">
+      </label>
+
+      <label>
+        <span>HEIGHT</span>
+        <input type="number" min="0" formControlName="height" (click)="$event.stopPropagation()">
+      </label>
+
+      <label>
+        <span>RX</span>
+        <input type="number" min="0" formControlName="roundCornerX" (click)="$event.stopPropagation()">
+      </label>
+
+      <label>
+        <span>RY</span>
+        <input type="number" min="0" formControlName="roundCornerY" (click)="$event.stopPropagation()">
+      </label>
+
+      <label>
+        <span>NOMBRE</span>
+        <input type="text" formControlName="name" (click)="$event.stopPropagation()">
+      </label>
+    </div>
+  </form>
+</app-collapsible>

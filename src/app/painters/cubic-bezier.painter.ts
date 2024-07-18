@@ -1,17 +1,15 @@
 import { FormControl, FormGroup } from '@angular/forms';
 import { Coord } from '../coord';
 import { Shape } from '../shapes';
+import { ShapePainterMapping } from './shape-painter-mapping';
 import { ShapePainter } from './shape.painter';
 
-export class CubicBezierPainter implements ShapePainter {
-  private canvas: SVGSVGElement;
-  private cubicBezierEl: SVGPathElement;
+export class CubicBezierPainter extends ShapePainter {
+  protected override shapeEl: SVGPathElement;
 
   private isCubicBezierStarted = false;
   private isCubicBezierCompleted = false;
   private isCubicBezierSelected = false;
-
-  private isMouseDown = false;
 
   /*
    * 0 -> no points added
@@ -22,12 +20,10 @@ export class CubicBezierPainter implements ShapePainter {
    */
   private state: number = 0;
 
-  private svgEditPoints: SVGCircleElement[] = [];
-  private svgSelectedEditPointIndex: number = -1;
-
   public shape = Shape.CUBIC_BEZIER;
   public name = 'cubic-bezier';
-  public options: FormGroup = new FormGroup({
+
+  public override options: FormGroup = new FormGroup({
     name: new FormControl(this.name),
     stroke: new FormControl('#000000'),
     strokeWidth: new FormControl(1),
@@ -42,13 +38,17 @@ export class CubicBezierPainter implements ShapePainter {
     y2: new FormControl(0),
   });
 
-  public constructor() {
+  public constructor(protected override readonly canvas: SVGSVGElement) {
+    super();
+
+    this.shapeEl = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+
     this.options.valueChanges.subscribe((v) => {
       this.name = v.name;
       this.drawCubizBezier(v.x1, v.y1, v.c1x, v.c1y, v.c2x, v.c2y, v.x2, v.y2);
-      this.cubicBezierEl.setAttribute('stroke', v.stroke);
-      this.cubicBezierEl.setAttribute('stroke-width', v.strokeWidth);
-      this.cubicBezierEl.setAttribute('fill', v.fill);
+      this.shapeEl.setAttribute('stroke', v.stroke);
+      this.shapeEl.setAttribute('stroke-width', v.strokeWidth);
+      this.shapeEl.setAttribute('fill', v.fill);
       if (this.isShapeSelected()) {
         this.drawDotsForControlPoints();
       }
@@ -64,11 +64,11 @@ export class CubicBezierPainter implements ShapePainter {
   }
 
   private drawCubizBezier(x1: number, y1: number, c1x: number, c1y: number, c2x: number, c2y: number, x2: number, y2: number) {
-    this.cubicBezierEl.setAttribute('d', `M${x1},${y1}C${c1x},${c1y} ${c2x},${c2y} ${x2},${y2}`);
+    this.shapeEl.setAttribute('d', `M${x1},${y1}C${c1x},${c1y} ${c2x},${c2y} ${x2},${y2}`);
   }
 
   private getPathPointsFromAttribute(): Coord[] {
-    const pointsString = (this.cubicBezierEl.getAttribute('d') ?? '').substring(1).replace('C', ' ');
+    const pointsString = (this.shapeEl.getAttribute('d') ?? '').substring(1).replace('C', ' ');
     return pointsString
       .split(' ')
       .filter((s) => s.includes(','))
@@ -80,7 +80,7 @@ export class CubicBezierPainter implements ShapePainter {
 
   //#region mouse-events
 
-  public onMouseDown(coord: Coord) {
+  public override onMouseDown(coord: Coord) {
     this.isMouseDown = true;
 
     if (this.state === 0) {
@@ -97,7 +97,7 @@ export class CubicBezierPainter implements ShapePainter {
     }
   }
 
-  public onMouseMove(coord: Coord) {
+  public override onMouseMove(coord: Coord) {
     if (!this.isMouseDown) return;
 
     if (this.state === 1) {
@@ -113,7 +113,7 @@ export class CubicBezierPainter implements ShapePainter {
     }
   }
 
-  public onMouseUp(coord: Coord) {
+  public override onMouseUp(coord: Coord) {
     this.isMouseDown = false;
 
     if (this.state === 3) {
@@ -137,14 +137,14 @@ export class CubicBezierPainter implements ShapePainter {
 
   //#region mouse-events-edit
 
-  public onMouseDownEdit(coord: Coord): void {
+  public override onMouseDownEdit(coord: Coord): void {
     const existingCoords = this.getPathPointsFromAttribute();
     this.svgSelectedEditPointIndex = existingCoords.findIndex(
       (p) => Math.abs(p.x - coord.x) < this.pointControlWidth() && Math.abs(p.y - coord.y) < this.pointControlWidth()
     );
   }
 
-  public onMouseMoveEdit(coord: Coord): void {
+  public override onMouseMoveEdit(coord: Coord): void {
     if (this.svgSelectedEditPointIndex === -1) return;
 
     if (this.svgSelectedEditPointIndex === 0) {
@@ -167,7 +167,7 @@ export class CubicBezierPainter implements ShapePainter {
     this.svgEditPoints[this.svgSelectedEditPointIndex].setAttribute('cy', `${coord.y}`);
   }
 
-  public onMouseUpEdit(coord: Coord): void {
+  public override onMouseUpEdit(coord: Coord): void {
     this.onMouseMove(coord);
 
     this.svgSelectedEditPointIndex = -1;
@@ -177,19 +177,19 @@ export class CubicBezierPainter implements ShapePainter {
 
   //#region shape-state
 
-  public isShapeStarted(): boolean {
+  public override isShapeStarted(): boolean {
     return this.isCubicBezierStarted;
   }
 
-  public isShapeCompleted() {
+  public override isShapeCompleted() {
     return this.isCubicBezierCompleted;
   }
 
-  public isShapeSelected(): boolean {
+  public override isShapeSelected(): boolean {
     return this.isCubicBezierSelected;
   }
 
-  public setShapeSelected(selected: boolean): void {
+  public override setShapeSelected(selected: boolean): void {
     this.isCubicBezierSelected = selected;
     if (selected) {
       const coords = this.getPathPointsFromAttribute();
@@ -206,25 +206,12 @@ export class CubicBezierPainter implements ShapePainter {
 
   //#endregion shape-state
 
-  private createPointControl(coord: Coord): SVGCircleElement {
-    const c1 = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
-    c1.setAttribute('cx', `${coord.x}`);
-    c1.setAttribute('cy', `${coord.y}`);
-    c1.setAttribute('r', this.pointControlWidth().toFixed(1));
-    c1.setAttribute('stroke', 'blue');
-    c1.setAttribute('stroke-width', (this.pointControlWidth() / 2).toFixed(1));
-    c1.setAttribute('fill', 'white');
-    return c1;
+  public override isShapeType<T extends keyof typeof ShapePainterMapping>(shape: T): this is InstanceType<(typeof ShapePainterMapping)[T]> {
+    return shape === Shape.LINE;
   }
 
-  private pointControlWidth(): number {
-    return this.canvas.viewBox.baseVal.width * 0.01;
-  }
-
-  public addToCanvas(canvas: SVGSVGElement) {
-    this.canvas = canvas;
-    this.cubicBezierEl = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-    this.canvas.append(this.cubicBezierEl);
+  public override addToCanvas() {
+    this.canvas.append(this.shapeEl);
     this.isCubicBezierStarted = true;
   }
 }

@@ -1,24 +1,20 @@
 import { FormControl, FormGroup } from '@angular/forms';
 import { Coord } from '../coord';
 import { Shape } from '../shapes';
+import { ShapePainterMapping } from './shape-painter-mapping';
 import { ShapePainter } from './shape.painter';
 
-export class TextPainter implements ShapePainter {
-  private canvas: SVGSVGElement;
-  private textEl: SVGTextElement;
+export class TextPainter extends ShapePainter {
+  protected override shapeEl: SVGTextElement;
 
   private isTextStarted = false;
   private isTextCompleted = false;
   private isTextSelected = false;
 
-  private isMouseDown = false;
-
-  private svgEditPoints: SVGCircleElement[] = [];
-  private svgSelectedEditPointIndex: number = -1;
-
   public shape = Shape.TEXT;
   public name = 'text';
-  public options: FormGroup = new FormGroup({
+
+  public override options: FormGroup = new FormGroup({
     name: new FormControl(this.name),
     stroke: new FormControl('#000000'),
     strokeWidth: new FormControl(0.3),
@@ -29,13 +25,17 @@ export class TextPainter implements ShapePainter {
     fontSize: new FormControl(10),
   });
 
-  public constructor() {
+  public constructor(protected override readonly canvas: SVGSVGElement) {
+    super();
+
+    this.shapeEl = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+
     this.options.valueChanges.subscribe((v) => {
       this.name = v.name;
       this.drawText(v.x, v.y, v.text, v.fontSize);
-      this.textEl.setAttribute('stroke', v.stroke);
-      this.textEl.setAttribute('stroke-width', v.strokeWidth);
-      this.textEl.setAttribute('fill', v.fill);
+      this.shapeEl.setAttribute('stroke', v.stroke);
+      this.shapeEl.setAttribute('stroke-width', v.strokeWidth);
+      this.shapeEl.setAttribute('fill', v.fill);
       if (this.isShapeSelected()) {
         this.svgEditPoints[0].setAttribute('cx', `${v.x}`);
         this.svgEditPoints[0].setAttribute('cy', `${v.y}`);
@@ -43,31 +43,27 @@ export class TextPainter implements ShapePainter {
     });
   }
 
-  private getSvgAttribute(name: string, element: SVGElement = this.textEl): number {
-    return +element.getAttribute(name)!;
-  }
-
   private drawText(x: number, y: number, text: string, fontSize: number) {
-    this.textEl.setAttribute('x', `${x}`);
-    this.textEl.setAttribute('y', `${y}`);
-    this.textEl.setAttribute('font-size', `${fontSize}`);
-    this.textEl.innerHTML = text || this.name;
+    this.shapeEl.setAttribute('x', `${x}`);
+    this.shapeEl.setAttribute('y', `${y}`);
+    this.shapeEl.setAttribute('font-size', `${fontSize}`);
+    this.shapeEl.innerHTML = text || this.name;
   }
 
   //#region mouse-events
 
-  public onMouseDown(coord: Coord) {
+  public override onMouseDown(coord: Coord) {
     this.isMouseDown = true;
     this.options.patchValue({ x: coord.x, y: coord.y });
   }
 
-  public onMouseMove(coord: Coord) {
+  public override onMouseMove(coord: Coord) {
     if (!this.isMouseDown) return;
 
     this.options.patchValue({ x: coord.x, y: coord.y });
   }
 
-  public onMouseUp(coord: Coord) {
+  public override onMouseUp(coord: Coord) {
     this.isMouseDown = false;
 
     this.options.patchValue({ x: coord.x, y: coord.y });
@@ -79,7 +75,7 @@ export class TextPainter implements ShapePainter {
 
   //#region mouse-events-edit
 
-  public onMouseDownEdit(coord: Coord): void {
+  public override onMouseDownEdit(coord: Coord): void {
     const position: Coord = { x: this.getSvgAttribute('x'), y: this.getSvgAttribute('y') };
 
     const isPosition = Math.abs(position.x - coord.x) < this.pointControlWidth() && Math.abs(position.y - coord.y) < this.pointControlWidth();
@@ -87,7 +83,7 @@ export class TextPainter implements ShapePainter {
     else this.svgSelectedEditPointIndex = -1;
   }
 
-  public onMouseMoveEdit(coord: Coord): void {
+  public override onMouseMoveEdit(coord: Coord): void {
     if (this.svgSelectedEditPointIndex === -1) return;
 
     this.svgEditPoints[this.svgSelectedEditPointIndex].setAttribute('x', `${coord.x}`);
@@ -98,7 +94,7 @@ export class TextPainter implements ShapePainter {
       y: coord.y,
     });
   }
-  public onMouseUpEdit(coord: Coord): void {
+  public override onMouseUpEdit(coord: Coord): void {
     if (this.svgSelectedEditPointIndex === -1) return;
 
     this.svgEditPoints[this.svgSelectedEditPointIndex].setAttribute('x', `${coord.x}`);
@@ -116,19 +112,19 @@ export class TextPainter implements ShapePainter {
 
   //#region shape-state
 
-  public isShapeStarted(): boolean {
+  public override isShapeStarted(): boolean {
     return this.isTextStarted;
   }
 
-  public isShapeCompleted() {
+  public override isShapeCompleted() {
     return this.isTextCompleted;
   }
 
-  public isShapeSelected(): boolean {
+  public override isShapeSelected(): boolean {
     return this.isTextSelected;
   }
 
-  public setShapeSelected(selected: boolean): void {
+  public override setShapeSelected(selected: boolean): void {
     this.isTextSelected = selected;
     if (selected) {
       const c1 = this.createPointControl({ x: this.getSvgAttribute('x'), y: this.getSvgAttribute('y') });
@@ -142,26 +138,13 @@ export class TextPainter implements ShapePainter {
 
   //#endregion shape-state
 
-  private createPointControl(coord: Coord): SVGCircleElement {
-    const c1 = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
-    c1.setAttribute('cx', `${coord.x}`);
-    c1.setAttribute('cy', `${coord.y}`);
-    c1.setAttribute('r', this.pointControlWidth().toFixed(1));
-    c1.setAttribute('stroke', 'blue');
-    c1.setAttribute('stroke-width', (this.pointControlWidth() / 2).toFixed(1));
-    c1.setAttribute('fill', 'white');
-    return c1;
+  public override isShapeType<T extends keyof typeof ShapePainterMapping>(shape: T): this is InstanceType<(typeof ShapePainterMapping)[T]> {
+    return shape === Shape.TEXT;
   }
 
-  private pointControlWidth(): number {
-    return this.canvas.viewBox.baseVal.width * 0.01;
-  }
-
-  public addToCanvas(canvas: SVGSVGElement) {
-    this.canvas = canvas;
-    this.textEl = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-    this.textEl.innerHTML = 'text';
-    this.canvas.append(this.textEl);
+  public override addToCanvas() {
+    this.shapeEl.innerHTML = 'text';
+    this.canvas.append(this.shapeEl);
     this.isTextStarted = true;
   }
 }

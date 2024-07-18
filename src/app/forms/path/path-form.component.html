@@ -1,0 +1,18 @@
+<app-collapsible [isOpen]="pathPainter.isShapeSelected()" [formGroup]="pathPainter.options">
+  <div class="invoker" [class.selected]="pathPainter.isShapeSelected()">
+    {{pathPainter.name}}
+  </div>
+
+  <form appCollapsibleContent formArrayName="points">
+    <div class="shape-options-form">
+      <label *ngFor="let control of getAsFormArray(pathPainter.options.controls['points']).controls; let i = index"
+        formGroupName="{{i}}">
+        <span>P{{i}}</span>
+        <div class="point-coords-input">
+          <input type="number" formControlName="x" (click)="$event.stopPropagation()">
+          <input type="number" formControlName="y" (click)="$event.stopPropagation()">
+        </div>
+      </label>
+    </div>
+  </form>
+</app-collapsible>

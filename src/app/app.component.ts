@@ -2,19 +2,31 @@ import { CommonModule } from '@angular/common';
 import { AfterViewInit, Component, ElementRef, HostListener, ViewChild } from '@angular/core';
 import { AbstractControl, FormArray, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { CollapsibleModule } from '@jaimemartinmartin15/jei-devkit-angular-shared';
-import { CirclePainter } from './painters/circle.painter';
-import { CubicBezierPainter } from './painters/cubic-bezier.painter';
-import { LinePainter } from './painters/line.painter';
-import { PathPainter } from './painters/path.painter';
-import { RectPainter } from './painters/rect.painter';
+import { CircleFormComponent } from './forms/circle/circle-form.component';
+import { CubicBezierFormComponent } from './forms/cubic-bezier/cubic-bezier-form.component';
+import { LineFormComponent } from './forms/line/line-form.component';
+import { PathFormComponent } from './forms/path/path-form.component';
+import { RectFormComponent } from './forms/rect/rect-form.component';
+import { TextFormComponent } from './forms/text/text-form.component';
+import { ShapePainterMapping } from './painters/shape-painter-mapping';
 import { ShapePainter } from './painters/shape.painter';
-import { TextPainter } from './painters/text.painter';
 import { Shape } from './shapes';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [CommonModule, FormsModule, ReactiveFormsModule, CollapsibleModule],
+  imports: [
+    CommonModule,
+    FormsModule,
+    ReactiveFormsModule,
+    CollapsibleModule,
+    RectFormComponent,
+    CircleFormComponent,
+    LineFormComponent,
+    PathFormComponent,
+    TextFormComponent,
+    CubicBezierFormComponent,
+  ],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss',
 })
@@ -26,11 +38,11 @@ export class AppComponent implements AfterViewInit {
 
   public Shape = Shape;
   public shapeToDraw: Shape = Shape.RECT;
-  public shapePainter: ShapePainter = new RectPainter();
+  public shapePainter: ShapePainter;
   public shapeList: ShapePainter[] = [];
 
   @ViewChild('canvas')
-  private canvasRef: ElementRef<SVGElement>;
+  private canvasRef: ElementRef<SVGSVGElement>;
   private get canvas() {
     return this.canvasRef.nativeElement;
   }
@@ -41,13 +53,16 @@ export class AppComponent implements AfterViewInit {
     this.canvas.addEventListener('pointerdown', this.onPointerDown.bind(this));
     this.canvas.addEventListener('pointermove', this.onPointerMove.bind(this));
     this.canvas.addEventListener('pointerup', this.onPointerUp.bind(this));
+
+    // avoid error ExpressionChangedAfterItHasBeenCheckedError
+    setTimeout(() => (this.shapePainter = this.instantiateShapePainter()), 0);
   }
 
   @HostListener('document:keypress', ['$event'])
   public onKeydownHandler(event: KeyboardEvent) {
     if (event.code === 'KeyF') {
       // finish path to start a new one
-      if (this.shapePainter instanceof PathPainter) {
+      if (this.shapePainter.isShapeType(Shape.PATH)) {
         this.shapePainter.setPathCompleted();
       }
     }
@@ -67,26 +82,15 @@ export class AppComponent implements AfterViewInit {
 
   public onChangeShapeToDraw() {
     this.shapePainter.setShapeSelected(false);
+    // TODO set shape completed
     this.shapePainter = this.instantiateShapePainter();
   }
 
   private instantiateShapePainter(): ShapePainter {
-    switch (this.shapeToDraw) {
-      case Shape.LINE:
-        return (this.shapePainter = new LinePainter());
-      case Shape.PATH:
-        return (this.shapePainter = new PathPainter());
-      case Shape.CIRCLE:
-        return (this.shapePainter = new CirclePainter());
-      case Shape.TEXT:
-        return (this.shapePainter = new TextPainter());
-      case Shape.CUBIC_BEZIER:
-        return (this.shapePainter = new CubicBezierPainter());
-      case Shape.RECT:
-      default:
-        return (this.shapePainter = new RectPainter());
-    }
+    return new ShapePainterMapping[this.shapeToDraw](this.canvas);
   }
+
+  //#region mouse event handlers
 
   private onPointerDown(e: PointerEvent) {
     if (this.shapePainter.isShapeSelected()) {
@@ -100,7 +104,7 @@ export class AppComponent implements AfterViewInit {
     }
 
     if (!this.shapePainter.isShapeStarted()) {
-      this.shapePainter.addToCanvas(this.canvas);
+      this.shapePainter.addToCanvas();
       this.shapeList.push(this.shapePainter);
     }
 
@@ -122,6 +126,8 @@ export class AppComponent implements AfterViewInit {
     }
     this.shapePainter.onMouseUp(this.getCoordsInViewBox(e));
   }
+
+  //#endregion mouse event handlers
 
   public selectShapePainter(shapePainter: ShapePainter) {
     if (shapePainter.isShapeSelected()) {

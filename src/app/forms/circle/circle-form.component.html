@@ -1,0 +1,24 @@
+<app-collapsible [isOpen]="circlePainter.isShapeSelected()">
+  <div class="invoker" [class.selected]="circlePainter.isShapeSelected()">
+    {{circlePainter.name}}
+  </div>
+
+  <form appCollapsibleContent [formGroup]="circlePainter.options">
+    <div class="shape-options-form">
+      <label>
+        <span>CX</span>
+        <input type="number" formControlName="cx" (click)="$event.stopPropagation()">
+      </label>
+
+      <label>
+        <span>CY</span>
+        <input type="number" formControlName="cy" (click)="$event.stopPropagation()">
+      </label>
+
+      <label>
+        <span>R</span>
+        <input type="number" formControlName="r" (click)="$event.stopPropagation()">
+      </label>
+    </div>
+  </form>
+</app-collapsible>

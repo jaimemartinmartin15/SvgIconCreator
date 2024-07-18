@@ -9,73 +9,6 @@
   --border: 1px solid #bbbfc5;
 }
 
-label {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  gap: 8px;
-  font-size: 0.9rem;
-  font-weight: bold;
-  color: #595959;
-  position: relative;
-  cursor: pointer;
-
-  input[type="number"]::-webkit-outer-spin-button,
-  input[type="number"]::-webkit-inner-spin-button {
-    /* hide arrows */
-    -webkit-appearance: none;
-  }
-
-  input[type="text"],
-  input[type="number"] {
-    height: 40px;
-    width: 90px;
-    padding: 0 8px;
-    border: var(--border);
-    border-radius: 5px;
-    text-align: center;
-    font-size: 100%;
-    font-weight: bold;
-    box-sizing: border-box;
-  }
-
-  input[type="number"]:focus {
-    border: 3px solid black;
-  }
-
-  input[type="file"],
-  input[type="color"],
-  input[type="radio"] {
-    /* make them no visible */
-    visibility: hidden;
-    width: 0;
-    height: 0;
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    pointer-events: none;
-  }
-
-  .mock-input-color {
-    width: 90px;
-    height: 40px;
-    border-radius: 5px;
-    border: var(--border);
-  }
-
-  .mock-input-file {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 40px;
-    min-width: 90px;
-    border-radius: 5px;
-    border: var(--border);
-    padding: 0 10px;
-  }
-}
-
 .left-side {
   display: flex;
   flex-direction: column;
@@ -159,40 +92,5 @@ label {
     gap: 10px;
     max-height: 70vh;
     overflow: auto;
-
-    .shape-collapsible {
-      border: var(--border);
-      border-radius: 5px;
-
-      &.selected {
-        background-color: #f0f1f2;
-        border-left: var(--border);
-      }
-
-      .invoker {
-        padding: 10px;
-
-        &.selected {
-          border-bottom: var(--border);
-        }
-      }
-
-      .shape-options {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 30px;
-        padding: 10px;
-
-        .point-input {
-          display: flex;
-          gap: 5px;
-
-          input[type="number"] {
-            width: 45px;
-            padding: 0;
-          }
-        }
-      }
-    }
   }
 }

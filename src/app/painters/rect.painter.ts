@@ -1,24 +1,20 @@
 import { FormControl, FormGroup } from '@angular/forms';
 import { Coord } from '../coord';
 import { Shape } from '../shapes';
+import { ShapePainterMapping } from './shape-painter-mapping';
 import { ShapePainter } from './shape.painter';
 
-export class RectPainter implements ShapePainter {
-  private canvas: SVGSVGElement;
-  private rectEl: SVGRectElement;
+export class RectPainter extends ShapePainter {
+  protected override shapeEl: SVGRectElement;
 
   private isRectStarted = false;
   private isRectCompleted = false;
   private isRectSelected = false;
 
-  private isMouseDown = false;
-
-  private svgEditPoints: SVGCircleElement[] = [];
-  private svgSelectedEditPointIndex: number = -1;
-
   public shape = Shape.RECT;
   public name = 'rect';
-  public options: FormGroup = new FormGroup({
+
+  public override options: FormGroup = new FormGroup({
     name: new FormControl(this.name),
     stroke: new FormControl('#000000'),
     strokeWidth: new FormControl(1),
@@ -31,13 +27,17 @@ export class RectPainter implements ShapePainter {
     roundCornerY: new FormControl(0),
   });
 
-  public constructor() {
+  public constructor(protected override readonly canvas: SVGSVGElement) {
+    super();
+
+    this.shapeEl = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+
     this.options.valueChanges.subscribe((v) => {
       this.name = v.name;
       this.drawRect(v.x, v.y, v.width, v.height, v.roundCornerX, v.roundCornerY);
-      this.rectEl.setAttribute('stroke', v.stroke);
-      this.rectEl.setAttribute('stroke-width', v.strokeWidth);
-      this.rectEl.setAttribute('fill', v.fill);
+      this.shapeEl.setAttribute('stroke', v.stroke);
+      this.shapeEl.setAttribute('stroke-width', v.strokeWidth);
+      this.shapeEl.setAttribute('fill', v.fill);
       if (this.isShapeSelected()) {
         // adapt the position of the edit points
         this.svgEditPoints[0].setAttribute('cx', `${v.x}`);
@@ -48,27 +48,23 @@ export class RectPainter implements ShapePainter {
     });
   }
 
-  private getSvgAttribute(name: string, element: SVGElement = this.rectEl): number {
-    return +element.getAttribute(name)!;
-  }
-
   private drawRect(x: number, y: number, width: number, height: number, rx: number, ry: number) {
-    this.rectEl.setAttribute('x', x?.toFixed(1) ?? '0');
-    this.rectEl.setAttribute('y', y?.toFixed(1) ?? '0');
-    this.rectEl.setAttribute('width', width?.toFixed(1) ?? '0');
-    this.rectEl.setAttribute('height', height?.toFixed(1) ?? '0');
-    this.rectEl.setAttribute('rx', rx?.toFixed(1) ?? '0');
-    this.rectEl.setAttribute('ry', ry?.toFixed(1) ?? '0');
+    this.shapeEl.setAttribute('x', x?.toFixed(1) ?? '0');
+    this.shapeEl.setAttribute('y', y?.toFixed(1) ?? '0');
+    this.shapeEl.setAttribute('width', width?.toFixed(1) ?? '0');
+    this.shapeEl.setAttribute('height', height?.toFixed(1) ?? '0');
+    this.shapeEl.setAttribute('rx', rx?.toFixed(1) ?? '0');
+    this.shapeEl.setAttribute('ry', ry?.toFixed(1) ?? '0');
   }
 
   //#region mouse-events
 
-  public onMouseDown(coord: Coord) {
+  public override onMouseDown(coord: Coord) {
     this.isMouseDown = true;
     this.options.patchValue({ x: coord.x, y: coord.y });
   }
 
-  public onMouseMove(coord: Coord) {
+  public override onMouseMove(coord: Coord) {
     if (!this.isMouseDown) return;
 
     const x = this.getSvgAttribute('x');
@@ -84,7 +80,7 @@ export class RectPainter implements ShapePainter {
     });
   }
 
-  public onMouseUp(coord: Coord) {
+  public override onMouseUp(coord: Coord) {
     this.isMouseDown = false;
 
     const x = this.getSvgAttribute('x');
@@ -106,7 +102,7 @@ export class RectPainter implements ShapePainter {
 
   //#region mouse-events-edit
 
-  public onMouseDownEdit(coord: Coord): void {
+  public override onMouseDownEdit(coord: Coord): void {
     const topLeftPoint: Coord = { x: this.getSvgAttribute('x'), y: this.getSvgAttribute('y') };
     const bottomRightPoint: Coord = { x: topLeftPoint.x + this.getSvgAttribute('width'), y: topLeftPoint.y + this.getSvgAttribute('height') };
 
@@ -121,7 +117,7 @@ export class RectPainter implements ShapePainter {
     else this.svgSelectedEditPointIndex = -1;
   }
 
-  public onMouseMoveEdit(coord: Coord): void {
+  public override onMouseMoveEdit(coord: Coord): void {
     if (this.svgSelectedEditPointIndex === -1) return;
 
     this.svgEditPoints[this.svgSelectedEditPointIndex].setAttribute('cx', `${coord.x}`);
@@ -135,7 +131,7 @@ export class RectPainter implements ShapePainter {
     });
   }
 
-  public onMouseUpEdit(coord: Coord): void {
+  public override onMouseUpEdit(coord: Coord): void {
     if (this.svgSelectedEditPointIndex === -1) return;
 
     this.svgEditPoints[this.svgSelectedEditPointIndex].setAttribute('cx', `${coord.x}`);
@@ -155,19 +151,19 @@ export class RectPainter implements ShapePainter {
 
   //#region shape-state
 
-  public isShapeStarted(): boolean {
+  public override isShapeStarted(): boolean {
     return this.isRectStarted;
   }
 
-  public isShapeCompleted() {
+  public override isShapeCompleted() {
     return this.isRectCompleted;
   }
 
-  public isShapeSelected(): boolean {
+  public override isShapeSelected(): boolean {
     return this.isRectSelected;
   }
 
-  public setShapeSelected(selected: boolean): void {
+  public override setShapeSelected(selected: boolean): void {
     this.isRectSelected = selected;
     if (selected) {
       const c1 = this.createPointControl({ x: this.getSvgAttribute('x'), y: this.getSvgAttribute('y') });
@@ -187,25 +183,12 @@ export class RectPainter implements ShapePainter {
 
   //#endregion shape-state
 
-  private createPointControl(coord: Coord): SVGCircleElement {
-    const c1 = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
-    c1.setAttribute('cx', `${coord.x}`);
-    c1.setAttribute('cy', `${coord.y}`);
-    c1.setAttribute('r', this.pointControlWidth().toFixed(1));
-    c1.setAttribute('stroke', 'blue');
-    c1.setAttribute('stroke-width', (this.pointControlWidth() / 2).toFixed(1));
-    c1.setAttribute('fill', 'white');
-    return c1;
+  public override isShapeType<T extends keyof typeof ShapePainterMapping>(shape: T): this is InstanceType<(typeof ShapePainterMapping)[T]> {
+    return shape === Shape.RECT;
   }
 
-  private pointControlWidth(): number {
-    return this.canvas.viewBox.baseVal.width * 0.01;
-  }
-
-  public addToCanvas(canvas: SVGSVGElement) {
-    this.canvas = canvas;
-    this.rectEl = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
-    this.canvas.append(this.rectEl);
+  public override addToCanvas() {
+    this.canvas.append(this.shapeEl);
     this.isRectStarted = true;
   }
 }

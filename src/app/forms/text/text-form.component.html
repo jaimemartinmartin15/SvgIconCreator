@@ -1,0 +1,29 @@
+<app-collapsible [isOpen]="textPainter.isShapeSelected()">
+  <div class="invoker" [class.selected]="textPainter.isShapeSelected()">
+    {{textPainter.name}}
+  </div>
+
+  <form appCollapsibleContent [formGroup]="textPainter.options">
+    <div class="shape-options-form">
+      <label>
+        <span>X</span>
+        <input type="number" formControlName="x" (click)="$event.stopPropagation()">
+      </label>
+
+      <label>
+        <span>Y</span>
+        <input type="number" formControlName="y" (click)="$event.stopPropagation()">
+      </label>
+
+      <label>
+        <span>TEXT</span>
+        <input type="text" formControlName="text" (click)="$event.stopPropagation()">
+      </label>
+
+      <label>
+        <span>FONT SIZE</span>
+        <input type="number" formControlName="fontSize" (click)="$event.stopPropagation()">
+      </label>
+    </div>
+  </form>
+</app-collapsible>

@@ -1,0 +1,27 @@
+:host {
+  display: block;
+  border: var(--border);
+  border-radius: 5px;
+
+  &.selected {
+    background-color: #f0f1f2;
+    border-left: var(--border);
+  }
+
+  .invoker {
+    padding: 10px;
+    cursor: pointer;
+
+    &.selected {
+      border-bottom: var(--border);
+    }
+  }
+}
+
+.shape-options-form {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 30px;
+  box-sizing: border-box;
+  padding: 10px;
+}
