@@ -17,7 +17,7 @@ export class CirclePainter extends ShapePainter {
       strokeAlpha: new FormControl(1),
       strokeWidth: new FormControl(1),
       fill: new FormControl('#FFFFFF'),
-      fillAlpha: new FormControl(1),
+      fillAlpha: new FormControl(0),
       cx: new FormControl(0),
       cy: new FormControl(0),
       r: new FormControl(0),

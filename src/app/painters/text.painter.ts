@@ -13,10 +13,10 @@ export class TextPainter extends ShapePainter {
 
     this.options = new FormGroup({
       name: new FormControl('text'),
-      stroke: new FormControl('#000000'),
-      strokeAlpha: new FormControl(1),
+      stroke: new FormControl('#FFFFFF'),
+      strokeAlpha: new FormControl(0),
       strokeWidth: new FormControl(0.3),
-      fill: new FormControl('#FFFFFF'),
+      fill: new FormControl('#000000'),
       fillAlpha: new FormControl(1),
       x: new FormControl(0),
       y: new FormControl(0),

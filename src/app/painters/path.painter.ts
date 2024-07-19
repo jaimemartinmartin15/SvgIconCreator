@@ -17,7 +17,7 @@ export class PathPainter extends ShapePainter {
       strokeAlpha: new FormControl(1),
       strokeWidth: new FormControl(1),
       fill: new FormControl('#FFFFFF'),
-      fillAlpha: new FormControl(1),
+      fillAlpha: new FormControl(0),
       points: new FormArray([]),
     });
     this.setFormListener();
