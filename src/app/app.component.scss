@@ -84,6 +84,15 @@
     display: flex;
     justify-content: space-evenly;
     gap: 20px;
+
+    .input-color-alpha {
+      display: flex;
+      gap: 5px;
+
+      .alpha-input {
+        width: 50px;
+      }
+    }
   }
 
   .shape-list {
