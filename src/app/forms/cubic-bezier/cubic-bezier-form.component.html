@@ -1,6 +1,6 @@
 <app-collapsible [isOpen]="cubicBezierPainter.isShapeSelected()">
   <div class="invoker" [class.selected]="cubicBezierPainter.isShapeSelected()">
-    {{cubicBezierPainter.name}}
+    {{cubicBezierPainter.options.controls['name'].value}}
   </div>
 
   <form appCollapsibleContent [formGroup]="cubicBezierPainter.options">

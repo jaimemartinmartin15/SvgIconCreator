@@ -1,6 +1,6 @@
 <app-collapsible [isOpen]="circlePainter.isShapeSelected()">
   <div class="invoker" [class.selected]="circlePainter.isShapeSelected()">
-    {{circlePainter.name}}
+    {{circlePainter.options.controls['name'].value}}
   </div>
 
   <form appCollapsibleContent [formGroup]="circlePainter.options">

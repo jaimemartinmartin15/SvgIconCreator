@@ -1,6 +1,6 @@
 <app-collapsible [isOpen]="rectPainter.isShapeSelected()">
   <div class="invoker" [class.selected]="rectPainter.isShapeSelected()">
-    {{rectPainter.name}}
+    {{rectPainter.options.controls['name'].value}}
   </div>
 
   <form appCollapsibleContent [formGroup]="rectPainter.options">
@@ -27,17 +27,12 @@
 
       <label>
         <span>RX</span>
-        <input type="number" min="0" formControlName="roundCornerX" (click)="$event.stopPropagation()">
+        <input type="number" min="0" formControlName="rx" (click)="$event.stopPropagation()">
       </label>
 
       <label>
         <span>RY</span>
-        <input type="number" min="0" formControlName="roundCornerY" (click)="$event.stopPropagation()">
-      </label>
-
-      <label>
-        <span>NOMBRE</span>
-        <input type="text" formControlName="name" (click)="$event.stopPropagation()">
+        <input type="number" min="0" formControlName="ry" (click)="$event.stopPropagation()">
       </label>
     </div>
   </form>

@@ -77,21 +77,40 @@
 
   <form class="common-shape-options" *ngIf="shapePainter" [formGroup]="shapePainter.options">
     <label>
+      <span>NOMBRE</span>
+      <input type="text" formControlName="name">
+    </label>
+
+    <label>
       <span>STROKE WIDTH</span>
-      <input type="number" min="0" formControlName="strokeWidth">
+      <input type="number" min="0" step="0.5" formControlName="strokeWidth">
     </label>
 
-    <label>
-      <span>STROKE</span>
-      <input type="color" formControlName="stroke">
-      <div class="mock-input-color" [style]="{backgroundColor: shapePainter.options.controls['stroke'].value}"></div>
-    </label>
+    <div class="input-color-alpha">
+      <label>
+        <span>STROKE</span>
+        <input type="color" formControlName="stroke">
+        <div class="mock-input-color" [style]="{backgroundColor: getColorWithAlpha('stroke')}"></div>
+      </label>
 
-    <label>
-      <span>FILL</span>
-      <input type="color" formControlName="fill">
-      <div class="mock-input-color" [style]="{backgroundColor: shapePainter.options.controls['fill'].value}"></div>
-    </label>
+      <label>
+        <span>A</span>
+        <input type="number" min="0" max="1" step="0.05" class="alpha-input" formControlName="strokeAlpha">
+      </label>
+    </div>
+
+    <div class="input-color-alpha">
+      <label>
+        <span>FILL</span>
+        <input type="color" formControlName="fill">
+        <div class="mock-input-color" [style]="{backgroundColor: getColorWithAlpha('fill')}"></div>
+      </label>
+
+      <label>
+        <span>A</span>
+        <input type="number" min="0" max="1" step="0.05" class="alpha-input" formControlName="fillAlpha">
+      </label>
+    </div>
   </form>
 
   <div class="shape-list">

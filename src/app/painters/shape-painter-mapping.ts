@@ -1,4 +1,4 @@
-import { Shape } from '../shapes';
+import { Shape } from '../shape';
 import { CirclePainter } from './circle.painter';
 import { CubicBezierPainter } from './cubic-bezier.painter';
 import { LinePainter } from './line.painter';

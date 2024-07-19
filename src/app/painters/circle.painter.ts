@@ -1,53 +1,28 @@
 import { FormControl, FormGroup } from '@angular/forms';
 import { Coord } from '../coord';
-import { Shape } from '../shapes';
+import { CircleModel } from '../forms/circle/circle.model';
+import { Shape } from '../shape';
 import { ShapePainterMapping } from './shape-painter-mapping';
 import { ShapePainter } from './shape.painter';
 
 export class CirclePainter extends ShapePainter {
-  protected override shapeEl: SVGCircleElement;
-
-  private isCircleStarted = false;
-  private isCircleCompleted = false;
-  private isCircleSelected = false;
-
-  public shape = Shape.CIRCLE;
-  public name = 'circle';
-  public override options: FormGroup = new FormGroup({
-    name: new FormControl(this.name),
-    stroke: new FormControl('#000000'),
-    strokeWidth: new FormControl(1),
-    fill: new FormControl('#FFFFFF'),
-    cx: new FormControl(0),
-    cy: new FormControl(0),
-    r: new FormControl(0),
-  });
-
-  public constructor(protected override readonly canvas: SVGSVGElement) {
+  public constructor(protected readonly canvas: SVGSVGElement) {
     super();
 
     this.shapeEl = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
 
-    this.options.valueChanges.subscribe((v) => {
-      this.name = v.name;
-      this.drawCircle(v.cx, v.cy, v.r);
-      this.shapeEl.setAttribute('stroke', v.stroke);
-      this.shapeEl.setAttribute('stroke-width', v.strokeWidth);
-      this.shapeEl.setAttribute('fill', v.fill);
-      if (this.isShapeSelected()) {
-        // adapt the position of the edit points
-        this.svgEditPoints[0].setAttribute('cx', `${v.cx}`);
-        this.svgEditPoints[0].setAttribute('cy', `${v.cy}`);
-        this.svgEditPoints[1].setAttribute('cx', `${v.cx}`);
-        this.svgEditPoints[1].setAttribute('cy', `${v.cy + v.r}`);
-      }
+    this.options = new FormGroup({
+      name: new FormControl('circle'),
+      stroke: new FormControl('#000000'),
+      strokeAlpha: new FormControl(1),
+      strokeWidth: new FormControl(1),
+      fill: new FormControl('#FFFFFF'),
+      fillAlpha: new FormControl(1),
+      cx: new FormControl(0),
+      cy: new FormControl(0),
+      r: new FormControl(0),
     });
-  }
-
-  private drawCircle(cx: number, cy: number, r: number) {
-    this.shapeEl.setAttribute('cx', cx.toFixed(1) ?? 0);
-    this.shapeEl.setAttribute('cy', cy.toFixed(1) ?? 0);
-    this.shapeEl.setAttribute('r', r.toFixed(1) ?? 0);
+    this.setFormListener();
   }
 
   private calculateRadius(p1: Coord, p2: Coord): number {
@@ -59,12 +34,12 @@ export class CirclePainter extends ShapePainter {
 
   //#region mouse-events
 
-  public override onMouseDown(coord: Coord) {
+  public onMouseDown(coord: Coord) {
     this.isMouseDown = true;
     this.options.patchValue({ cx: coord.x, cy: coord.y, r: 0 });
   }
 
-  public override onMouseMove(coord: Coord) {
+  public onMouseMove(coord: Coord) {
     if (!this.isMouseDown) return;
 
     const center: Coord = { x: this.getSvgAttribute('cx'), y: this.getSvgAttribute('cy') };
@@ -72,109 +47,47 @@ export class CirclePainter extends ShapePainter {
     this.options.patchValue({ r: radius });
   }
 
-  public override onMouseUp(coord: Coord) {
-    this.isMouseDown = false;
-
-    const center: Coord = { x: this.getSvgAttribute('cx'), y: this.getSvgAttribute('cy') };
-    const radius = this.calculateRadius(center, coord);
-    this.options.patchValue({ r: radius });
-
-    this.isCircleCompleted = true;
-  }
-
   //#endregion mouse-events
 
   //#region mouse-events-edit
 
-  public override onMouseDownEdit(coord: Coord): void {
-    const center: Coord = { x: this.getSvgAttribute('cx'), y: this.getSvgAttribute('cy') };
-    const extPoint = { ...center, y: center.y + this.getSvgAttribute('r') };
-
-    // select control point to move
-    const isCenter = Math.abs(center.x - coord.x) < this.pointControlWidth() && Math.abs(center.y - coord.y) < this.pointControlWidth();
-    const isExtPoint = Math.abs(extPoint.x - coord.x) < this.pointControlWidth() && Math.abs(extPoint.y - coord.y) < this.pointControlWidth();
-
-    if (isCenter) this.svgSelectedEditPointIndex = 0;
-    else if (isExtPoint) this.svgSelectedEditPointIndex = 1;
-    else this.svgSelectedEditPointIndex = -1;
-  }
-
-  public override onMouseMoveEdit(coord: Coord): void {
+  public onMouseMoveEdit(coord: Coord): void {
     if (this.svgSelectedEditPointIndex === -1) return;
 
-    this.svgEditPoints[this.svgSelectedEditPointIndex].setAttribute('cx', `${coord.x}`);
-    this.svgEditPoints[this.svgSelectedEditPointIndex].setAttribute('cy', `${coord.y}`);
-
     if (this.svgSelectedEditPointIndex === 0) {
+      // moving the center
       this.options.patchValue({ cx: coord.x, cy: coord.y });
-      this.svgEditPoints[1].setAttribute('cx', `${coord.x}`);
-      this.svgEditPoints[1].setAttribute('cy', `${coord.y + this.getSvgAttribute('r')}`);
     } else {
+      // moving the radius
       const center: Coord = { x: this.getSvgAttribute('cx'), y: this.getSvgAttribute('cy') };
       const radius = this.calculateRadius(center, coord);
       this.options.patchValue({ r: radius });
     }
-  }
-  public override onMouseUpEdit(coord: Coord): void {
-    if (this.svgSelectedEditPointIndex === -1) return;
-
-    this.svgEditPoints[this.svgSelectedEditPointIndex].setAttribute('cx', `${coord.x}`);
-    this.svgEditPoints[this.svgSelectedEditPointIndex].setAttribute('cy', `${coord.y}`);
-
-    if (this.svgSelectedEditPointIndex === 0) {
-      this.options.patchValue({ cx: coord.x, cy: coord.y });
-    } else {
-      const center: Coord = { x: this.getSvgAttribute('cx'), y: this.getSvgAttribute('cy') };
-      const radius = this.calculateRadius(center, coord);
-      this.options.patchValue({ r: radius });
-    }
-
-    this.svgSelectedEditPointIndex = -1;
   }
 
   //#endregion mouse-events-edit
 
-  //#region shape-state
-
-  public override isShapeStarted(): boolean {
-    return this.isCircleStarted;
+  public drawShape(model: CircleModel): void {
+    this.shapeEl.setAttribute('cx', this.toFixed(model.cx));
+    this.shapeEl.setAttribute('cy', this.toFixed(model.cy));
+    this.shapeEl.setAttribute('r', this.toFixed(model.r));
   }
 
-  public override isShapeCompleted() {
-    return this.isCircleCompleted;
+  public getShapeEditPointsCoords(): Coord[] {
+    const center = {
+      x: this.getSvgAttribute('cx'),
+      y: this.getSvgAttribute('cy'),
+    };
+
+    const radius = {
+      x: center.x + this.getSvgAttribute('r'),
+      y: center.y,
+    };
+
+    return [center, radius];
   }
 
-  public override isShapeSelected(): boolean {
-    return this.isCircleSelected;
-  }
-
-  public override setShapeSelected(selected: boolean): void {
-    this.isCircleSelected = selected;
-    if (selected) {
-      const center: Coord = { x: this.getSvgAttribute('cx'), y: this.getSvgAttribute('cy') };
-      const c1 = this.createPointControl(center);
-      this.svgEditPoints.push(c1);
-      this.canvas.append(c1);
-      const c2 = this.createPointControl({
-        x: center.x,
-        y: center.y + this.getSvgAttribute('r'),
-      });
-      this.svgEditPoints.push(c2);
-      this.canvas.append(c2);
-    } else {
-      this.svgEditPoints.forEach((e) => e.remove());
-      this.svgEditPoints.length = 0;
-    }
-  }
-
-  //#endregion shape-state
-
-  public override isShapeType<T extends keyof typeof ShapePainterMapping>(shape: T): this is InstanceType<(typeof ShapePainterMapping)[T]> {
+  public isShapeType<T extends keyof typeof ShapePainterMapping>(shape: T): this is InstanceType<(typeof ShapePainterMapping)[T]> {
     return shape === Shape.CIRCLE;
-  }
-
-  public override addToCanvas() {
-    this.canvas.append(this.shapeEl);
-    this.isCircleStarted = true;
   }
 }

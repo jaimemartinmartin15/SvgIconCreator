@@ -1,6 +1,6 @@
 <app-collapsible [isOpen]="pathPainter.isShapeSelected()" [formGroup]="pathPainter.options">
   <div class="invoker" [class.selected]="pathPainter.isShapeSelected()">
-    {{pathPainter.name}}
+    {{pathPainter.options.controls['name'].value}}
   </div>
 
   <form appCollapsibleContent formArrayName="points">

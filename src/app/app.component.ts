@@ -2,6 +2,7 @@ import { CommonModule } from '@angular/common';
 import { AfterViewInit, Component, ElementRef, HostListener, ViewChild } from '@angular/core';
 import { AbstractControl, FormArray, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { CollapsibleModule } from '@jaimemartinmartin15/jei-devkit-angular-shared';
+import { addAlphaToColor } from './color.utils';
 import { CircleFormComponent } from './forms/circle/circle-form.component';
 import { CubicBezierFormComponent } from './forms/cubic-bezier/cubic-bezier-form.component';
 import { LineFormComponent } from './forms/line/line-form.component';
@@ -10,7 +11,7 @@ import { RectFormComponent } from './forms/rect/rect-form.component';
 import { TextFormComponent } from './forms/text/text-form.component';
 import { ShapePainterMapping } from './painters/shape-painter-mapping';
 import { ShapePainter } from './painters/shape.painter';
-import { Shape } from './shapes';
+import { Shape } from './shape';
 
 @Component({
   selector: 'app-root',
@@ -63,7 +64,7 @@ export class AppComponent implements AfterViewInit {
     if (event.code === 'KeyF') {
       // finish path to start a new one
       if (this.shapePainter.isShapeType(Shape.PATH)) {
-        this.shapePainter.setPathCompleted();
+        this.shapePainter.setShapeCompleted();
       }
     }
   }
@@ -82,7 +83,7 @@ export class AppComponent implements AfterViewInit {
 
   public onChangeShapeToDraw() {
     this.shapePainter.setShapeSelected(false);
-    // TODO set shape completed
+    this.shapePainter.setShapeCompleted();
     this.shapePainter = this.instantiateShapePainter();
   }
 
@@ -130,6 +131,8 @@ export class AppComponent implements AfterViewInit {
   //#endregion mouse event handlers
 
   public selectShapePainter(shapePainter: ShapePainter) {
+    this.shapePainter.setShapeCompleted();
+
     if (shapePainter.isShapeSelected()) {
       shapePainter.setShapeSelected(false);
       this.shapePainter = this.instantiateShapePainter();
@@ -139,6 +142,12 @@ export class AppComponent implements AfterViewInit {
     this.shapePainter.setShapeSelected(false);
     shapePainter.setShapeSelected(true);
     this.shapePainter = shapePainter;
+  }
+
+  public getColorWithAlpha(formControlName: string): string {
+    const color = this.shapePainter.options.controls[formControlName].value;
+    const alpha = this.shapePainter.options.controls[`${formControlName}Alpha`].value;
+    return addAlphaToColor(color, alpha);
   }
 
   public onUpdateBackgroundImage(e: Event) {
