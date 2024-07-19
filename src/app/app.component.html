@@ -1,81 +1,64 @@
-<div class="left-side">
-  <svg id="canvas" #canvas>
-  </svg>
+<form class="toolbar">
+  <label>
+    <span>FONDO</span>
 
-  <div class="canvas-message"
-    *ngIf="shapePainter && shapePainter.isShapeType(Shape.PATH) && shapePainter.isShapeStarted() && !shapePainter.isShapeCompleted()">
-    Presiona la tecla F para terminar la figura y empezar una nueva.
-  </div>
+    <input type="file" (change)="onUpdateBackgroundImage($event)">
+    <div class="mock-input-file">{{backgroundImageFile?.name ?? 'Selecciona un fondo'}}</div>
+  </label>
 
-  <div class="buttons-container">
-    <button class="download-button" (click)="downloadSvg()">Descargar svg</button>
-    <button class="download-button" (click)="downloadPng()">Descargar png</button>
-  </div>
-</div>
+  <label>
+    <span>TAMAÑO LIENZO</span>
 
-<form class="right-side">
-  <div class="canvas-config-options">
-    <label>
-      <span>FONDO</span>
-      <input type="file" (change)="onUpdateBackgroundImage($event)">
-      <div class="mock-input-file">{{backgroundImageFile?.name ?? 'Selecciona un fondo'}}</div>
-    </label>
+    <div>
+      <input type="number" min="1" id="canvas-width-input" name="canvas-width" [(ngModel)]="canvasWidth">
+      :
+      <input type="number" min="1" id="canvas-height-input" name="canvas-height" [(ngModel)]="canvasHeight">
+    </div>
+  </label>
 
-    <label>
-      <span>TAMAÑO LIENZO</span>
-      <div>
-        <input type="number" min="1" id="canvas-width-input" name="canvas-width" [(ngModel)]="canvasWidth"
-          (ngModelChange)="onChangeCanvasSize()">
-        :
-        <input type="number" min="1" id="canvas-height-input" name="canvas-height" [(ngModel)]="canvasHeight"
-          (ngModelChange)="onChangeCanvasSize()">
-      </div>
-    </label>
-  </div>
-
-  <label for="shape">
+  <div class="label">
     <span>FIGURAS</span>
 
-    <div class="shapes-radio-buttons-container">
-      <label>
+    <div class="shape-radio-buttons-container">
+      <label class="radio-button">
         <input type="radio" name="shape" [value]="Shape.RECT" [(ngModel)]="shapeToDraw"
           (ngModelChange)="onChangeShapeToDraw()">
         <span>rect</span>
       </label>
 
-      <label>
+      <label class="radio-button">
         <input type="radio" name="shape" [value]="Shape.LINE" [(ngModel)]="shapeToDraw"
           (ngModelChange)="onChangeShapeToDraw()">
         <span>line</span>
       </label>
 
-      <label>
+      <label class="radio-button">
         <input type="radio" name="shape" [value]="Shape.PATH" [(ngModel)]="shapeToDraw"
           (ngModelChange)="onChangeShapeToDraw()">
         <span>path</span>
       </label>
 
-      <label>
+      <label class="radio-button">
         <input type="radio" name="shape" [value]="Shape.CIRCLE" [(ngModel)]="shapeToDraw"
           (ngModelChange)="onChangeShapeToDraw()">
         <span>circle</span>
       </label>
 
-      <label>
+      <label class="radio-button">
         <input type="radio" name="shape" [value]="Shape.TEXT" [(ngModel)]="shapeToDraw"
           (ngModelChange)="onChangeShapeToDraw()">
         <span>text</span>
       </label>
 
-      <label>
+      <label class="radio-button">
         <input type="radio" name="shape" [value]="Shape.CUBIC_BEZIER" [(ngModel)]="shapeToDraw"
           (ngModelChange)="onChangeShapeToDraw()">
         <span>cubic bezier</span>
       </label>
     </div>
-  </label>
+  </div>
 
-  <form class="common-shape-options" *ngIf="shapePainter" [formGroup]="shapePainter.options">
+  <div class="common-shape-options" *ngIf="shapePainter" [formGroup]="shapePainter.options">
     <label>
       <span>NOMBRE</span>
       <input type="text" formControlName="name">
@@ -111,7 +94,24 @@
         <input type="number" min="0" max="1" step="0.05" class="alpha-input" formControlName="fillAlpha">
       </label>
     </div>
-  </form>
+  </div>
+
+  <div class="buttons-container">
+    <button class="download-button" (click)="downloadSvg()">Descargar svg</button>
+    <button class="download-button" (click)="downloadPng()">Descargar png</button>
+  </div>
+</form>
+
+<div class="canvas-and-shape-list">
+  <div class="canvas-container">
+    <svg id="canvas" #canvas [attr.viewBox]="'0 0 ' + canvasWidth + ' ' + canvasHeight">
+    </svg>
+
+    <div class="canvas-message"
+      *ngIf="shapePainter && shapePainter.isShapeType(Shape.PATH) && shapePainter.isShapeStarted() && !shapePainter.isShapeCompleted()">
+      Presiona la tecla F para terminar la figura y empezar una nueva.
+    </div>
+  </div>
 
   <div class="shape-list">
     <ng-container *ngFor="let shapePainter of shapeList">
@@ -140,4 +140,4 @@
       </app-cubic-bezier-form>
     </ng-container>
   </div>
-</form>
+</div>

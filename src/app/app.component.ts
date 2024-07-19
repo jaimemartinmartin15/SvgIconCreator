@@ -164,18 +164,6 @@ export class AppComponent implements AfterViewInit {
     this.canvas.append(imageBg);
   }
 
-  public onChangeCanvasSize() {
-    this.canvas.setAttribute('viewBox', `0 0 ${this.canvasWidth} ${this.canvasHeight}`);
-
-    const parentCssWidth = this.canvas.parentElement!.clientWidth;
-    let aspRat = parentCssWidth / this.canvasWidth;
-    if (aspRat * this.canvasHeight > window.innerHeight) {
-      aspRat = window.innerHeight / this.canvasHeight;
-    }
-    this.canvas.style.width = `${aspRat * this.canvasWidth}px`;
-    this.canvas.style.height = `${aspRat * this.canvasHeight}px`;
-  }
-
   public downloadSvg() {
     // convert the svg element to string
     const svgString = new XMLSerializer().serializeToString(this.canvas);
