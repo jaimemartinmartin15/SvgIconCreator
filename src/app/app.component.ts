@@ -59,11 +59,33 @@ export class AppComponent implements AfterViewInit {
 
   @HostListener('document:keypress', ['$event'])
   public onKeydownHandler(event: KeyboardEvent) {
+    if (!this.shapePainter.isShapeType(Shape.PATH)) {
+      return;
+    }
+
+    if (event.code === 'KeyM') {
+      this.shapePainter.moveTo();
+      return;
+    }
+
+    if (event.code === 'KeyL') {
+      this.shapePainter.lineTo();
+      return;
+    }
+
+    if (event.code === 'KeyC') {
+      this.shapePainter.cubizBezier();
+      return;
+    }
+
+    if (event.code === 'KeyZ') {
+      this.shapePainter.closePath();
+      return;
+    }
+
     if (event.code === 'KeyF') {
-      // finish path to start a new one
-      if (this.shapePainter.isShapeType(Shape.PATH)) {
-        this.shapePainter.setShapeCompleted();
-      }
+      this.shapePainter.setShapeCompleted();
+      return;
     }
   }
 

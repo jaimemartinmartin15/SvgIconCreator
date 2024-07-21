@@ -98,4 +98,20 @@ export class PathPainter extends ShapePainter {
   public isShapeType<T extends keyof typeof ShapePainterMapping>(shape: T): this is InstanceType<(typeof ShapePainterMapping)[T]> {
     return shape === Shape.PATH;
   }
+
+  public moveTo() {
+    // TODO
+  }
+
+  public lineTo() {
+    // TODO
+  }
+
+  public cubizBezier() {
+    // TODO
+  }
+
+  public closePath() {
+    // TODO
+  }
 }

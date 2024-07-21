@@ -102,8 +102,9 @@
     </svg>
 
     <div class="canvas-message"
-      *ngIf="shapePainter && shapePainter.isShapeType(Shape.PATH) && shapePainter.isShapeStarted() && !shapePainter.isShapeCompleted()">
-      Presiona la tecla F para terminar la figura y empezar una nueva.
+      *ngIf="shapePainter?.isShapeType(Shape.PATH) && shapePainter.isShapeStarted() && !shapePainter.isShapeCompleted()">
+      Pulsa las teclas M, L, C o Z para mover el cursor, dibujar curvas o cerrar la figura. Pulsa F para terminar la
+      figura y empezar una nueva.
     </div>
   </div>
 
