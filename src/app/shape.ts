@@ -4,5 +4,4 @@ export enum Shape {
   PATH = 'PATH',
   CIRCLE = 'CIRCLE',
   TEXT = 'TEXT',
-  CUBIC_BEZIER = 'CUBIC_BEZIER',
 }

@@ -4,7 +4,6 @@ import { AbstractControl, FormArray, FormsModule, ReactiveFormsModule } from '@a
 import { CollapsibleModule } from '@jaimemartinmartin15/jei-devkit-angular-shared';
 import { addAlphaToColor } from './color.utils';
 import { CircleFormComponent } from './forms/circle/circle-form.component';
-import { CubicBezierFormComponent } from './forms/cubic-bezier/cubic-bezier-form.component';
 import { LineFormComponent } from './forms/line/line-form.component';
 import { PathFormComponent } from './forms/path/path-form.component';
 import { RectFormComponent } from './forms/rect/rect-form.component';
@@ -26,7 +25,6 @@ import { Shape } from './shape';
     LineFormComponent,
     PathFormComponent,
     TextFormComponent,
-    CubicBezierFormComponent,
   ],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss',

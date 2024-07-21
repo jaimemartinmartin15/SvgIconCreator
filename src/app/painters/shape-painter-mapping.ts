@@ -1,6 +1,5 @@
 import { Shape } from '../shape';
 import { CirclePainter } from './circle.painter';
-import { CubicBezierPainter } from './cubic-bezier.painter';
 import { LinePainter } from './line.painter';
 import { PathPainter } from './path.painter';
 import { RectPainter } from './rect.painter';
@@ -12,5 +11,4 @@ export const ShapePainterMapping = {
   [Shape.LINE]: LinePainter,
   [Shape.TEXT]: TextPainter,
   [Shape.PATH]: PathPainter,
-  [Shape.CUBIC_BEZIER]: CubicBezierPainter,
 };

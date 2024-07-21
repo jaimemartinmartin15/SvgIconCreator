@@ -49,12 +49,6 @@
           (ngModelChange)="onChangeShapeToDraw()">
         <span>text</span>
       </label>
-
-      <label class="radio-button">
-        <input type="radio" name="shape" [value]="Shape.CUBIC_BEZIER" [(ngModel)]="shapeToDraw"
-          (ngModelChange)="onChangeShapeToDraw()">
-        <span>cubic bezier</span>
-      </label>
     </div>
   </div>
 
@@ -134,10 +128,6 @@
       <app-text-form (onShapeSelected)="selectShapePainter($event)" [textPainter]="shapePainter"
         *ngIf="shapePainter.isShapeType(Shape.TEXT)">
       </app-text-form>
-
-      <app-cubic-bezier-form (onShapeSelected)="selectShapePainter($event)" [cubicBezierPainter]="shapePainter"
-        *ngIf="shapePainter.isShapeType(Shape.CUBIC_BEZIER)">
-      </app-cubic-bezier-form>
     </ng-container>
   </div>
 </div>
