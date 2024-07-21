@@ -9,11 +9,18 @@
   }
 
   .invoker {
+    display: flex;
+    align-items: center;
     padding: 10px;
     cursor: pointer;
 
     &.selected {
       border-bottom: var(--border);
+    }
+
+    .shape-name {
+      margin-left: 15px;
+      flex-grow: 1;
     }
   }
 }

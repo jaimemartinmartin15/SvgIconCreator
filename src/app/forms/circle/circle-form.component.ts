@@ -1,3 +1,4 @@
+import { CdkDragHandle } from '@angular/cdk/drag-drop';
 import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, HostBinding, HostListener, Input, Output } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
@@ -7,7 +8,7 @@ import { CirclePainter } from '../../painters/circle.painter';
 @Component({
   selector: 'app-circle-form',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, CollapsibleModule],
+  imports: [CommonModule, ReactiveFormsModule, CollapsibleModule, CdkDragHandle],
   templateUrl: './circle-form.component.html',
   styleUrls: ['../shared.scss'],
 })
@@ -18,6 +19,9 @@ export class CircleFormComponent {
   @Output()
   public onShapeSelected = new EventEmitter<CirclePainter>();
 
+  @Output()
+  public onShapeDelete = new EventEmitter<CirclePainter>();
+
   @HostListener('click')
   public toggleShapeSelected() {
     this.onShapeSelected.emit(this.circlePainter);
@@ -26,5 +30,10 @@ export class CircleFormComponent {
   @HostBinding('class.selected')
   public get isSelected() {
     return this.circlePainter.isShapeSelected();
+  }
+
+  public onDeleteShape(event: MouseEvent) {
+    event.stopPropagation();
+    this.onShapeDelete.emit(this.circlePainter);
   }
 }

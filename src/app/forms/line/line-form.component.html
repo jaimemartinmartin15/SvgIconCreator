@@ -1,6 +1,8 @@
 <app-collapsible [isOpen]="linePainter.isShapeSelected()">
   <div class="invoker" [class.selected]="linePainter.isShapeSelected()">
-    {{linePainter.options.controls['name'].value}}
+    <span cdkDragHandle (click)="$event.stopPropagation()">&#x2630;</span>
+    <span class="shape-name">{{linePainter.options.controls['name'].value}}</span>
+    <span class="delete-icon" (click)="onDeleteShape($event)">🗑️</span>
   </div>
 
   <form appCollapsibleContent [formGroup]="linePainter.options">

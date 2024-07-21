@@ -1,6 +1,8 @@
 <app-collapsible [isOpen]="pathPainter.isShapeSelected()" [formGroup]="pathPainter.options">
   <div class="invoker" [class.selected]="pathPainter.isShapeSelected()">
-    {{pathPainter.options.controls['name'].value}}
+    <span cdkDragHandle (click)="$event.stopPropagation()">&#x2630;</span>
+    <span class="shape-name">{{pathPainter.options.controls['name'].value}}</span>
+    <span class="delete-icon" (click)="onDeleteShape($event)">🗑️</span>
   </div>
 
   <form appCollapsibleContent formArrayName="points">

@@ -104,6 +104,13 @@ export abstract class ShapePainter {
   public addToCanvas() {
     this.canvas.append(this.shapeEl);
     this._isShapeStarted = true;
+    // wait all shapes to be added to the canvas, and then paint the edit points on top of all shapes
+    setTimeout(() => this.svgEditPoints.forEach((ep) => this.canvas.append(ep)), 0);
+  }
+
+  public removeFromCanvas() {
+    this.shapeEl.remove();
+    this.svgEditPoints.forEach((ep) => ep.remove());
   }
 
   protected getSvgAttribute(name: string, element: SVGElement = this.shapeEl): number {

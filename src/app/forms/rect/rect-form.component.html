@@ -1,6 +1,8 @@
 <app-collapsible [isOpen]="rectPainter.isShapeSelected()">
   <div class="invoker" [class.selected]="rectPainter.isShapeSelected()">
-    {{rectPainter.options.controls['name'].value}}
+    <span cdkDragHandle (click)="$event.stopPropagation()">&#x2630;</span>
+    <span class="shape-name">{{rectPainter.options.controls['name'].value}}</span>
+    <span class="delete-icon" (click)="onDeleteShape($event)">🗑️</span>
   </div>
 
   <form appCollapsibleContent [formGroup]="rectPainter.options">

@@ -1,3 +1,4 @@
+import { CdkDragDrop, DragDropModule, moveItemInArray } from '@angular/cdk/drag-drop';
 import { CommonModule } from '@angular/common';
 import { AfterViewInit, Component, ElementRef, HostListener, ViewChild } from '@angular/core';
 import { AbstractControl, FormArray, FormsModule, ReactiveFormsModule } from '@angular/forms';
@@ -19,6 +20,7 @@ import { Shape } from './shape';
     CommonModule,
     FormsModule,
     ReactiveFormsModule,
+    DragDropModule,
     CollapsibleModule,
     RectFormComponent,
     CircleFormComponent,
@@ -168,6 +170,18 @@ export class AppComponent implements AfterViewInit {
     const color = this.shapePainter.options.controls[formControlName].value;
     const alpha = this.shapePainter.options.controls[`${formControlName}Alpha`].value;
     return addAlphaToColor(color, alpha);
+  }
+
+  public onReorderingShapes(event: CdkDragDrop<string[]>) {
+    this.shapeList.forEach((sp) => sp.removeFromCanvas());
+    moveItemInArray(this.shapeList, event.previousIndex, event.currentIndex);
+    this.shapeList.forEach((sp) => sp.addToCanvas());
+  }
+
+  public deleteShape(shapePainter: ShapePainter) {
+    this.shapeList.splice(this.shapeList.indexOf(shapePainter), 1);
+    shapePainter.removeFromCanvas();
+    this.shapePainter = this.instantiateShapePainter();
   }
 
   public onUpdateBackgroundImage(e: Event) {

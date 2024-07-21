@@ -108,26 +108,36 @@
     </div>
   </div>
 
-  <div class="shape-list">
+  <div class="shape-list" cdkDropList (cdkDropListDropped)="onReorderingShapes($event)">
     <ng-container *ngFor="let shapePainter of shapeList">
-      <app-rect-form (onShapeSelected)="selectShapePainter($event)" [rectPainter]="shapePainter"
+      <app-rect-form cdkDrag cdkDragPreviewContainer="parent" (onShapeDelete)="deleteShape($event)"
+        (onShapeSelected)="selectShapePainter($event)" [rectPainter]="shapePainter"
         *ngIf="shapePainter.isShapeType(Shape.RECT)">
+        <div *cdkDragPlaceholder></div>
       </app-rect-form>
 
-      <app-circle-form (onShapeSelected)="selectShapePainter($event)" [circlePainter]="shapePainter"
+      <app-circle-form cdkDrag cdkDragPreviewContainer="parent" (onShapeDelete)="deleteShape($event)"
+        (onShapeSelected)="selectShapePainter($event)" [circlePainter]="shapePainter"
         *ngIf="shapePainter.isShapeType(Shape.CIRCLE)">
+        <div *cdkDragPlaceholder></div>
       </app-circle-form>
 
-      <app-line-form (onShapeSelected)="selectShapePainter($event)" [linePainter]="shapePainter"
+      <app-line-form cdkDrag cdkDragPreviewContainer="parent" (onShapeDelete)="deleteShape($event)"
+        (onShapeSelected)="selectShapePainter($event)" [linePainter]="shapePainter"
         *ngIf="shapePainter.isShapeType(Shape.LINE)">
+        <div *cdkDragPlaceholder></div>
       </app-line-form>
 
-      <app-path-form (onShapeSelected)="selectShapePainter($event)" [pathPainter]="shapePainter"
+      <app-path-form cdkDrag cdkDragPreviewContainer="parent" (onShapeDelete)="deleteShape($event)"
+        (onShapeSelected)="selectShapePainter($event)" [pathPainter]="shapePainter"
         *ngIf="shapePainter.isShapeType(Shape.PATH)">
+        <div *cdkDragPlaceholder></div>
       </app-path-form>
 
-      <app-text-form (onShapeSelected)="selectShapePainter($event)" [textPainter]="shapePainter"
+      <app-text-form cdkDrag cdkDragPreviewContainer="parent" (onShapeDelete)="deleteShape($event)"
+        (onShapeSelected)="selectShapePainter($event)" [textPainter]="shapePainter"
         *ngIf="shapePainter.isShapeType(Shape.TEXT)">
+        <div *cdkDragPlaceholder></div>
       </app-text-form>
     </ng-container>
   </div>
