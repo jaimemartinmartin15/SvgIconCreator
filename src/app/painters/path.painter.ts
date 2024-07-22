@@ -288,18 +288,25 @@ export class PathPainter extends ShapePainter {
   }
 
   public moveTo() {
+    this.stateCubicBezier = 0;
     this.currentCommand = COMMANDS.MOVE_TO;
   }
 
   public lineTo() {
+    if ((this.options.controls['commands'] as FormArray).length === 0) return;
+    this.stateCubicBezier = 0;
     this.currentCommand = COMMANDS.LINE_TO;
   }
 
   public cubizBezier() {
+    if ((this.options.controls['commands'] as FormArray).length === 0) return;
+    this.stateCubicBezier = 0;
     this.currentCommand = COMMANDS.CUBIC_BEZIER;
   }
 
   public closePath() {
+    if ((this.options.controls['commands'] as FormArray).length === 0) return;
+    this.stateCubicBezier = 0;
     this.currentCommand = COMMANDS.CLOSE_PATH;
     (this.options.controls['commands'] as FormArray).push(
       new FormGroup({
@@ -308,5 +315,12 @@ export class PathPainter extends ShapePainter {
       })
     );
     this._isShapeCompleted = true;
+  }
+
+  public deleteCommand(i: number) {
+    // easy way to delete the edit points
+    this.setShapeSelected(false);
+    (this.options.controls['commands'] as FormArray).removeAt(i);
+    this.setShapeSelected(true);
   }
 }

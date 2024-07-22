@@ -13,6 +13,8 @@ import { PathPainter } from '../../painters/path.painter';
   styleUrls: ['../shared.scss', './path-form.component.scss'],
 })
 export class PathFormComponent {
+  public mouseHoverIndex = -1;
+
   @Input()
   public pathPainter: PathPainter;
 
@@ -39,5 +41,10 @@ export class PathFormComponent {
   public onDeleteShape(event: MouseEvent) {
     event.stopPropagation();
     this.onShapeDelete.emit(this.pathPainter);
+  }
+
+  public deleteCommand(i: number, e: MouseEvent) {
+    e.stopPropagation();
+    this.pathPainter.deleteCommand(i);
   }
 }
