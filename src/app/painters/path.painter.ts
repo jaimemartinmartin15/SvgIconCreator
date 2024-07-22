@@ -5,7 +5,24 @@ import { Shape } from '../shape';
 import { ShapePainterMapping } from './shape-painter-mapping';
 import { ShapePainter } from './shape.painter';
 
+const COMMANDS = {
+  MOVE_TO: 'M',
+  LINE_TO: 'L',
+  CUBIC_BEZIER: 'C',
+  CLOSE_PATH: 'Z',
+};
+
 export class PathPainter extends ShapePainter {
+  /*
+   * 0 -> no points added
+   * 1 -> end point added
+   * 2 -> control point 1 added
+   * 3 -> control point 2 added
+   */
+  private stateCubicBezier: number = 0;
+
+  public currentCommand = 'M';
+
   public constructor(protected readonly canvas: SVGSVGElement) {
     super();
 
@@ -18,61 +35,234 @@ export class PathPainter extends ShapePainter {
       strokeWidth: new FormControl(1),
       fill: new FormControl('#FFFFFF'),
       fillAlpha: new FormControl(0),
-      points: new FormArray([]),
+      commands: new FormArray([]),
     });
     this.setFormListener();
   }
 
-  //#region mouse-events
+  //#region mouse down
 
   public onMouseDown(coord: Coord) {
     this.isMouseDown = true;
 
-    (this.options.controls['points'] as FormArray).push(
+    if (this.currentCommand === COMMANDS.MOVE_TO) {
+      this.onMouseDownMoveTo(coord);
+      return;
+    }
+
+    if (this.currentCommand === COMMANDS.LINE_TO) {
+      this.onMouseDownLineTo(coord);
+      return;
+    }
+
+    if (this.currentCommand === COMMANDS.CUBIC_BEZIER) {
+      this.onMouseDownCubicBezier(coord);
+      return;
+    }
+  }
+
+  private onMouseDownMoveTo(coord: Coord) {
+    (this.options.controls['commands'] as FormArray).push(
       new FormGroup({
-        x: new FormControl(coord.x),
-        y: new FormControl(coord.y),
+        type: new FormControl(COMMANDS.MOVE_TO),
+        coords: new FormArray([
+          new FormGroup({
+            x: new FormControl(coord.x),
+            y: new FormControl(coord.y),
+          }),
+        ]),
       })
     );
   }
 
-  public onMouseMove(coord: Coord) {
-    if (!this.isMouseDown) return;
+  private onMouseDownLineTo(coord: Coord) {
+    // check if previous command was of these type or not
+    const commands: FormArray = this.options.controls['commands'] as FormArray;
+    const lastControl = commands.controls[commands.length - 1];
 
-    const pointsFormArray: FormArray = this.options.controls['points'] as FormArray;
-    if (pointsFormArray.controls.length === 1) {
-      // allows to draw first segment with one single click and drag
-      pointsFormArray.push(
+    if (lastControl.value.type === COMMANDS.LINE_TO) {
+      // add a new point to last command
+      ((lastControl as FormGroup).controls['coords'] as FormArray).push(
         new FormGroup({
           x: new FormControl(coord.x),
           y: new FormControl(coord.y),
         })
       );
+    } else {
+      // add a new command
+      (this.options.controls['commands'] as FormArray).push(
+        new FormGroup({
+          type: new FormControl(COMMANDS.LINE_TO),
+          coords: new FormArray([
+            new FormGroup({
+              x: new FormControl(coord.x),
+              y: new FormControl(coord.y),
+            }),
+          ]),
+        })
+      );
+    }
+  }
+
+  private onMouseDownCubicBezier(coord: Coord) {
+    if (this.stateCubicBezier === 0) {
+      // add a new command, set end point and controls
+      (this.options.controls['commands'] as FormArray).push(
+        new FormGroup({
+          type: new FormControl(COMMANDS.CUBIC_BEZIER),
+          coords: new FormArray([
+            new FormGroup({
+              x: new FormControl(coord.x),
+              y: new FormControl(coord.y),
+            }),
+            new FormGroup({
+              x: new FormControl(coord.x),
+              y: new FormControl(coord.y),
+            }),
+            new FormGroup({
+              x: new FormControl(coord.x),
+              y: new FormControl(coord.y),
+            }),
+          ]),
+        })
+      );
       return;
     }
 
-    const lastCoordIndex = pointsFormArray.controls.length - 1;
-    pointsFormArray.at(lastCoordIndex).patchValue({
+    const commands = this.options.controls['commands'] as FormArray;
+    const lastCommandControl = commands.controls[commands.length - 1] as FormGroup;
+    const coordControls = lastCommandControl.controls['coords'] as FormArray;
+
+    if (this.stateCubicBezier === 1) {
+      coordControls.controls[0].patchValue({
+        x: coord.x,
+        y: coord.y,
+      });
+      coordControls.controls[1].patchValue({
+        x: coord.x,
+        y: coord.y,
+      });
+    }
+
+    if (this.stateCubicBezier === 2) {
+      coordControls.controls[1].patchValue({
+        x: coord.x,
+        y: coord.y,
+      });
+    }
+  }
+
+  //#endregion mouse down
+
+  //#region mouse move
+
+  public onMouseMove(coord: Coord) {
+    if (!this.isMouseDown) return;
+
+    const commands: FormArray = this.options.controls['commands'] as FormArray;
+    const currentCommandControl = commands.controls[commands.length - 1] as FormGroup;
+
+    if (this.currentCommand === COMMANDS.MOVE_TO) {
+      this.onMouseMoveMoveTo(coord, currentCommandControl);
+      return;
+    }
+
+    if (this.currentCommand === COMMANDS.LINE_TO) {
+      this.onMouseMoveLineTo(coord, currentCommandControl);
+      return;
+    }
+
+    if (this.currentCommand === COMMANDS.CUBIC_BEZIER) {
+      this.onMouseMoveCubicBezier(coord, currentCommandControl);
+      return;
+    }
+  }
+
+  private onMouseMoveMoveTo(coord: Coord, currentCommandControl: FormGroup) {
+    (currentCommandControl.controls['coords'] as FormArray).controls[0].patchValue({
       x: coord.x,
       y: coord.y,
     });
   }
 
+  private onMouseMoveLineTo(coord: Coord, currentCommandControl: FormGroup<any>) {
+    const coordsFormArrayControls = (currentCommandControl.controls['coords'] as FormArray).controls;
+    const pointsLength = coordsFormArrayControls.length;
+    coordsFormArrayControls[pointsLength - 1].patchValue({
+      x: coord.x,
+      y: coord.y,
+    });
+  }
+
+  private onMouseMoveCubicBezier(coord: Coord, currentCommandControl: FormGroup<any>) {
+    const coordsFormArrayControls = (currentCommandControl.controls['coords'] as FormArray).controls;
+
+    if (this.stateCubicBezier === 0) {
+      coordsFormArrayControls[0].patchValue({
+        x: coord.x,
+        y: coord.y,
+      });
+      coordsFormArrayControls[1].patchValue({
+        x: coord.x,
+        y: coord.y,
+      });
+      coordsFormArrayControls[2].patchValue({
+        x: coord.x,
+        y: coord.y,
+      });
+      return;
+    }
+
+    if (this.stateCubicBezier === 1) {
+      coordsFormArrayControls[0].patchValue({
+        x: coord.x,
+        y: coord.y,
+      });
+      coordsFormArrayControls[1].patchValue({
+        x: coord.x,
+        y: coord.y,
+      });
+      return;
+    }
+
+    if (this.stateCubicBezier === 2) {
+      coordsFormArrayControls[1].patchValue({
+        x: coord.x,
+        y: coord.y,
+      });
+      return;
+    }
+  }
+
+  //#endregion mouse move
+
   public override onMouseUp(coord: Coord) {
     super.onMouseUp(coord);
     // avoid super class to complete the shape
     this._isShapeCompleted = false;
-  }
 
-  //#endregion mouse-events
+    if (this.currentCommand === COMMANDS.MOVE_TO) {
+      this.currentCommand = COMMANDS.LINE_TO;
+    }
+
+    if (this.currentCommand === COMMANDS.CUBIC_BEZIER) {
+      // change to next state or finish
+      this.stateCubicBezier++;
+      if (this.stateCubicBezier === 3) {
+        this.stateCubicBezier = 0;
+      }
+    }
+  }
 
   //#region mouse-events-edit
 
   public onMouseMoveEdit(coord: Coord): void {
     if (this.svgSelectedEditPointIndex === -1) return;
 
-    const pointsFormArray: FormArray = this.options.controls['points'] as FormArray;
-    pointsFormArray.at(this.svgSelectedEditPointIndex).patchValue({
+    const coordControls = (this.options.controls['commands'] as FormArray).controls
+      .map((c) => ((c as FormGroup).controls['coords'] as FormArray).controls)
+      .flatMap((c) => c) as FormControl[];
+    coordControls[this.svgSelectedEditPointIndex].patchValue({
       x: coord.x,
       y: coord.y,
     });
@@ -81,18 +271,16 @@ export class PathPainter extends ShapePainter {
   //#endregion mouse-events-edit
 
   public drawShape(model: PathModel): void {
-    this.shapeEl.setAttribute('d', `M${model.points.map((p) => `${p.x},${p.y}`).join(' ')}`);
+    const path = model.commands.reduce((path, command) => {
+      path += command.type;
+      path += command.coords.map((c) => `${c.x},${c.y}`).join(' ');
+      return path;
+    }, '');
+    this.shapeEl.setAttribute('d', path);
   }
 
   public getShapeEditPointsCoords(): Coord[] {
-    const pointsString = (this.shapeEl.getAttribute('d') ?? '').substring(1);
-    return pointsString
-      .split(' ')
-      .filter((s) => s.includes(','))
-      .map((pointString) => ({
-        x: +pointString.split(',')[0],
-        y: +pointString.split(',')[1],
-      }));
+    return (this.options.value as PathModel).commands.map((c) => c.coords).flatMap((c) => c);
   }
 
   public isShapeType<T extends keyof typeof ShapePainterMapping>(shape: T): this is InstanceType<(typeof ShapePainterMapping)[T]> {
@@ -100,18 +288,25 @@ export class PathPainter extends ShapePainter {
   }
 
   public moveTo() {
-    // TODO
+    this.currentCommand = COMMANDS.MOVE_TO;
   }
 
   public lineTo() {
-    // TODO
+    this.currentCommand = COMMANDS.LINE_TO;
   }
 
   public cubizBezier() {
-    // TODO
+    this.currentCommand = COMMANDS.CUBIC_BEZIER;
   }
 
   public closePath() {
-    // TODO
+    this.currentCommand = COMMANDS.CLOSE_PATH;
+    (this.options.controls['commands'] as FormArray).push(
+      new FormGroup({
+        type: new FormControl(COMMANDS.CLOSE_PATH),
+        coords: new FormArray([]),
+      })
+    );
+    this._isShapeCompleted = true;
   }
 }

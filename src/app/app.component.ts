@@ -82,11 +82,13 @@ export class AppComponent implements AfterViewInit {
 
     if (event.code === 'KeyZ') {
       this.shapePainter.closePath();
+      this.shapePainter = this.instantiateShapePainter();
       return;
     }
 
     if (event.code === 'KeyF') {
       this.shapePainter.setShapeCompleted();
+      this.shapePainter = this.instantiateShapePainter();
       return;
     }
   }

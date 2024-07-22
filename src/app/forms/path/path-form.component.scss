@@ -7,3 +7,30 @@
     padding: 0;
   }
 }
+
+.shape-options-form {
+  flex-direction: column;
+  gap: 15px;
+
+  label {
+    cursor: default;
+  }
+
+  .command {
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: flex-start;
+    gap: 5px;
+
+    .command-type {
+      min-width: 15px;
+      padding-top: 14px;
+    }
+
+    .coords-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 11px 25px;
+    }
+  }
+}

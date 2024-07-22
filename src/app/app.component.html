@@ -101,10 +101,14 @@
     <svg id="canvas" #canvas [attr.viewBox]="'0 0 ' + canvasWidth + ' ' + canvasHeight">
     </svg>
 
-    <div class="canvas-message"
-      *ngIf="shapePainter?.isShapeType(Shape.PATH) && shapePainter.isShapeStarted() && !shapePainter.isShapeCompleted()">
-      Pulsa las teclas M, L, C o Z para mover el cursor, dibujar curvas o cerrar la figura. Pulsa F para terminar la
-      figura y empezar una nueva.
+    <div class="canvas-message" *ngIf="shapePainter && shapePainter.isShapeType(Shape.PATH)">
+      Pulsa las teclas
+      <span [class.command-selected]="shapePainter.currentCommand === 'M'">M</span>,
+      <span [class.command-selected]="shapePainter.currentCommand === 'L'">L</span>,
+      <span [class.command-selected]="shapePainter.currentCommand === 'C'">C</span>,
+      <span [class.command-selected]="shapePainter.currentCommand === 'Z'">Z</span>,
+      para mover el cursor, dibujar lineas, curvas o cerrar la figura. Pulsa F para terminar la figura y empezar una
+      nueva.
     </div>
   </div>
 

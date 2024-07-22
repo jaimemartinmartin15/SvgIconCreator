@@ -5,14 +5,17 @@
     <span class="delete-icon" (click)="onDeleteShape($event)">🗑️</span>
   </div>
 
-  <form appCollapsibleContent formArrayName="points">
+  <form appCollapsibleContent formArrayName="commands">
     <div class="shape-options-form">
-      <label *ngFor="let control of getAsFormArray(pathPainter.options.controls['points']).controls; let i = index"
-        formGroupName="{{i}}">
-        <span>P{{i}}</span>
-        <div class="point-coords-input">
-          <input type="number" formControlName="x" (click)="$event.stopPropagation()">
-          <input type="number" formControlName="y" (click)="$event.stopPropagation()">
+      <label *ngFor="let control of getAsFormArray(pathPainter.options.controls['commands']).controls; let i = index"
+        formGroupName="{{i}}" class="command">
+        <span class="command-type">{{control.value.type}}</span>
+        <div formArrayName="coords" class="coords-list">
+          <div class="point-coords-input"
+            *ngFor="let p of getAsFormArray(control.get('coords')!).controls; let i = index" formGroupName="{{i}}">
+            <input type="number" formControlName="x" (click)="$event.stopPropagation()">
+            <input type="number" formControlName="y" (click)="$event.stopPropagation()">
+          </div>
         </div>
       </label>
     </div>
