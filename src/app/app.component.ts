@@ -61,6 +61,22 @@ export class AppComponent implements AfterViewInit {
 
   @HostListener('document:keypress', ['$event'])
   public onKeydownHandler(event: KeyboardEvent) {
+    if (event.shiftKey) {
+      const keyMapping: { [key: string]: Shape } = {
+        KeyR: Shape.RECT,
+        KeyL: Shape.LINE,
+        KeyC: Shape.CIRCLE,
+        KeyP: Shape.PATH,
+        KeyT: Shape.TEXT,
+      };
+
+      if (event.code in keyMapping) {
+        this.shapeToDraw = keyMapping[event.code];
+        this.shapePainter = this.instantiateShapePainter();
+      }
+      return;
+    }
+
     if (!this.shapePainter.isShapeType(Shape.PATH)) {
       return;
     }
