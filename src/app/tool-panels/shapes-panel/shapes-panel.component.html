@@ -1,0 +1,72 @@
+<app-collapsible [isOpen]="true">
+  <span appCollapsibleToggleAction>
+    <svg viewBox="0 0 650 620">
+      <path stroke-width="2" stroke="#000" fill="#6db3ce" d="M5,185L180,290 175,485 5,385.9Z" />
+      <path stroke-width="2" stroke="#000" fill="#79c6e4" d="M5,185L176.7,86.7 360,190 180,290Z" />
+      <path stroke-width="2" stroke="#000" fill="#619eb6" d="M180,290L175,485 358,383 360,190Z" />
+      <circle stroke-width="2" stroke="#000" fill="#ed718b" cx="473.2" cy="221.9" r="171.4" />
+      <path stroke-width="2" stroke="#000" fill="#fda75f"
+        d="M232,534L396.9,180.9C400.5,168.7 424.2,171.6 424.2,180.9L586.8,537C510,615 297,615 232,534" />
+    </svg>
+
+    <span class="app-label-name">FIGURAS</span>
+  </span>
+
+  <div appCollapsibleContent>
+    <div class="wrapper">
+      <div class="app-label-and-input shape-to-draw">
+        <span class="app-label-name">ELEMENTO SVG</span>
+
+        <div class="shape-radio-buttons-container" [formGroup]="shapesPanelForm">
+          <label class="mock-radio-button">
+            <!-- checked because is default Shape in app.component.ts -->
+            <input formControlName="shape" checked type="radio" name="shape" [value]="Shape.RECT"
+              (change)="onSelectShape.emit(Shape.RECT)">
+            <span>rect</span>
+          </label>
+
+          <label class="mock-radio-button">
+            <input formControlName="shape" type="radio" name="shape" [value]="Shape.LINE"
+              (change)="onSelectShape.emit(Shape.LINE)">
+            <span>line</span>
+          </label>
+
+          <label class="mock-radio-button">
+            <input formControlName="shape" type="radio" name="shape" [value]="Shape.PATH"
+              (change)="onSelectShape.emit(Shape.PATH)">
+            <span>path</span>
+          </label>
+
+          <label class="mock-radio-button">
+            <input formControlName="shape" type="radio" name="shape" [value]="Shape.CIRCLE"
+              (change)="onSelectShape.emit(Shape.CIRCLE)">
+            <span>circle</span>
+          </label>
+
+          <label class="mock-radio-button">
+            <input formControlName="shape" type="radio" name="shape" [value]="Shape.TEXT"
+              (change)="onSelectShape.emit(Shape.TEXT)">
+            <span>text</span>
+          </label>
+
+          <!-- TODO add ellipse -->
+        </div>
+      </div>
+
+      <div class="path-message" *ngIf="shapesPanelForm.controls['shape'].value === Shape.PATH">
+        <!-- TODO set in bold the letter depending on the shape state -->
+        <p>Pulsa la tecla M para establecer el cursor en un punto.</p>
+        <p>Pulsa la L para trazar líneas hasta un punto.</p>
+        <p>Pulsa la C para trazar curvas bezier.</p>
+        <p>Pulsa la Z para unir el path con el punto inicial y teminar.</p>
+        <p>Pulsa la F para teminar.</p>
+
+        <!-- TODO remove this example -->
+        <!-- <span [class.command-selected]="shapePainter.currentCommand === 'M'">M</span>,
+        <span [class.command-selected]="shapePainter.currentCommand === 'L'">L</span>,
+        <span [class.command-selected]="shapePainter.currentCommand === 'C'">C</span>,
+        <span [class.command-selected]="shapePainter.currentCommand === 'Z'">Z</span>, -->
+      </div>
+    </div>
+  </div>
+</app-collapsible>
