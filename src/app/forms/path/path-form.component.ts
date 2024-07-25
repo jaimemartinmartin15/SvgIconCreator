@@ -1,7 +1,7 @@
 import { CdkDragHandle } from '@angular/cdk/drag-drop';
 import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, HostBinding, HostListener, Input, Output } from '@angular/core';
-import { AbstractControl, FormArray, ReactiveFormsModule } from '@angular/forms';
+import { AbstractControl, FormArray, FormControl, ReactiveFormsModule } from '@angular/forms';
 import { CollapsibleModule } from '@jaimemartinmartin15/jei-devkit-angular-shared';
 import { PathPainter } from '../../painters/path.painter';
 
@@ -17,10 +17,6 @@ export class PathFormComponent {
 
   @Input()
   public pathPainter: PathPainter;
-
-  public getAsFormArray(form: AbstractControl): FormArray {
-    return form as FormArray;
-  }
 
   @Output()
   public onShapeSelected = new EventEmitter<PathPainter>();
@@ -46,5 +42,13 @@ export class PathFormComponent {
   public deleteCommand(i: number, e: MouseEvent) {
     e.stopPropagation();
     this.pathPainter.deleteCommand(i);
+  }
+
+  public getAsFormArray(form: AbstractControl): FormArray {
+    return form as FormArray;
+  }
+
+  public getAsFormControl(form: AbstractControl): FormControl {
+    return form as FormControl;
   }
 }

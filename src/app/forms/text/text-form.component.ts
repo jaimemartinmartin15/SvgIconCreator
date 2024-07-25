@@ -1,7 +1,7 @@
 import { CdkDragHandle } from '@angular/cdk/drag-drop';
 import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, HostBinding, HostListener, Input, Output } from '@angular/core';
-import { ReactiveFormsModule } from '@angular/forms';
+import { AbstractControl, FormControl, ReactiveFormsModule } from '@angular/forms';
 import { CollapsibleModule } from '@jaimemartinmartin15/jei-devkit-angular-shared';
 import { TextPainter } from '../../painters/text.painter';
 
@@ -35,5 +35,9 @@ export class TextFormComponent {
   public onDeleteShape(event: MouseEvent) {
     event.stopPropagation();
     this.onShapeDelete.emit(this.textPainter);
+  }
+
+  public getAsFormControl(form: AbstractControl): FormControl {
+    return form as FormControl;
   }
 }
