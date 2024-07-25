@@ -54,18 +54,28 @@
       </div>
 
       <div class="path-message" *ngIf="shapesPanelForm.controls['shape'].value === Shape.PATH">
-        <!-- TODO set in bold the letter depending on the shape state -->
-        <p>Pulsa la tecla M para establecer el cursor en un punto.</p>
-        <p>Pulsa la L para trazar líneas hasta un punto.</p>
-        <p>Pulsa la C para trazar curvas bezier.</p>
-        <p>Pulsa la Z para unir el path con el punto inicial y teminar.</p>
-        <p>Pulsa la F para teminar.</p>
+        <p>
+          Pulsa la tecla <span [class.command-selected]="pathCommand === 'M'">M</span> para establecer el cursor en un
+          punto.
+        </p>
 
-        <!-- TODO remove this example -->
-        <!-- <span [class.command-selected]="shapePainter.currentCommand === 'M'">M</span>,
-        <span [class.command-selected]="shapePainter.currentCommand === 'L'">L</span>,
-        <span [class.command-selected]="shapePainter.currentCommand === 'C'">C</span>,
-        <span [class.command-selected]="shapePainter.currentCommand === 'Z'">Z</span>, -->
+        <p>
+          Pulsa la tecla <span [class.command-selected]="pathCommand === 'L'">L</span> para trazar líneas hasta un
+          punto.
+        </p>
+
+        <p>
+          Pulsa la tecla <span [class.command-selected]="pathCommand === 'C'">C</span> para trazar curvas bezier.
+        </p>
+
+        <p>
+          Pulsa la tecla <span [class.command-selected]="pathCommand === 'Z'">Z</span> para unir el path con el punto
+          inicial y teminar.
+        </p>
+
+        <p>
+          Pulsa la tecla <span [class.command-selected]="pathCommand === 'F'">F</span> para teminar.
+        </p>
       </div>
     </div>
   </div>

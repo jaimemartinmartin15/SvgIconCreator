@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, EventEmitter, HostListener, Output } from '@angular/core';
+import { Component, EventEmitter, HostListener, Input, Output } from '@angular/core';
 import { NonNullableFormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { CollapsibleModule } from '@jaimemartinmartin15/jei-devkit-angular-shared';
 import { Shape } from '../../shape';
@@ -22,6 +22,9 @@ const KEY_MAPPING: { [key: string]: Shape } = {
 export class ShapesPanelComponent {
   public Shape = Shape;
   public shapesPanelForm;
+
+  @Input()
+  public pathCommand: string;
 
   @Output()
   public onSelectShape = new EventEmitter<Shape>();
