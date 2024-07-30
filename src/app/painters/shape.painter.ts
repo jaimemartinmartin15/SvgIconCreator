@@ -1,5 +1,4 @@
 import { FormGroup } from '@angular/forms';
-import { addAlphaToColor } from '../color.utils';
 import { Coord } from '../coord';
 import { ShapePainterMapping } from './shape-painter-mapping';
 
@@ -72,8 +71,8 @@ export abstract class ShapePainter {
     this.options.valueChanges.subscribe((v) => {
       // commom options
       this.shapeEl.setAttribute('stroke-width', v.strokeWidth);
-      this.shapeEl.setAttribute('stroke', addAlphaToColor(v.stroke, v.strokeAlpha));
-      this.shapeEl.setAttribute('fill', addAlphaToColor(v.fill, v.fillAlpha));
+      this.shapeEl.setAttribute('stroke', v.stroke);
+      this.shapeEl.setAttribute('fill', v.fill);
 
       // shape options
       this.drawShape(v);

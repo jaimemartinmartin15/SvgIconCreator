@@ -1,0 +1,39 @@
+<app-collapsible [isOpen]="true">
+  <span appCollapsibleToggleAction>
+    <svg viewBox="0 0 100 100">
+      <circle stroke-width="1" fill="#0000ff99" cx="50" cy="30" r="29" />
+      <circle stroke-width="1" fill="#00ff0099" cx="30" cy="70" r="29" />
+      <circle stroke-width="1" fill="#ff000099" cx="70" cy="70" r="29" />
+    </svg>
+
+    <span class="app-label-name">GROSOR Y COLORES</span>
+  </span>
+
+  <div appCollapsibleContent>
+    <div class="wrapper" [formGroup]="shapeForm">
+      <div class="app-label-and-input">
+        <span class="app-label-name">STROKE WIDTH</span>
+
+        <input type="number" min="0" step="0.5" formControlName="strokeWidth">
+      </div>
+
+      <div class="app-label-and-input colors">
+        <span class="app-label-name">
+          <span class="app-label-name" (click)="colorFormControlName = 'stroke'"
+            [ngClass]="{selected: colorFormControlName === 'stroke'}">
+            <span class="color" [style]="{backgroundColor: shapeForm.controls['stroke'].value}"></span>
+            <span>STROKE</span>
+          </span>
+
+          <span class="app-label-name" (click)="colorFormControlName = 'fill'"
+            [ngClass]="{selected: colorFormControlName === 'fill'}">
+            <span class="color" [style]="{backgroundColor: shapeForm.controls['fill'].value}"></span>
+            <span>FILL</span>
+          </span>
+        </span>
+
+        <app-color-picker [formControl]="getColorFormControl()"></app-color-picker>
+      </div>
+    </div>
+  </div>
+</app-collapsible>
