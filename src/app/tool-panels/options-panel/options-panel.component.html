@@ -10,7 +10,7 @@
   </span>
 
   <div appCollapsibleContent>
-    <div class="wrapper" [formGroup]="shapeForm">
+    <div class="wrapper" [formGroup]="shapePainter.options">
       <div class="app-label-and-input">
         <span class="app-label-name">STROKE WIDTH</span>
 
@@ -21,13 +21,13 @@
         <span class="app-label-name">
           <span class="app-label-name" (click)="colorFormControlName = 'stroke'"
             [ngClass]="{selected: colorFormControlName === 'stroke'}">
-            <span class="color" [style]="{backgroundColor: shapeForm.controls['stroke'].value}"></span>
+            <span class="color" [style]="{backgroundColor: shapePainter.options.controls['stroke'].value}"></span>
             <span>STROKE</span>
           </span>
 
           <span class="app-label-name" (click)="colorFormControlName = 'fill'"
-            [ngClass]="{selected: colorFormControlName === 'fill'}">
-            <span class="color" [style]="{backgroundColor: shapeForm.controls['fill'].value}"></span>
+            [ngClass]="{selected: colorFormControlName === 'fill'}" *ngIf="!shapePainter.isShapeType(Shape.LINE)">
+            <span class="color" [style]="{backgroundColor: shapePainter.options.controls['fill'].value}"></span>
             <span>FILL</span>
           </span>
         </span>
