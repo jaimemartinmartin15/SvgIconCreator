@@ -90,4 +90,17 @@ export class CirclePainter extends ShapePainter {
   public isShapeType<T extends keyof typeof ShapePainterMapping>(shape: T): this is InstanceType<(typeof ShapePainterMapping)[T]> {
     return shape === Shape.CIRCLE;
   }
+
+  protected getSvgString(): string {
+    const { strokeWidth, stroke, fill, cx, cy, r } = this.options.controls;
+
+    const strokeWidthAttr = `stroke-width="${strokeWidth.value}"`;
+    const strokeAttr = `stroke="${stroke.value}"`;
+    const fillAttr = `fill="${fill.value}"`;
+    const cxAttr = `cx="${cx.value}"`;
+    const cyAttr = `cy="${cy.value}"`;
+    const rAttr = `r="${r.value}"`;
+
+    return `<circle ${strokeWidthAttr} ${strokeAttr} ${fillAttr} ${cxAttr} ${cyAttr} ${rAttr} />`;
+  }
 }

@@ -57,7 +57,7 @@ export class TextPainter extends ShapePainter {
     this.shapeEl.setAttribute('x', this.toFixed(model.x));
     this.shapeEl.setAttribute('y', this.toFixed(model.y));
     this.shapeEl.setAttribute('font-size', `${model.fontSize}`);
-    this.shapeEl.innerHTML = model.text || this.options.controls['name'].value;
+    this.shapeEl.innerHTML = model.text;
   }
 
   public getShapeEditPointsCoords(): Coord[] {
@@ -71,5 +71,18 @@ export class TextPainter extends ShapePainter {
 
   public isShapeType<T extends keyof typeof ShapePainterMapping>(shape: T): this is InstanceType<(typeof ShapePainterMapping)[T]> {
     return shape === Shape.TEXT;
+  }
+
+  public getSvgString(): string {
+    const { strokeWidth, stroke, fill, x, y, text, fontSize } = this.options.controls;
+
+    const strokeWidthAttr = `stroke-width="${strokeWidth.value}"`;
+    const strokeAttr = `stroke="${stroke.value}"`;
+    const fillAttr = `fill="${fill.value}"`;
+    const xAttr = `x="${x.value}"`;
+    const yAttr = `y="${y.value}"`;
+    const fontSizeAttr = `font-size="${fontSize.value}"`;
+
+    return `<text ${strokeWidthAttr} ${strokeAttr} ${fillAttr} ${xAttr} ${yAttr} ${fontSizeAttr}>${text.value}</text>`;
   }
 }

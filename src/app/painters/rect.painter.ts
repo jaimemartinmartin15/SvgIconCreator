@@ -98,4 +98,20 @@ export class RectPainter extends ShapePainter {
   public isShapeType<T extends keyof typeof ShapePainterMapping>(shape: T): this is InstanceType<(typeof ShapePainterMapping)[T]> {
     return shape === Shape.RECT;
   }
+
+  protected getSvgString(): string {
+    const { strokeWidth, stroke, fill, x, y, width, height, rx, ry } = this.options.controls;
+
+    const strokeWidthAttr = `stroke-width="${strokeWidth.value}"`;
+    const strokeAttr = `stroke="${stroke.value}"`;
+    const fillAttr = `fill="${fill.value}"`;
+    const xAttr = `x="${x.value}"`;
+    const yAttr = `y="${y.value}"`;
+    const widthAttr = `width="${width.value}"`;
+    const heightAttr = `height="${height.value}"`;
+    const rxAttr = `rx="${rx.value}"`;
+    const ryAttr = `ry="${ry.value}"`;
+
+    return `<rect ${strokeWidthAttr} ${strokeAttr} ${fillAttr} ${xAttr} ${yAttr} ${widthAttr} ${heightAttr} ${rxAttr} ${ryAttr} />`;
+  }
 }

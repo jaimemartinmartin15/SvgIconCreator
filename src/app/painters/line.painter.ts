@@ -84,4 +84,18 @@ export class LinePainter extends ShapePainter {
   public isShapeType<T extends keyof typeof ShapePainterMapping>(shape: T): this is InstanceType<(typeof ShapePainterMapping)[T]> {
     return shape === Shape.LINE;
   }
+
+  protected getSvgString(): string {
+    const { strokeWidth, stroke, fill, x1, y1, x2, y2 } = this.options.controls;
+
+    const strokeWidthAttr = `stroke-width="${strokeWidth.value}"`;
+    const strokeAttr = `stroke="${stroke.value}"`;
+    const fillAttr = `fill="${fill.value}"`;
+    const x1Attr = `x1="${x1.value}"`;
+    const y1Attr = `y1="${y1.value}"`;
+    const x2Attr = `x2="${x2.value}"`;
+    const y2Attr = `y2="${y2.value}"`;
+
+    return `<line ${strokeWidthAttr} ${strokeAttr} ${fillAttr} ${x1Attr} ${y1Attr} ${x2Attr} ${y2Attr} />`;
+  }
 }

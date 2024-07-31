@@ -323,4 +323,21 @@ export class PathPainter extends ShapePainter {
     (this.options.controls['commands'] as FormArray).removeAt(i);
     this.setShapeSelected(true);
   }
+
+  public getSvgString(): string {
+    const { strokeWidth, stroke, fill } = this.options.controls;
+
+    const strokeWidthAttr = `stroke-width="${strokeWidth.value}"`;
+    const strokeAttr = `stroke="${stroke.value}"`;
+    const fillAttr = `fill="${fill.value}"`;
+
+    const pathModel: PathModel = this.options.value;
+    const dAttr = `d="${pathModel.commands.reduce((path, command) => {
+      path += command.type;
+      path += command.coords.map((c) => `${c.x},${c.y}`).join(' ');
+      return path;
+    }, '')}"`;
+
+    return `<path ${strokeWidthAttr} ${strokeAttr} ${fillAttr} ${dAttr} />`;
+  }
 }
