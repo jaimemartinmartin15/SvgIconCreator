@@ -126,8 +126,18 @@ export abstract class ShapePainter {
     c1.setAttribute('fill', 'white');
     return c1;
   }
-
   protected pointControlWidth(): number {
     return this.canvas.viewBox.baseVal.width * 0.01;
+  }
+
+  // TODO optimize this method on each shape, by removing unnecessary attributes
+  // TODO or returning an empty string if it won't be visible
+  protected abstract getSvgString(): string;
+  public asString(): string {
+    return this.getSvgString()
+      .replaceAll(/(#[0-9a-fA-F]{6})(ff|FF)/g, '$1') // remove transparency value when it is ff
+      .replaceAll(/\s{2,}/g, ' ') // reduce two or more spaces between the attributes or path points to one space
+      .replaceAll(/(\.\d*?)0+(,| |")/g, '$1$2') // Remove 0 at the end behind the dot
+      .replaceAll(/\.(,| |")/g, '$1'); // Remove the dot if necessary
   }
 }
