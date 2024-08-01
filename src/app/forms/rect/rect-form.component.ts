@@ -1,8 +1,8 @@
 import { CdkDragHandle } from '@angular/cdk/drag-drop';
 import { CommonModule } from '@angular/common';
-import { Component, EventEmitter, HostBinding, HostListener, Input, Output } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, EventEmitter, HostBinding, HostListener, Input, Output, ViewChild } from '@angular/core';
 import { AbstractControl, FormControl, ReactiveFormsModule } from '@angular/forms';
-import { CollapsibleModule } from '@jaimemartinmartin15/jei-devkit-angular-shared';
+import { adaptWidthOfInputToWidthOfText, CollapsibleModule } from '@jaimemartinmartin15/jei-devkit-angular-shared';
 import { RectPainter } from '../../painters/rect.painter';
 
 @Component({
@@ -12,7 +12,10 @@ import { RectPainter } from '../../painters/rect.painter';
   templateUrl: './rect-form.component.html',
   styleUrls: ['../shared.scss'],
 })
-export class RectFormComponent {
+export class RectFormComponent implements AfterViewInit {
+  @ViewChild('shapeName')
+  public shapeNameInput: ElementRef<HTMLInputElement>;
+
   @Input()
   public rectPainter: RectPainter;
 
@@ -30,6 +33,14 @@ export class RectFormComponent {
   @HostBinding('class.selected')
   public get isSelected() {
     return this.rectPainter.isShapeSelected();
+  }
+
+  public ngAfterViewInit(): void {
+    adaptWidthOfInputToWidthOfText(this.shapeNameInput.nativeElement);
+  }
+
+  public adaptShapeNameSize(event: Event) {
+    adaptWidthOfInputToWidthOfText(event.target as HTMLInputElement);
   }
 
   public onDeleteShape(event: MouseEvent) {

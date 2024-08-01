@@ -1,8 +1,8 @@
 import { CdkDragHandle } from '@angular/cdk/drag-drop';
 import { CommonModule } from '@angular/common';
-import { Component, EventEmitter, HostBinding, HostListener, Input, Output } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, EventEmitter, HostBinding, HostListener, Input, Output, ViewChild } from '@angular/core';
 import { AbstractControl, FormArray, FormControl, ReactiveFormsModule } from '@angular/forms';
-import { CollapsibleModule } from '@jaimemartinmartin15/jei-devkit-angular-shared';
+import { adaptWidthOfInputToWidthOfText, CollapsibleModule } from '@jaimemartinmartin15/jei-devkit-angular-shared';
 import { PathPainter } from '../../painters/path.painter';
 
 @Component({
@@ -12,7 +12,10 @@ import { PathPainter } from '../../painters/path.painter';
   templateUrl: './path-form.component.html',
   styleUrls: ['../shared.scss', './path-form.component.scss'],
 })
-export class PathFormComponent {
+export class PathFormComponent implements AfterViewInit {
+  @ViewChild('shapeName')
+  public shapeNameInput: ElementRef<HTMLInputElement>;
+
   public mouseHoverIndex = -1;
 
   @Input()
@@ -32,6 +35,14 @@ export class PathFormComponent {
   @HostBinding('class.selected')
   public get isSelected() {
     return this.pathPainter.isShapeSelected();
+  }
+
+  public ngAfterViewInit(): void {
+    adaptWidthOfInputToWidthOfText(this.shapeNameInput.nativeElement);
+  }
+
+  public adaptShapeNameSize(event: Event) {
+    adaptWidthOfInputToWidthOfText(event.target as HTMLInputElement);
   }
 
   public onDeleteShape(event: MouseEvent) {

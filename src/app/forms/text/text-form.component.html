@@ -2,10 +2,12 @@
   <div class="invoker" [class.selected]="textPainter.isShapeSelected()">
     <span cdkDragHandle (click)="$event.stopPropagation()">&#x2630;</span>
 
-    <input class="shape-name" (click)="$event.stopPropagation()"
+    <input #shapeName class="shape-name" (click)="$event.stopPropagation()" (input)="adaptShapeNameSize($event)"
       [formControl]="getAsFormControl(textPainter.options.controls['name'])">
 
-    <span class="delete-icon" (click)="onDeleteShape($event)">🗑️</span>
+    <span class="mock-icon"></span>
+
+    <span (click)="onDeleteShape($event)">🗑️</span>
   </div>
 
   <form appCollapsibleContent [formGroup]="textPainter.options">

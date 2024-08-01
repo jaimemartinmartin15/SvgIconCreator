@@ -16,6 +16,10 @@
 
     &.selected {
       border-bottom: var(--border);
+
+      .shape-name {
+        background-color: #f0f1f2;
+      }
     }
 
     .shape-name {
@@ -23,11 +27,14 @@
       outline: none;
       font-size: 1rem;
       margin: 0px 15px;
-      flex-grow: 1;
 
       &:focus {
         border-bottom: 2px solid black;
       }
+    }
+
+    .mock-icon {
+      flex-grow: 1;
     }
   }
 }
