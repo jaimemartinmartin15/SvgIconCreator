@@ -58,12 +58,15 @@ export class AppComponent implements AfterViewInit {
   public ngAfterViewInit(): void {
     this.canvas = this.elementsRefService.getNativeElement<SVGSVGElement>('canvas');
 
-    this.canvas.addEventListener('pointerdown', this.onPointerDown.bind(this));
-    this.canvas.addEventListener('pointermove', this.onPointerMove.bind(this));
-    this.canvas.addEventListener('pointerup', this.onPointerUp.bind(this));
+    setTimeout(() => {
+      // avoid error ExpressionChangedAfterItHasBeenCheckedError
+      this.shapePainter = this.instantiateShapePainter();
 
-    // avoid error ExpressionChangedAfterItHasBeenCheckedError
-    setTimeout(() => (this.shapePainter = this.instantiateShapePainter()), 0);
+      // avoid triggering these events before the instance is instantiated
+      this.canvas.addEventListener('pointerdown', this.onPointerDown.bind(this));
+      this.canvas.addEventListener('pointermove', this.onPointerMove.bind(this));
+      this.canvas.addEventListener('pointerup', this.onPointerUp.bind(this));
+    }, 0);
   }
 
   @HostListener('document:keypress', ['$event'])
