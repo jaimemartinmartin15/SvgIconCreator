@@ -5,7 +5,6 @@
   padding: 40px;
   height: 100vh;
   box-sizing: border-box;
-  --panel-and-shape-list-width: 375px;
 }
 
 .panels-list {
@@ -14,7 +13,7 @@
   justify-content: flex-start;
   flex-shrink: 0;
   gap: 20px;
-  width: var(--panel-and-shape-list-width);
+  width: 375px;
   overflow: auto;
   scrollbar-gutter: stable;
 }
@@ -39,7 +38,7 @@
   flex-direction: column;
   flex-shrink: 0;
   gap: 10px;
-  width: var(--panel-and-shape-list-width);
+  width: 500px;
   overflow: auto;
   scrollbar-gutter: stable;
 

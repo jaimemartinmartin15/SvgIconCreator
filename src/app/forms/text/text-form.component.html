@@ -10,23 +10,23 @@
 
   <form appCollapsibleContent [formGroup]="textPainter.options">
     <div class="shape-options-form">
-      <label>
-        <span>X</span>
+      <label class="app-label-and-input">
+        <span class="app-label-name">X</span>
         <input type="number" formControlName="x" (click)="$event.stopPropagation()">
       </label>
 
-      <label>
-        <span>Y</span>
+      <label class="app-label-and-input">
+        <span class="app-label-name">Y</span>
         <input type="number" formControlName="y" (click)="$event.stopPropagation()">
       </label>
 
-      <label>
-        <span>TEXT</span>
+      <label class="app-label-and-input">
+        <span class="app-label-name">TEXT</span>
         <input type="text" formControlName="text" (click)="$event.stopPropagation()">
       </label>
 
-      <label>
-        <span>FONT SIZE</span>
+      <label class="app-label-and-input">
+        <span class="app-label-name">FONT SIZE</span>
         <input type="number" formControlName="fontSize" (click)="$event.stopPropagation()">
       </label>
     </div>

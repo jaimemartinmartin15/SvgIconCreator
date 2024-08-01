@@ -10,17 +10,19 @@
 
   <form appCollapsibleContent formArrayName="commands">
     <div class="shape-options-form">
-      <label *ngFor="let control of getAsFormArray(pathPainter.options.controls['commands']).controls; let i = index"
-        formGroupName="{{i}}" class="command" (mouseover)="mouseHoverIndex = i" (mouseout)="mouseHoverIndex = -1">
+      <label
+        *ngFor="let commandControl of getAsFormArray(pathPainter.options.controls['commands']).controls; let i = index"
+        formGroupName="{{i}}" class="command" (mouseenter)="mouseHoverIndex = i" (mouseleave)="mouseHoverIndex = -i">
 
-        <span class="command-type">
-          <span *ngIf="mouseHoverIndex !== i || mouseHoverIndex === 0"> {{control.value.type}}</span>
+        <div class="command-type">
+          <span *ngIf="mouseHoverIndex !== i || mouseHoverIndex === 0">{{commandControl.value.type}}</span>
           <span *ngIf="mouseHoverIndex === i && mouseHoverIndex !== 0" (click)="deleteCommand(i, $event)">🗑️</span>
-        </span>
+        </div>
 
         <div formArrayName="coords" class="coords-list">
           <div class="point-coords-input"
-            *ngFor="let p of getAsFormArray(control.get('coords')!).controls; let i = index" formGroupName="{{i}}">
+            *ngFor="let p of getAsFormArray(commandControl.get('coords')!).controls; let i = index"
+            formGroupName="{{i}}">
             <input type="number" formControlName="x" (click)="$event.stopPropagation()">
             <input type="number" formControlName="y" (click)="$event.stopPropagation()">
           </div>

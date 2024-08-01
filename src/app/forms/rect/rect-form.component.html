@@ -10,33 +10,33 @@
 
   <form appCollapsibleContent [formGroup]="rectPainter.options">
     <div class="shape-options-form">
-      <label>
-        <span>X</span>
+      <label class="app-label-and-input">
+        <span class="app-label-name">X</span>
         <input type="number" formControlName="x" (click)="$event.stopPropagation()">
       </label>
 
-      <label>
-        <span>Y</span>
+      <label class="app-label-and-input">
+        <span class="app-label-name">Y</span>
         <input type="number" formControlName="y" (click)="$event.stopPropagation()">
       </label>
 
-      <label>
-        <span>WIDTH</span>
+      <label class="app-label-and-input">
+        <span class="app-label-name">WIDTH</span>
         <input type="number" min="0" formControlName="width" (click)="$event.stopPropagation()">
       </label>
 
-      <label>
-        <span>HEIGHT</span>
+      <label class="app-label-and-input">
+        <span class="app-label-name">HEIGHT</span>
         <input type="number" min="0" formControlName="height" (click)="$event.stopPropagation()">
       </label>
 
-      <label>
-        <span>RX</span>
+      <label class="app-label-and-input">
+        <span class="app-label-name">RX</span>
         <input type="number" min="0" formControlName="rx" (click)="$event.stopPropagation()">
       </label>
 
-      <label>
-        <span>RY</span>
+      <label class="app-label-and-input">
+        <span class="app-label-name">RY</span>
         <input type="number" min="0" formControlName="ry" (click)="$event.stopPropagation()">
       </label>
     </div>
