@@ -1,148 +1,51 @@
-<form class="toolbar">
-  <label>
-    <span>FONDO</span>
+<div class="panels-list">
+  <app-background-panel></app-background-panel>
 
-    <input type="file" (change)="onUpdateBackgroundImage($event)">
-    <div class="mock-input-file">{{backgroundImageFile?.name ?? 'Selecciona un fondo'}}</div>
-  </label>
+  <app-size-panel></app-size-panel>
 
-  <label>
-    <span>TAMAÑO LIENZO</span>
+  <app-shapes-panel (onSelectShape)="onChangeShapeToDraw($event)"
+    [pathCommand]="shapePainter && shapePainter.isShapeType(Shape.PATH) && shapePainter.currentCommand || ''">
+  </app-shapes-panel>
 
-    <div>
-      <input type="number" min="1" id="canvas-width-input" name="canvas-width" [(ngModel)]="canvasWidth">
-      :
-      <input type="number" min="1" id="canvas-height-input" name="canvas-height" [(ngModel)]="canvasHeight">
-    </div>
-  </label>
+  <app-options-panel *ngIf="shapePainter" [shapePainter]="shapePainter"></app-options-panel>
 
-  <div class="label">
-    <span>FIGURAS</span>
+  <app-export-panel [shapeList]="shapeList"></app-export-panel>
+</div>
 
-    <div class="shape-radio-buttons-container">
-      <label class="radio-button">
-        <input type="radio" name="shape" [value]="Shape.RECT" [(ngModel)]="shapeToDraw"
-          (ngModelChange)="onChangeShapeToDraw()">
-        <span>rect</span>
-      </label>
+<div class="canvas-container">
+  <svg id="canvas" appElementRef="canvas" viewBox="0 0 100 100"></svg>
+</div>
 
-      <label class="radio-button">
-        <input type="radio" name="shape" [value]="Shape.LINE" [(ngModel)]="shapeToDraw"
-          (ngModelChange)="onChangeShapeToDraw()">
-        <span>line</span>
-      </label>
+<div class="shape-list" cdkDropList (cdkDropListDropped)="onReorderingShapes($event)">
+  <ng-container *ngFor="let shapePainter of shapeList">
+    <app-rect-form cdkDrag cdkDragPreviewContainer="parent" (onShapeDelete)="deleteShape($event)"
+      (onShapeSelected)="selectShapePainter($event)" [rectPainter]="shapePainter"
+      *ngIf="shapePainter.isShapeType(Shape.RECT)">
+      <div *cdkDragPlaceholder></div>
+    </app-rect-form>
 
-      <label class="radio-button">
-        <input type="radio" name="shape" [value]="Shape.PATH" [(ngModel)]="shapeToDraw"
-          (ngModelChange)="onChangeShapeToDraw()">
-        <span>path</span>
-      </label>
+    <app-circle-form cdkDrag cdkDragPreviewContainer="parent" (onShapeDelete)="deleteShape($event)"
+      (onShapeSelected)="selectShapePainter($event)" [circlePainter]="shapePainter"
+      *ngIf="shapePainter.isShapeType(Shape.CIRCLE)">
+      <div *cdkDragPlaceholder></div>
+    </app-circle-form>
 
-      <label class="radio-button">
-        <input type="radio" name="shape" [value]="Shape.CIRCLE" [(ngModel)]="shapeToDraw"
-          (ngModelChange)="onChangeShapeToDraw()">
-        <span>circle</span>
-      </label>
+    <app-line-form cdkDrag cdkDragPreviewContainer="parent" (onShapeDelete)="deleteShape($event)"
+      (onShapeSelected)="selectShapePainter($event)" [linePainter]="shapePainter"
+      *ngIf="shapePainter.isShapeType(Shape.LINE)">
+      <div *cdkDragPlaceholder></div>
+    </app-line-form>
 
-      <label class="radio-button">
-        <input type="radio" name="shape" [value]="Shape.TEXT" [(ngModel)]="shapeToDraw"
-          (ngModelChange)="onChangeShapeToDraw()">
-        <span>text</span>
-      </label>
-    </div>
-  </div>
+    <app-path-form cdkDrag cdkDragPreviewContainer="parent" (onShapeDelete)="deleteShape($event)"
+      (onShapeSelected)="selectShapePainter($event)" [pathPainter]="shapePainter"
+      *ngIf="shapePainter.isShapeType(Shape.PATH)">
+      <div *cdkDragPlaceholder></div>
+    </app-path-form>
 
-  <div class="common-shape-options" *ngIf="shapePainter" [formGroup]="shapePainter.options">
-    <label>
-      <span>NOMBRE</span>
-      <input type="text" formControlName="name">
-    </label>
-
-    <label>
-      <span>STROKE WIDTH</span>
-      <input type="number" min="0" step="0.5" formControlName="strokeWidth">
-    </label>
-
-    <div class="input-color-alpha">
-      <label>
-        <span>STROKE</span>
-        <input type="color" formControlName="stroke">
-        <div class="mock-input-color" [style]="{backgroundColor: getColorWithAlpha('stroke')}"></div>
-      </label>
-
-      <label>
-        <span>A</span>
-        <input type="number" min="0" max="1" step="0.05" class="alpha-input" formControlName="strokeAlpha">
-      </label>
-    </div>
-
-    <div class="input-color-alpha">
-      <label>
-        <span>FILL</span>
-        <input type="color" formControlName="fill">
-        <div class="mock-input-color" [style]="{backgroundColor: getColorWithAlpha('fill')}"></div>
-      </label>
-
-      <label>
-        <span>A</span>
-        <input type="number" min="0" max="1" step="0.05" class="alpha-input" formControlName="fillAlpha">
-      </label>
-    </div>
-  </div>
-
-  <div class="buttons-container">
-    <button class="download-button" (click)="downloadSvg()">Descargar svg</button>
-    <button class="download-button" (click)="downloadPng()">Descargar png</button>
-  </div>
-</form>
-
-<div class="canvas-and-shape-list">
-  <div class="canvas-container">
-    <svg id="canvas" #canvas [attr.viewBox]="'0 0 ' + canvasWidth + ' ' + canvasHeight">
-    </svg>
-
-    <div class="canvas-message" *ngIf="shapePainter && shapePainter.isShapeType(Shape.PATH)">
-      Pulsa las teclas
-      <span [class.command-selected]="shapePainter.currentCommand === 'M'">M</span>,
-      <span [class.command-selected]="shapePainter.currentCommand === 'L'">L</span>,
-      <span [class.command-selected]="shapePainter.currentCommand === 'C'">C</span>,
-      <span [class.command-selected]="shapePainter.currentCommand === 'Z'">Z</span>,
-      para mover el cursor, dibujar lineas, curvas o cerrar la figura. Pulsa F para terminar la figura y empezar una
-      nueva.
-    </div>
-  </div>
-
-  <div class="shape-list" cdkDropList (cdkDropListDropped)="onReorderingShapes($event)">
-    <ng-container *ngFor="let shapePainter of shapeList">
-      <app-rect-form cdkDrag cdkDragPreviewContainer="parent" (onShapeDelete)="deleteShape($event)"
-        (onShapeSelected)="selectShapePainter($event)" [rectPainter]="shapePainter"
-        *ngIf="shapePainter.isShapeType(Shape.RECT)">
-        <div *cdkDragPlaceholder></div>
-      </app-rect-form>
-
-      <app-circle-form cdkDrag cdkDragPreviewContainer="parent" (onShapeDelete)="deleteShape($event)"
-        (onShapeSelected)="selectShapePainter($event)" [circlePainter]="shapePainter"
-        *ngIf="shapePainter.isShapeType(Shape.CIRCLE)">
-        <div *cdkDragPlaceholder></div>
-      </app-circle-form>
-
-      <app-line-form cdkDrag cdkDragPreviewContainer="parent" (onShapeDelete)="deleteShape($event)"
-        (onShapeSelected)="selectShapePainter($event)" [linePainter]="shapePainter"
-        *ngIf="shapePainter.isShapeType(Shape.LINE)">
-        <div *cdkDragPlaceholder></div>
-      </app-line-form>
-
-      <app-path-form cdkDrag cdkDragPreviewContainer="parent" (onShapeDelete)="deleteShape($event)"
-        (onShapeSelected)="selectShapePainter($event)" [pathPainter]="shapePainter"
-        *ngIf="shapePainter.isShapeType(Shape.PATH)">
-        <div *cdkDragPlaceholder></div>
-      </app-path-form>
-
-      <app-text-form cdkDrag cdkDragPreviewContainer="parent" (onShapeDelete)="deleteShape($event)"
-        (onShapeSelected)="selectShapePainter($event)" [textPainter]="shapePainter"
-        *ngIf="shapePainter.isShapeType(Shape.TEXT)">
-        <div *cdkDragPlaceholder></div>
-      </app-text-form>
-    </ng-container>
-  </div>
+    <app-text-form cdkDrag cdkDragPreviewContainer="parent" (onShapeDelete)="deleteShape($event)"
+      (onShapeSelected)="selectShapePainter($event)" [textPainter]="shapePainter"
+      *ngIf="shapePainter.isShapeType(Shape.TEXT)">
+      <div *cdkDragPlaceholder></div>
+    </app-text-form>
+  </ng-container>
 </div>

@@ -31,5 +31,6 @@ export class SizePanelComponent implements AfterViewInit {
     };
 
     this.canvas.setAttribute('viewBox', `${viewBox.x} ${viewBox.y} ${viewBox.width} ${viewBox.height}`);
+    this.canvas.style.aspectRatio = `${viewBox.width} / ${viewBox.height}`;
   }
 }

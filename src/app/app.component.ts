@@ -1,9 +1,8 @@
 import { CdkDragDrop, DragDropModule, moveItemInArray } from '@angular/cdk/drag-drop';
 import { CommonModule } from '@angular/common';
-import { AfterViewInit, Component, ElementRef, HostListener, ViewChild } from '@angular/core';
-import { AbstractControl, FormArray, FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { CollapsibleModule } from '@jaimemartinmartin15/jei-devkit-angular-shared';
-import { addAlphaToColor } from './color.utils';
+import { AfterViewInit, Component, HostListener } from '@angular/core';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { CollapsibleModule, ElementRefDirective, ElementsRefService } from '@jaimemartinmartin15/jei-devkit-angular-shared';
 import { CircleFormComponent } from './forms/circle/circle-form.component';
 import { LineFormComponent } from './forms/line/line-form.component';
 import { PathFormComponent } from './forms/path/path-form.component';
@@ -12,44 +11,52 @@ import { TextFormComponent } from './forms/text/text-form.component';
 import { ShapePainterMapping } from './painters/shape-painter-mapping';
 import { ShapePainter } from './painters/shape.painter';
 import { Shape } from './shape';
+import { BackgroundPanelComponent } from './tool-panels/background-panel/background-panel.component';
+import { ExportPanelComponent } from './tool-panels/export-panel/export-panel.component';
+import { OptionsPanelComponent } from './tool-panels/options-panel/options-panel.component';
+import { ShapesPanelComponent } from './tool-panels/shapes-panel/shapes-panel.component';
+import { SizePanelComponent } from './tool-panels/size-panel/size-panel.component';
 
 @Component({
   selector: 'app-root',
   standalone: true,
   imports: [
+    // angular
     CommonModule,
+    DragDropModule,
     FormsModule,
     ReactiveFormsModule,
-    DragDropModule,
+    // jei-devkit
     CollapsibleModule,
-    RectFormComponent,
+    ElementRefDirective,
+    // panels
+    BackgroundPanelComponent,
+    ExportPanelComponent,
+    OptionsPanelComponent,
+    ShapesPanelComponent,
+    SizePanelComponent,
+    // shape list form components
     CircleFormComponent,
     LineFormComponent,
     PathFormComponent,
+    RectFormComponent,
     TextFormComponent,
   ],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss',
 })
 export class AppComponent implements AfterViewInit {
-  public backgroundImageFile?: File;
-
-  public canvasWidth = 100;
-  public canvasHeight = 100;
-
   public Shape = Shape;
   public shapeToDraw: Shape = Shape.RECT;
   public shapePainter: ShapePainter;
   public shapeList: ShapePainter[] = [];
 
-  @ViewChild('canvas')
-  private canvasRef: ElementRef<SVGSVGElement>;
-  private get canvas() {
-    return this.canvasRef.nativeElement;
-  }
+  private canvas: SVGSVGElement;
+
+  public constructor(private readonly elementsRefService: ElementsRefService) {}
 
   public ngAfterViewInit(): void {
-    this.canvas.setAttribute('viewBox', `0 0 ${this.canvasWidth} ${this.canvasHeight}`);
+    this.canvas = this.elementsRefService.getNativeElement<SVGSVGElement>('canvas');
 
     this.canvas.addEventListener('pointerdown', this.onPointerDown.bind(this));
     this.canvas.addEventListener('pointermove', this.onPointerMove.bind(this));
@@ -60,23 +67,7 @@ export class AppComponent implements AfterViewInit {
   }
 
   @HostListener('document:keypress', ['$event'])
-  public onKeydownHandler(event: KeyboardEvent) {
-    if (event.shiftKey) {
-      const keyMapping: { [key: string]: Shape } = {
-        KeyR: Shape.RECT,
-        KeyL: Shape.LINE,
-        KeyC: Shape.CIRCLE,
-        KeyP: Shape.PATH,
-        KeyT: Shape.TEXT,
-      };
-
-      if (event.code in keyMapping) {
-        this.shapeToDraw = keyMapping[event.code];
-        this.shapePainter = this.instantiateShapePainter();
-      }
-      return;
-    }
-
+  public onKeypressHandler(event: KeyboardEvent) {
     if (!this.shapePainter.isShapeType(Shape.PATH)) {
       return;
     }
@@ -115,13 +106,14 @@ export class AppComponent implements AfterViewInit {
     const y = e.clientY - rect.top;
 
     // convert mouse coordinates to viewBox coordinate system
-    const xInViewBox = (x / rect.width) * this.canvasWidth;
-    const yInViewBox = (y / rect.height) * this.canvasHeight;
+    const xInViewBox = (x / rect.width) * this.canvas.viewBox.baseVal.width;
+    const yInViewBox = (y / rect.height) * this.canvas.viewBox.baseVal.height;
 
     return { x: +xInViewBox.toFixed(1), y: +yInViewBox.toFixed(1) };
   }
 
-  public onChangeShapeToDraw() {
+  public onChangeShapeToDraw(shape: Shape) {
+    this.shapeToDraw = shape;
     this.shapePainter.setShapeSelected(false);
     this.shapePainter.setShapeCompleted();
     this.shapePainter = this.instantiateShapePainter();
@@ -184,12 +176,6 @@ export class AppComponent implements AfterViewInit {
     this.shapePainter = shapePainter;
   }
 
-  public getColorWithAlpha(formControlName: string): string {
-    const color = this.shapePainter.options.controls[formControlName].value;
-    const alpha = this.shapePainter.options.controls[`${formControlName}Alpha`].value;
-    return addAlphaToColor(color, alpha);
-  }
-
   public onReorderingShapes(event: CdkDragDrop<string[]>) {
     this.shapeList.forEach((sp) => sp.removeFromCanvas());
     moveItemInArray(this.shapeList, event.previousIndex, event.currentIndex);
@@ -200,58 +186,5 @@ export class AppComponent implements AfterViewInit {
     this.shapeList.splice(this.shapeList.indexOf(shapePainter), 1);
     shapePainter.removeFromCanvas();
     this.shapePainter = this.instantiateShapePainter();
-  }
-
-  public onUpdateBackgroundImage(e: Event) {
-    const inputEl = e.target as HTMLInputElement;
-    this.backgroundImageFile = inputEl.files![0];
-
-    const imageBg = document.createElementNS('http://www.w3.org/2000/svg', 'image') as SVGImageElement;
-
-    imageBg.setAttribute('x', '0');
-    imageBg.setAttribute('y', '0');
-    imageBg.setAttribute('width', `${this.canvasWidth}`);
-    imageBg.setAttribute('height', `${this.canvasHeight}`);
-    imageBg.setAttribute('href', URL.createObjectURL(this.backgroundImageFile));
-    this.canvas.append(imageBg);
-  }
-
-  public downloadSvg() {
-    // convert the svg element to string
-    const svgString = new XMLSerializer().serializeToString(this.canvas);
-    var textFileAsBlob = new Blob([svgString], { type: 'text/plain' });
-
-    // download the file with the svg string
-    var downloadLink = document.createElement('a');
-    // TODO allow to set custom name
-    downloadLink.download = 'jaimeelingeniero-creador-de-iconos-svg.svg';
-    downloadLink.href = window.webkitURL.createObjectURL(textFileAsBlob);
-    downloadLink.click();
-  }
-
-  public downloadPng() {
-    const svgString = new XMLSerializer().serializeToString(this.canvas);
-
-    const canvas = document.createElement('canvas');
-    const ctx = canvas.getContext('2d')!;
-    const img = new Image();
-
-    img.onload = () => {
-      canvas.width = this.canvasWidth;
-      canvas.height = this.canvasHeight;
-      ctx.drawImage(img, 0, 0, this.canvasWidth, this.canvasHeight);
-
-      const enlace = document.createElement('a');
-      enlace.href = canvas.toDataURL('image/png');
-      // TODO allow to set custom name
-      enlace.download = 'jaimeelingeniero-creador-de-iconos-svg.png';
-      enlace.click();
-    };
-
-    img.src = `data:image/svg+xml;base64,${btoa(svgString)}`;
-  }
-
-  public getAsFormArray(form: AbstractControl): FormArray {
-    return form as FormArray;
   }
 }
