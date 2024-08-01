@@ -18,8 +18,9 @@ export class OptionsPanelComponent implements OnChanges {
   public colorFormControlName: 'stroke' | 'fill' = 'stroke';
 
   private otherShapeIsSelected$ = new Subject<void>();
-  private lastUsedStroke: string = '#000000'; // black
-  private lastUsedFill: string = '#FFFFFF'; // white
+  private lastUsedStrokeWidth: number = 1;
+  private lastUsedStroke: string = '#FF0000'; // red
+  private lastUsedFill: string = '#FF000000'; // red transparent
 
   @Input()
   public shapePainter: ShapePainter;
@@ -32,6 +33,9 @@ export class OptionsPanelComponent implements OnChanges {
       this.otherShapeIsSelected$.next();
 
       // listen to changes for next shape
+      (this.shapePainter.options.controls['strokeWidth'] as FormControl).valueChanges
+        .pipe(takeUntil(this.otherShapeIsSelected$))
+        .subscribe((v) => (this.lastUsedStrokeWidth = v));
       (this.shapePainter.options.controls['stroke'] as FormControl).valueChanges
         .pipe(takeUntil(this.otherShapeIsSelected$))
         .subscribe((v) => (this.lastUsedStroke = v));
@@ -42,6 +46,7 @@ export class OptionsPanelComponent implements OnChanges {
 
     if (changes['shapePainter'] && !this.shapePainter.isShapeSelected()) {
       // if it changes the shapePainter and it is not selected (it is a new one), set last used colors in colorpicker
+      this.shapePainter.options.controls['strokeWidth'].setValue(this.lastUsedStrokeWidth);
       this.shapePainter.options.controls['stroke'].setValue(this.lastUsedStroke);
       this.shapePainter.options.controls['fill'].setValue(this.lastUsedFill);
     }
