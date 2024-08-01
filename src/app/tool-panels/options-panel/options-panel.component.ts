@@ -45,6 +45,10 @@ export class OptionsPanelComponent implements OnChanges {
       this.shapePainter.options.controls['stroke'].setValue(this.lastUsedStroke);
       this.shapePainter.options.controls['fill'].setValue(this.lastUsedFill);
     }
+
+    if (changes['shapePainter'] && this.shapePainter.isShapeType(Shape.LINE)) {
+      this.colorFormControlName = 'stroke';
+    }
   }
 
   public getColorFormControl(): FormControl {
