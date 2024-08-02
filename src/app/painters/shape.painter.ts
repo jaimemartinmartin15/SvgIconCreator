@@ -1,5 +1,6 @@
 import { FormGroup } from '@angular/forms';
 import { Coord } from '../coord';
+import { Shape } from '../shape';
 import { ShapePainterMapping } from './shape-painter-mapping';
 
 export abstract class ShapePainter {
@@ -70,6 +71,7 @@ export abstract class ShapePainter {
   public setFormListener() {
     this.options.valueChanges.subscribe((v) => {
       // commom options
+      this.shapeEl.setAttribute('name', v.name);
       this.shapeEl.setAttribute('stroke-width', v.strokeWidth);
       this.shapeEl.setAttribute('stroke', v.stroke);
       this.shapeEl.setAttribute('fill', v.fill);
@@ -130,14 +132,50 @@ export abstract class ShapePainter {
     return this.canvas.viewBox.baseVal.width * 0.01;
   }
 
-  // TODO optimize this method on each shape, by removing unnecessary attributes
-  // TODO or returning an empty string if it won't be visible
-  protected abstract getSvgString(): string;
-  public asString(): string {
-    return this.getSvgString()
-      .replaceAll(/(#[0-9a-fA-F]{6})(ff|FF)/g, '$1') // remove transparency value when it is ff
+  //#region Parse Svg String
+
+  protected abstract tag: Shape;
+
+  protected abstract parseCustomAttributesAndCloseShape(): string;
+
+  public parseAsString(): string {
+    if (!this.isShapeVisible()) return '';
+
+    const { strokeWidth, stroke, fill } = this.options.controls;
+
+    let shape = `<${this.tag} `;
+
+    // if stroke-width is 1, do not add it (it is the default)
+    // if the stroke is transparent, do not add it neither
+    if (strokeWidth.value !== 1 && !stroke.value.endsWith('00')) {
+      shape += ` stroke-width="${strokeWidth.value}"`;
+    }
+
+    // if stroke-width is 0, do not add it
+    // if the stroke is transparent, do not add it neither
+    if (strokeWidth.value !== 0 && !stroke.value.endsWith('00')) {
+      shape += ` stroke="${stroke.value}"`;
+    }
+
+    // if the shape is a line, do not add it
+    // if the fill is black, do not add it (it is the default)
+    if (!this.isShapeType(Shape.LINE) && !(fill.value.toLowerCase() === '#000000ff')) {
+      shape += ` fill="${fill.value}"`;
+    }
+
+    shape += this.parseCustomAttributesAndCloseShape();
+
+    return shape
+      .replaceAll(/(#[0-9a-fA-F]{6})(ff|FF)/g, '$1') // remove transparency from colors value when it is ff
       .replaceAll(/\s{2,}/g, ' ') // reduce two or more spaces between the attributes or path points to one space
       .replaceAll(/(\.\d*?)0+(,| |")/g, '$1$2') // Remove 0 at the end behind the dot
       .replaceAll(/\.(,| |")/g, '$1'); // Remove the dot if necessary
   }
+
+  protected isShapeVisible(): boolean {
+    const { strokeWidth, stroke, fill } = this.options.controls;
+    return !fill.value.endsWith('00') || (!stroke.value.endsWith('00') && strokeWidth.value !== 0);
+  }
+
+  //#endregion Parse Svg String
 }

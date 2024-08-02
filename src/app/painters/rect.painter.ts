@@ -99,19 +99,38 @@ export class RectPainter extends ShapePainter {
     return shape === Shape.RECT;
   }
 
-  protected getSvgString(): string {
-    const { strokeWidth, stroke, fill, x, y, width, height, rx, ry } = this.options.controls;
+  //#region Parse Svg String
 
-    const strokeWidthAttr = `stroke-width="${strokeWidth.value}"`;
-    const strokeAttr = `stroke="${stroke.value}"`;
-    const fillAttr = `fill="${fill.value}"`;
-    const xAttr = `x="${x.value}"`;
-    const yAttr = `y="${y.value}"`;
-    const widthAttr = `width="${width.value}"`;
-    const heightAttr = `height="${height.value}"`;
-    const rxAttr = `rx="${rx.value}"`;
-    const ryAttr = `ry="${ry.value}"`;
+  protected tag = Shape.RECT;
 
-    return `<rect ${strokeWidthAttr} ${strokeAttr} ${fillAttr} ${xAttr} ${yAttr} ${widthAttr} ${heightAttr} ${rxAttr} ${ryAttr} />`;
+  protected parseCustomAttributesAndCloseShape(): string {
+    const { x, y, width, height, rx, ry } = this.options.controls;
+
+    let rectAttr = '';
+
+    // add if they are not the default value
+    if (x.value !== 0) rectAttr += ` x="${x.value}"`;
+    if (y.value !== 0) rectAttr += ` y="${y.value}"`;
+
+    // always present, otherwise not visible
+    rectAttr += ` width="${width.value}"`;
+    rectAttr += ` height="${height.value}"`;
+
+    // rx and ry both have to be different than 0, and if they are the same, add only one of both
+    if (rx.value === ry.value && rx.value !== 0) rectAttr += ` rx="${rx.value}"`;
+    else if (rx.value !== 0 && ry.value !== 0) rectAttr += ` rx="${rx.value}" ry="${ry.value}"`;
+
+    return `${rectAttr} />`;
   }
+
+  protected override isShapeVisible(): boolean {
+    const { width, height } = this.options.controls;
+
+    let isVisible = super.isShapeVisible();
+    let hasSize = width.value > 0 && height.value > 0;
+
+    return isVisible && hasSize;
+  }
+
+  //#endregion Parse Svg String
 }

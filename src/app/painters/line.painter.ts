@@ -85,17 +85,32 @@ export class LinePainter extends ShapePainter {
     return shape === Shape.LINE;
   }
 
-  protected getSvgString(): string {
-    const { strokeWidth, stroke, fill, x1, y1, x2, y2 } = this.options.controls;
+  //#region Parse Svg String
 
-    const strokeWidthAttr = `stroke-width="${strokeWidth.value}"`;
-    const strokeAttr = `stroke="${stroke.value}"`;
-    const fillAttr = `fill="${fill.value}"`;
-    const x1Attr = `x1="${x1.value}"`;
-    const y1Attr = `y1="${y1.value}"`;
-    const x2Attr = `x2="${x2.value}"`;
-    const y2Attr = `y2="${y2.value}"`;
+  protected tag = Shape.LINE;
 
-    return `<line ${strokeWidthAttr} ${strokeAttr} ${fillAttr} ${x1Attr} ${y1Attr} ${x2Attr} ${y2Attr} />`;
+  protected parseCustomAttributesAndCloseShape(): string {
+    const { x1, y1, x2, y2 } = this.options.controls;
+
+    let lineAttrs = '';
+
+    // add if they are not the default value
+    if (x1.value !== 0) lineAttrs += ` x1="${x1.value}"`;
+    if (y1.value !== 0) lineAttrs += ` y1="${y1.value}"`;
+    if (x2.value !== 0) lineAttrs += ` x2="${x2.value}"`;
+    if (y2.value !== 0) lineAttrs += ` y2="${y2.value}"`;
+
+    return `${lineAttrs} />`;
   }
+
+  protected override isShapeVisible(): boolean {
+    const { strokeWidth, stroke, x1, y1, x2, y2 } = this.options.controls;
+
+    let isVisible = !stroke.value.endsWith('00') && strokeWidth.value !== 0;
+    let hasSize = x1.value !== x2.value && y1.value !== y2.value;
+
+    return isVisible && hasSize;
+  }
+
+  //#endregion Parse Svg String
 }

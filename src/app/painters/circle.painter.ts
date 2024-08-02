@@ -91,16 +91,33 @@ export class CirclePainter extends ShapePainter {
     return shape === Shape.CIRCLE;
   }
 
-  protected getSvgString(): string {
-    const { strokeWidth, stroke, fill, cx, cy, r } = this.options.controls;
+  //#region Parse Svg String
 
-    const strokeWidthAttr = `stroke-width="${strokeWidth.value}"`;
-    const strokeAttr = `stroke="${stroke.value}"`;
-    const fillAttr = `fill="${fill.value}"`;
-    const cxAttr = `cx="${cx.value}"`;
-    const cyAttr = `cy="${cy.value}"`;
-    const rAttr = `r="${r.value}"`;
+  protected tag = Shape.CIRCLE;
 
-    return `<circle ${strokeWidthAttr} ${strokeAttr} ${fillAttr} ${cxAttr} ${cyAttr} ${rAttr} />`;
+  protected parseCustomAttributesAndCloseShape(): string {
+    const { cx, cy, r } = this.options.controls;
+
+    let circleAttr = '';
+
+    // add if they are not the default value
+    if (cx.value !== 0) circleAttr += ` cx="${cx.value}"`;
+    if (cy.value !== 0) circleAttr += ` cy="${cy.value}"`;
+
+    // always present, otherwise not visible
+    circleAttr += ` r="${r.value}"`;
+
+    return `${circleAttr} />`;
   }
+
+  protected override isShapeVisible(): boolean {
+    const { r } = this.options.controls;
+
+    let isVisible = super.isShapeVisible();
+    let hasSize = r.value > 0;
+
+    return isVisible && hasSize;
+  }
+
+  //#endregion Parse Svg String
 }

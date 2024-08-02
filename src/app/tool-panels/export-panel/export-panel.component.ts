@@ -35,15 +35,15 @@ export class ExportPanelComponent {
     const svgVb = this.canvas.viewBox.baseVal;
     let svgTemplate = `<svg viewBox="${svgVb.x} ${svgVb.y} ${svgVb.width} ${svgVb.height}">
   ${this.shapeList
-    .map((sp) => sp.asString())
+    .map((sp) => sp.parseAsString())
     .filter((s) => s !== '')
     .join('\n  ')}
 </svg>`;
 
     // download the file
-    var downloadLink = document.createElement('a');
+    const downloadLink = document.createElement('a');
     downloadLink.download = this.parseDownloadFileName('optimizedSvg', 'svg');
-    var svgFileAsBlob = new Blob([svgTemplate], { type: 'text/plain' });
+    const svgFileAsBlob = new Blob([svgTemplate], { type: 'text/plain' });
     downloadLink.href = window.webkitURL.createObjectURL(svgFileAsBlob);
     downloadLink.click();
   }
@@ -53,15 +53,16 @@ export class ExportPanelComponent {
     const svgString = new XMLSerializer().serializeToString(this.canvas);
 
     // download the file
-    var downloadLink = document.createElement('a');
+    const downloadLink = document.createElement('a');
     downloadLink.download = this.parseDownloadFileName('svg', 'svg');
-    var svgFileAsBlob = new Blob([svgString], { type: 'text/plain' });
+    const svgFileAsBlob = new Blob([svgString], { type: 'text/plain' });
     downloadLink.href = window.webkitURL.createObjectURL(svgFileAsBlob);
     downloadLink.click();
   }
 
   public downloadPng() {
     // convert the svg element to string
+    // TODO do not export the background image
     const svgString = new XMLSerializer().serializeToString(this.canvas);
 
     // create and image, and attach a listener to download it when it is loaded

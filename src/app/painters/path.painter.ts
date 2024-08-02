@@ -324,20 +324,29 @@ export class PathPainter extends ShapePainter {
     this.setShapeSelected(true);
   }
 
-  public getSvgString(): string {
-    const { strokeWidth, stroke, fill } = this.options.controls;
+  //#region Parse Svg String
 
-    const strokeWidthAttr = `stroke-width="${strokeWidth.value}"`;
-    const strokeAttr = `stroke="${stroke.value}"`;
-    const fillAttr = `fill="${fill.value}"`;
+  protected tag = Shape.PATH;
+
+  protected parseCustomAttributesAndCloseShape(): string {
+    let pathAttr = '';
 
     const pathModel: PathModel = this.options.value;
-    const dAttr = `d="${pathModel.commands.reduce((path, command) => {
+    pathAttr += ` d="${pathModel.commands.reduce((path, command) => {
       path += command.type;
       path += command.coords.map((c) => `${c.x},${c.y}`).join(' ');
       return path;
     }, '')}"`;
 
-    return `<path ${strokeWidthAttr} ${strokeAttr} ${fillAttr} ${dAttr} />`;
+    return `${pathAttr} />`;
   }
+
+  protected override isShapeVisible(): boolean {
+    let isVisible = super.isShapeVisible();
+    let hasSize = this.options.value.commands.length > 1;
+
+    return isVisible && hasSize;
+  }
+
+  //#endregion Parse Svg String
 }

@@ -73,16 +73,32 @@ export class TextPainter extends ShapePainter {
     return shape === Shape.TEXT;
   }
 
-  public getSvgString(): string {
-    const { strokeWidth, stroke, fill, x, y, text, fontSize } = this.options.controls;
+  //#region Parse Svg String
 
-    const strokeWidthAttr = `stroke-width="${strokeWidth.value}"`;
-    const strokeAttr = `stroke="${stroke.value}"`;
-    const fillAttr = `fill="${fill.value}"`;
-    const xAttr = `x="${x.value}"`;
-    const yAttr = `y="${y.value}"`;
-    const fontSizeAttr = `font-size="${fontSize.value}"`;
+  protected tag = Shape.TEXT;
 
-    return `<text ${strokeWidthAttr} ${strokeAttr} ${fillAttr} ${xAttr} ${yAttr} ${fontSizeAttr}>${text.value}</text>`;
+  protected parseCustomAttributesAndCloseShape(): string {
+    const { x, y, text, fontSize } = this.options.controls;
+
+    let textAttr = '';
+
+    // add if they are not the default value
+    if (x.value !== 0) textAttr += ` x="${x.value}"`;
+    if (y.value !== 0) textAttr += ` y="${y.value}"`;
+
+    // always present, otherwise not visible
+    textAttr += ` font-size="${fontSize.value}"`;
+    return `${textAttr} >${text.value}</text>`;
   }
+
+  protected override isShapeVisible(): boolean {
+    const { text, fontSize } = this.options.controls;
+
+    let isVisible = super.isShapeVisible();
+    let hasSize = text.value.trim() !== '' && fontSize.value > 0;
+
+    return isVisible && hasSize;
+  }
+
+  //#endregion Parse Svg String
 }

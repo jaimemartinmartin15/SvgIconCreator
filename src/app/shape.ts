@@ -1,7 +1,8 @@
+// the values are used also as tag to parse and export the shapes
 export enum Shape {
-  RECT = 'RECT',
-  LINE = 'LINE',
-  PATH = 'PATH',
-  CIRCLE = 'CIRCLE',
-  TEXT = 'TEXT',
+  RECT = 'rect',
+  LINE = 'line',
+  PATH = 'path',
+  CIRCLE = 'circle',
+  TEXT = 'text',
 }
