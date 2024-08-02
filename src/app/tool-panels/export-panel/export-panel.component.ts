@@ -49,8 +49,11 @@ export class ExportPanelComponent {
   }
 
   public downloadSvg() {
-    // convert the svg element to string
-    const svgString = new XMLSerializer().serializeToString(this.canvas);
+    // convert the svg element to string (remove the background image)
+    let svgString = new XMLSerializer().serializeToString(this.canvas);
+    if (svgString.includes('<image ')) {
+      svgString = svgString.slice(0, svgString.indexOf('<image ')) + svgString.slice(svgString.indexOf('/>') + 2);
+    }
 
     // download the file
     const downloadLink = document.createElement('a');
@@ -61,9 +64,11 @@ export class ExportPanelComponent {
   }
 
   public downloadPng() {
-    // convert the svg element to string
-    // TODO do not export the background image
-    const svgString = new XMLSerializer().serializeToString(this.canvas);
+    // convert the svg element to string (remove the background image)
+    let svgString = new XMLSerializer().serializeToString(this.canvas);
+    if (svgString.includes('<image ')) {
+      svgString = svgString.slice(0, svgString.indexOf('<image ')) + svgString.slice(svgString.indexOf('/>') + 2);
+    }
 
     // create and image, and attach a listener to download it when it is loaded
     const img = new Image();
