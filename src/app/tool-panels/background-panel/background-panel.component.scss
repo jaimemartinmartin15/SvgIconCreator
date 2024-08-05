@@ -1,5 +1,11 @@
 @import "../../styles/panels";
 
+.info-message {
+  color: #909090;
+  font-size: 1rem;
+  margin: 0;
+}
+
 .choose-image {
   .mock-input-and-delete-wrapper {
     display: flex;
