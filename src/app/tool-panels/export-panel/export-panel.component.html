@@ -1,4 +1,4 @@
-<app-collapsible>
+<app-collapsible [formGroup]="exportPanelForm">
   <span appCollapsibleToggleAction>
     <svg viewBox="0 0 100 100">
       <rect stroke-width="1" stroke="#d8a72c" fill="#d8a72c" x="0" y="0" width="100" height="100" rx="25" ry="25" />
@@ -7,73 +7,79 @@
       <path stroke-width="1" stroke="#d8a72c" fill="#d8a72c" d="M28,55L35,55 35,65 65,65 65,55 72,55 72,70 28,70Z" />
     </svg>
 
+    <!-- TODO <span class="app-label-name">EXPORTAR O IMPORTAR</span> -->
     <span class="app-label-name">EXPORTAR</span>
   </span>
 
   <div appCollapsibleContent>
-    <div class="wrapper" [formGroup]="downloadFileNameForm">
-      <p class="message">
-        La imagen de fondo no es exportada, es solo una referencia para realizar el dibujo.
-      </p>
+    <div class="wrapper">
+      <div class="app-label-and-input format">
+        <span class="app-label-name">FORMATO</span>
 
-      <div class="app-label-and-input">
-        <span class="app-label-name">DESCARGAR SVG OPTIMIZADO</span>
+        <div class="export-radio-buttons-container">
+          <label class="mock-radio-button">
+            <input type="radio" formControlName="format" [value]="ExportTypes.SvgOptimized">
+            <span>SVG Optimizado</span>
+          </label>
 
-        <div>
-          <p class="message">
-            Esta opción descarga el svg sin nombres y con los atributos mínimos. Usa esta opción si vas a incluir el svg
-            en tu aplicación.
+          <label class="mock-radio-button">
+            <input type="radio" formControlName="format" [value]="ExportTypes.Svg">
+            <span>SVG</span>
+          </label>
+
+          <label class="mock-radio-button">
+            <input type="radio" formControlName="format" [value]="ExportTypes.Png">
+            <span>PNG</span>
+          </label>
+        </div>
+
+        <p class="info-message" *ngIf="exportPanelForm.controls['format'].value === ExportTypes.SvgOptimized">
+          Descarga un fichero .svg con las figuras optimizadas, es decir, con las figuras visibles y con los atributos
+          mínimos.
+        </p>
+
+        <p class="info-message" *ngIf="exportPanelForm.controls['format'].value === ExportTypes.Svg">
+          Descarga un fichero .svg con las figuras tal y como están en el DOM. Mantiene todos los atributos y permite
+          importalo más adelante para continuar.
+        </p>
+
+        <ng-container *ngIf="exportPanelForm.controls['format'].value === ExportTypes.Png">
+          <p class="info-message">
+            Descarga un fichero .png con el tamaño indicado.
           </p>
 
-          <div class="input-and-download">
-            <input type="text" [placeholder]="DEFAULT_DOWNLOAD_FILE_NAME + '.svg'" formControlName="optimizedSvg">
-
-            <button class="download-button" (click)="downloadOptimizedSvg()">
-              Descargar
-            </button>
+          <div class="png-inputs" formGroupName="pngSize">
+            <input type="number" formControlName="width" value="100">
+            <span> x </span>
+            <input type="number" formControlName="height" value="100">
+            <span> px</span>
           </div>
-        </div>
+        </ng-container>
       </div>
 
-      <div class="app-label-and-input">
-        <span class="app-label-name">DESCARGAR SVG</span>
+      <div class="app-label-and-input file-name">
+        <span class="app-label-name">NOMBRE DEL FICHERO</span>
 
-        <div>
-          <p class="message">
-            Esta opción descarga el svg tal cual está ahora mismo en el DOM. Se puede utilizar para volver a importarlo
-            después y conservar los nombres de las figuras.
-          </p>
+        <div class="input-and-button">
+          <input type="text" [placeholder]="DEFAULT_DOWNLOAD_FILE_NAME" formControlName="fileName">
 
-          <div class="input-and-download">
-            <input type="text" [placeholder]="DEFAULT_DOWNLOAD_FILE_NAME + '.svg'" formControlName="svg">
-
-            <button class="download-button" (click)="downloadSvg()">
-              Descargar
-            </button>
-          </div>
+          <button class="download-button" (click)="downloadDrawing()">
+            Descargar
+          </button>
         </div>
       </div>
+      <!-- <div class="app-label-and-input file-name">
+        <span class="app-label-name">IMPORTAR</span>
 
-      <div class="app-label-and-input">
-        <span class="app-label-name">DESCARGAR PNG</span>
+        TODO add option to import svg file, or create an import-panel that shows erros if the svg is not valid?
+        <div class="input-and-button">
+          <input type="text" formControlName="fileName">
 
-        <div>
-          <p class="message">
-            Esta opción descarga el dibujo en una imagen PNG del tamaño del viewBox del SVG.
-            <!-- TODO allow to select size in size-panel?? and show the current size here? {{widthPng}} {{heightPng}} -->
-          </p>
-
-          <div class="input-and-download">
-            <input type="text" [placeholder]="DEFAULT_DOWNLOAD_FILE_NAME + '.png'" formControlName="png">
-
-            <button class="download-button" (click)="downloadPng()">
-              Descargar
-            </button>
-          </div>
+          <button class="download-button" (click)="downloadDrawing()">
+            Descargar
+          </button>
         </div>
-      </div>
-
-      <!-- TODO add option to import svg file, or create an import-panel that shows erros if the svg is not valid? -->
+      </div> -->
     </div>
   </div>
 </app-collapsible>

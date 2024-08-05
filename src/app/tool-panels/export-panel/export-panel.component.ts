@@ -4,6 +4,12 @@ import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { CollapsibleModule, ColorPickerComponent, ElementsRefService } from '@jaimemartinmartin15/jei-devkit-angular-shared';
 import { ShapePainter } from '../../painters/shape.painter';
 
+enum ExportTypes {
+  SvgOptimized,
+  Svg,
+  Png,
+}
+
 @Component({
   selector: 'app-export-panel',
   standalone: true,
@@ -14,11 +20,15 @@ import { ShapePainter } from '../../painters/shape.painter';
 export class ExportPanelComponent {
   private canvas: SVGSVGElement;
 
-  public DEFAULT_DOWNLOAD_FILE_NAME = 'nombre_del_archivo';
-  public downloadFileNameForm = new FormGroup({
-    optimizedSvg: new FormControl(),
-    svg: new FormControl(),
-    png: new FormControl(),
+  public ExportTypes = ExportTypes;
+  public DEFAULT_DOWNLOAD_FILE_NAME = 'mi_dibujo';
+  public exportPanelForm = new FormGroup({
+    fileName: new FormControl(),
+    format: new FormControl(ExportTypes.SvgOptimized),
+    pngSize: new FormGroup({
+      width: new FormControl(100),
+      height: new FormControl(100),
+    }),
   });
 
   @Input()
@@ -28,6 +38,13 @@ export class ExportPanelComponent {
 
   public ngAfterViewInit() {
     this.canvas = this.elementsRefService.getNativeElement<SVGSVGElement>('canvas');
+  }
+
+  public downloadDrawing(): void {
+    const format = this.exportPanelForm.controls['format'].value;
+    if (format === ExportTypes.SvgOptimized) return this.downloadOptimizedSvg();
+    if (format === ExportTypes.Svg) return this.downloadSvg();
+    if (format === ExportTypes.Png) return this.downloadPng();
   }
 
   public downloadOptimizedSvg() {
@@ -42,7 +59,7 @@ export class ExportPanelComponent {
 
     // download the file
     const downloadLink = document.createElement('a');
-    downloadLink.download = this.parseDownloadFileName('optimizedSvg', 'svg');
+    downloadLink.download = this.parseDownloadFileName('svg');
     const svgFileAsBlob = new Blob([svgTemplate], { type: 'text/plain' });
     downloadLink.href = window.webkitURL.createObjectURL(svgFileAsBlob);
     downloadLink.click();
@@ -61,7 +78,7 @@ export class ExportPanelComponent {
 
     // download the file
     const downloadLink = document.createElement('a');
-    downloadLink.download = this.parseDownloadFileName('svg', 'svg');
+    downloadLink.download = this.parseDownloadFileName('svg');
     const svgFileAsBlob = new Blob([svgString], { type: 'text/plain' });
     downloadLink.href = window.webkitURL.createObjectURL(svgFileAsBlob);
     downloadLink.click();
@@ -87,14 +104,14 @@ export class ExportPanelComponent {
       // load the image into a canvas
       const canvas = document.createElement('canvas');
       const ctx = canvas.getContext('2d')!;
-      canvas.width = this.canvas.viewBox.baseVal.width;
-      canvas.height = this.canvas.viewBox.baseVal.height;
-      ctx.drawImage(img, 0, 0, this.canvas.viewBox.baseVal.width, this.canvas.viewBox.baseVal.height);
+      canvas.width = this.exportPanelForm.controls['pngSize'].controls['width'].value ?? 0;
+      canvas.height = this.exportPanelForm.controls['pngSize'].controls['height'].value ?? 0;
+      ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
 
       // download the file
       const downloadLink = document.createElement('a');
       downloadLink.href = canvas.toDataURL('image/png');
-      downloadLink.download = this.parseDownloadFileName('png', 'png');
+      downloadLink.download = this.parseDownloadFileName('png');
       downloadLink.click();
 
       // after it is exported, select the shape again
@@ -103,8 +120,8 @@ export class ExportPanelComponent {
     img.src = `data:image/svg+xml;base64,${btoa(svgString)}`;
   }
 
-  private parseDownloadFileName(controlName: 'optimizedSvg' | 'svg' | 'png', extension: 'svg' | 'png'): string {
-    const enteredFileName = this.downloadFileNameForm.controls[controlName].value;
+  private parseDownloadFileName(extension: 'svg' | 'png'): string {
+    const enteredFileName = this.exportPanelForm.controls['fileName'].value;
     let downloadFileName;
     if (!enteredFileName || enteredFileName === `.${extension}`) {
       downloadFileName = `${this.DEFAULT_DOWNLOAD_FILE_NAME}.${extension}`;
