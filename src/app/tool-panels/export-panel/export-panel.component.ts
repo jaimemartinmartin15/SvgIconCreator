@@ -49,6 +49,10 @@ export class ExportPanelComponent {
   }
 
   public downloadSvg() {
+    // avoid exporting circles of selected shape
+    const selectedShape = this.shapeList.find((sp) => sp.isShapeSelected());
+    selectedShape?.setShapeSelected(false);
+
     // convert the svg element to string (remove the background image)
     let svgString = new XMLSerializer().serializeToString(this.canvas);
     if (svgString.includes('<image ')) {
@@ -61,9 +65,16 @@ export class ExportPanelComponent {
     const svgFileAsBlob = new Blob([svgString], { type: 'text/plain' });
     downloadLink.href = window.webkitURL.createObjectURL(svgFileAsBlob);
     downloadLink.click();
+
+    // after it is exported, select the shape again
+    selectedShape?.setShapeSelected(true);
   }
 
   public downloadPng() {
+    // avoid exporting circles of selected shape
+    const selectedShape = this.shapeList.find((sp) => sp.isShapeSelected());
+    selectedShape?.setShapeSelected(false);
+
     // convert the svg element to string (remove the background image)
     let svgString = new XMLSerializer().serializeToString(this.canvas);
     if (svgString.includes('<image ')) {
@@ -85,6 +96,9 @@ export class ExportPanelComponent {
       downloadLink.href = canvas.toDataURL('image/png');
       downloadLink.download = this.parseDownloadFileName('png', 'png');
       downloadLink.click();
+
+      // after it is exported, select the shape again
+      selectedShape?.setShapeSelected(true);
     };
     img.src = `data:image/svg+xml;base64,${btoa(svgString)}`;
   }
