@@ -22,15 +22,14 @@
       <div class="app-label-and-input view-box">
         <span class="app-label-name">VIEW BOX</span>
 
-        <div class="inputs-wrapper">
-          <!-- init with default value of viewBox -->
-          <input type="number" value="0" (input)="onChangeViewBox({event: $event, property: 'x'})">
+        <div class="inputs-wrapper" [formGroup]="viewBoxForm">
+          <input type="number" formControlName="x">
           <span>:</span>
-          <input type="number" value="0" (input)="onChangeViewBox({event: $event, property: 'y'})">
+          <input type="number" formControlName="y">
           <span>:</span>
-          <input type="number" value="100" (input)="onChangeViewBox({event: $event, property: 'width'})">
+          <input type="number" formControlName="width">
           <span>:</span>
-          <input type="number" value="100" (input)="onChangeViewBox({event: $event, property: 'height'})">
+          <input type="number" formControlName="height">
         </div>
       </div>
     </div>

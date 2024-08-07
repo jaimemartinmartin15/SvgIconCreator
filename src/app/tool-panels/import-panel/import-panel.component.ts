@@ -1,6 +1,5 @@
 import { CommonModule } from '@angular/common';
 import { Component, Input } from '@angular/core';
-import { ReactiveFormsModule } from '@angular/forms';
 import { CollapsibleModule, ElementsRefService } from '@jaimemartinmartin15/jei-devkit-angular-shared';
 import { CirclePainter } from '../../painters/circle.painter';
 import { LinePainter } from '../../painters/line.painter';
@@ -12,7 +11,7 @@ import { TextPainter } from '../../painters/text.painter';
 @Component({
   selector: 'app-import-panel',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, CollapsibleModule],
+  imports: [CommonModule, CollapsibleModule],
   templateUrl: './import-panel.component.html',
   styleUrls: ['./import-panel.component.scss'],
 })
