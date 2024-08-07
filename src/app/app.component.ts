@@ -163,6 +163,10 @@ export class AppComponent implements AfterViewInit {
       return;
     }
     this.shapePainter.onMouseUp(this.getCoordsInViewBox(e));
+
+    if (this.shapePainter.isShapeCompleted()) {
+      this.shapePainter = this.instantiateShapePainter();
+    }
   }
 
   //#endregion mouse event handlers
