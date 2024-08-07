@@ -111,8 +111,8 @@ export class AppComponent implements AfterViewInit {
     const y = e.clientY - rect.top;
 
     // convert mouse coordinates to viewBox coordinate system
-    const xInViewBox = (x / rect.width) * this.canvas.viewBox.baseVal.width;
-    const yInViewBox = (y / rect.height) * this.canvas.viewBox.baseVal.height;
+    const xInViewBox = (x / rect.width) * this.canvas.viewBox.baseVal.width + this.canvas.viewBox.baseVal.x;
+    const yInViewBox = (y / rect.height) * this.canvas.viewBox.baseVal.height + this.canvas.viewBox.baseVal.y;
 
     return { x: +xInViewBox.toFixed(1), y: +yInViewBox.toFixed(1) };
   }
