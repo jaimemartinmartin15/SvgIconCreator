@@ -14,10 +14,8 @@ export class RectPainter extends ShapePainter {
     this.options = new FormGroup({
       name: new FormControl('rect'),
       stroke: new FormControl('#000000'),
-      strokeAlpha: new FormControl(1),
       strokeWidth: new FormControl(1),
       fill: new FormControl('#FFFFFF'),
-      fillAlpha: new FormControl(0),
       x: new FormControl(0),
       y: new FormControl(0),
       width: new FormControl(0),
@@ -26,6 +24,22 @@ export class RectPainter extends ShapePainter {
       ry: new FormControl(0),
     });
     this.setFormListener();
+  }
+
+  public loadFromElement(shape: SVGRectElement) {
+    this.shapeEl = shape;
+    this.options.setValue({
+      name: this.shapeEl.getAttribute('name'),
+      stroke: this.shapeEl.getAttribute('stroke'),
+      strokeWidth: this.getSvgAttribute('stroke-width'),
+      fill: this.shapeEl.getAttribute('fill'),
+      x: this.getSvgAttribute('x'),
+      y: this.getSvgAttribute('y'),
+      width: this.getSvgAttribute('width'),
+      height: this.getSvgAttribute('height'),
+      rx: this.getSvgAttribute('rx'),
+      ry: this.getSvgAttribute('ry'),
+    });
   }
 
   //#region mouse-events

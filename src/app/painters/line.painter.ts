@@ -14,16 +14,28 @@ export class LinePainter extends ShapePainter {
     this.options = new FormGroup({
       name: new FormControl('line'),
       stroke: new FormControl('#000000'),
-      strokeAlpha: new FormControl(1),
       strokeWidth: new FormControl(1),
       fill: new FormControl('#FFFFFF'),
-      fillAlpha: new FormControl(0),
       x1: new FormControl(0),
       y1: new FormControl(0),
       x2: new FormControl(0),
       y2: new FormControl(0),
     });
     this.setFormListener();
+  }
+
+  public loadFromElement(shape: SVGLineElement) {
+    this.shapeEl = shape;
+    this.options.setValue({
+      name: this.shapeEl.getAttribute('name'),
+      stroke: this.shapeEl.getAttribute('stroke'),
+      strokeWidth: this.getSvgAttribute('stroke-width'),
+      fill: this.shapeEl.getAttribute('fill'),
+      x1: this.getSvgAttribute('x1'),
+      y1: this.getSvgAttribute('y1'),
+      x2: this.getSvgAttribute('x2'),
+      y2: this.getSvgAttribute('y2'),
+    });
   }
 
   //#region mouse-events

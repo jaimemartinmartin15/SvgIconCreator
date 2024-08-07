@@ -1,6 +1,6 @@
 import { FormArray, FormControl, FormGroup } from '@angular/forms';
 import { Coord } from '../coord';
-import { PathModel } from '../forms/path/path.model';
+import { Command, PathModel } from '../forms/path/path.model';
 import { Shape } from '../shape';
 import { ShapePainterMapping } from './shape-painter-mapping';
 import { ShapePainter } from './shape.painter';
@@ -31,13 +31,66 @@ export class PathPainter extends ShapePainter {
     this.options = new FormGroup({
       name: new FormControl('path'),
       stroke: new FormControl('#000000'),
-      strokeAlpha: new FormControl(1),
       strokeWidth: new FormControl(1),
       fill: new FormControl('#FFFFFF'),
-      fillAlpha: new FormControl(0),
       commands: new FormArray([]),
     });
     this.setFormListener();
+  }
+
+  public loadFromElement(shape: SVGPathElement) {
+    this.shapeEl = shape;
+
+    // It is needed a new FormArray instance every time the size of the array value changes
+    this.options.setControl('commands', this.getCommandsFromPath(this.shapeEl.getAttribute('d')!), { emitEvent: false });
+
+    this.options.patchValue({
+      name: this.shapeEl.getAttribute('name'),
+      stroke: this.shapeEl.getAttribute('stroke'),
+      strokeWidth: this.getSvgAttribute('stroke-width'),
+      fill: this.shapeEl.getAttribute('fill'),
+    });
+  }
+
+  private getCommandsFromPath(d: string): FormArray {
+    const commands: Command[] = [];
+    for (let i = 0; i < d.length; i++) {
+      if (['M', 'L', 'C', 'Z'].includes(d.charAt(i))) {
+        const init = i;
+        let end = i + 1;
+        for (let j = i + 1; !['M', 'L', 'C', 'Z'].includes(d.charAt(j)) && j < d.length; j++) {
+          end = j + 1;
+        }
+
+        commands.push({
+          type: d.charAt(init),
+          coords: d
+            .substring(init + 1, end)
+            .split(' ')
+            .filter((c) => c !== '')
+            .map((coords) => coords.split(','))
+            .map(([x, y]) => ({ x: +x, y: +y })),
+        });
+      }
+    }
+
+    return new FormArray(
+      commands.map(
+        (c) =>
+          new FormGroup({
+            type: new FormControl(c.type),
+            coords: new FormArray(
+              c.coords.map(
+                (coord) =>
+                  new FormGroup({
+                    x: new FormControl(coord.x),
+                    y: new FormControl(coord.y),
+                  })
+              )
+            ),
+          })
+      )
+    );
   }
 
   //#region mouse down

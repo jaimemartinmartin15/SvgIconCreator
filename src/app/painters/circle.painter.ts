@@ -14,15 +14,26 @@ export class CirclePainter extends ShapePainter {
     this.options = new FormGroup({
       name: new FormControl('circle'),
       stroke: new FormControl('#000000'),
-      strokeAlpha: new FormControl(1),
       strokeWidth: new FormControl(1),
       fill: new FormControl('#FFFFFF'),
-      fillAlpha: new FormControl(0),
       cx: new FormControl(0),
       cy: new FormControl(0),
       r: new FormControl(0),
     });
     this.setFormListener();
+  }
+
+  public loadFromElement(shape: SVGCircleElement) {
+    this.shapeEl = shape;
+    this.options.setValue({
+      name: this.shapeEl.getAttribute('name'),
+      stroke: this.shapeEl.getAttribute('stroke'),
+      strokeWidth: this.getSvgAttribute('stroke-width'),
+      fill: this.shapeEl.getAttribute('fill'),
+      cx: this.getSvgAttribute('cx'),
+      cy: this.getSvgAttribute('cy'),
+      r: this.getSvgAttribute('r'),
+    });
   }
 
   private calculateRadius(p1: Coord, p2: Coord): number {

@@ -13,6 +13,7 @@ import { ShapePainter } from './painters/shape.painter';
 import { Shape } from './shape';
 import { BackgroundPanelComponent } from './tool-panels/background-panel/background-panel.component';
 import { ExportPanelComponent } from './tool-panels/export-panel/export-panel.component';
+import { ImportPanelComponent } from './tool-panels/import-panel/import-panel.component';
 import { OptionsPanelComponent } from './tool-panels/options-panel/options-panel.component';
 import { ShapesPanelComponent } from './tool-panels/shapes-panel/shapes-panel.component';
 import { SizePanelComponent } from './tool-panels/size-panel/size-panel.component';
@@ -32,6 +33,7 @@ import { SizePanelComponent } from './tool-panels/size-panel/size-panel.componen
     // panels
     BackgroundPanelComponent,
     ExportPanelComponent,
+    ImportPanelComponent,
     OptionsPanelComponent,
     ShapesPanelComponent,
     SizePanelComponent,

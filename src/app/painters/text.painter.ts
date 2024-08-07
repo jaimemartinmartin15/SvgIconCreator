@@ -14,16 +14,28 @@ export class TextPainter extends ShapePainter {
     this.options = new FormGroup({
       name: new FormControl('text'),
       stroke: new FormControl('#FFFFFF'),
-      strokeAlpha: new FormControl(0),
       strokeWidth: new FormControl(0.3),
       fill: new FormControl('#000000'),
-      fillAlpha: new FormControl(1),
       x: new FormControl(0),
       y: new FormControl(0),
       text: new FormControl('text'),
       fontSize: new FormControl(10),
     });
     this.setFormListener();
+  }
+
+  public loadFromElement(shape: SVGTextElement) {
+    this.shapeEl = shape;
+    this.options.setValue({
+      name: this.shapeEl.getAttribute('name'),
+      stroke: this.shapeEl.getAttribute('stroke'),
+      strokeWidth: this.getSvgAttribute('stroke-width'),
+      fill: this.shapeEl.getAttribute('fill'),
+      x: this.getSvgAttribute('x'),
+      y: this.getSvgAttribute('y'),
+      text: this.shapeEl.textContent,
+      fontSize: this.getSvgAttribute('font-size'),
+    });
   }
 
   //#region mouse-events
