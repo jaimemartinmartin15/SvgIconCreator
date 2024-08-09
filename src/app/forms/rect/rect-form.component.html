@@ -1,0 +1,46 @@
+<app-collapsible [isOpen]="rectPainter.isShapeSelected()">
+  <div class="invoker" [class.selected]="rectPainter.isShapeSelected()">
+    <span cdkDragHandle (click)="$event.stopPropagation()">&#x2630;</span>
+
+    <input #shapeName class="shape-name" (click)="$event.stopPropagation()" (input)="adaptShapeNameSize($event)"
+      [formControl]="getAsFormControl(rectPainter.options.controls['name'])">
+
+    <span class="mock-icon"></span>
+
+    <span (click)="onDeleteShape($event)">🗑️</span>
+  </div>
+
+  <form appCollapsibleContent [formGroup]="rectPainter.options">
+    <div class="shape-options-form">
+      <label class="app-label-and-input">
+        <span class="app-label-name">X</span>
+        <input type="number" formControlName="x" (click)="$event.stopPropagation()">
+      </label>
+
+      <label class="app-label-and-input">
+        <span class="app-label-name">Y</span>
+        <input type="number" formControlName="y" (click)="$event.stopPropagation()">
+      </label>
+
+      <label class="app-label-and-input">
+        <span class="app-label-name">WIDTH</span>
+        <input type="number" min="0" formControlName="width" (click)="$event.stopPropagation()">
+      </label>
+
+      <label class="app-label-and-input">
+        <span class="app-label-name">HEIGHT</span>
+        <input type="number" min="0" formControlName="height" (click)="$event.stopPropagation()">
+      </label>
+
+      <label class="app-label-and-input">
+        <span class="app-label-name">RX</span>
+        <input type="number" min="0" formControlName="rx" (click)="$event.stopPropagation()">
+      </label>
+
+      <label class="app-label-and-input">
+        <span class="app-label-name">RY</span>
+        <input type="number" min="0" formControlName="ry" (click)="$event.stopPropagation()">
+      </label>
+    </div>
+  </form>
+</app-collapsible>

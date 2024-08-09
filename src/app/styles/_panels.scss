@@ -1,0 +1,28 @@
+:host {
+  display: block;
+}
+
+app-collapsible {
+  border: var(--border);
+  border-radius: 5px;
+
+  [appCollapsibleToggleAction] {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 20px;
+    padding: 10px;
+
+    svg {
+      width: 25px;
+      height: 25px;
+    }
+  }
+
+  [appCollapsibleContent] .wrapper {
+    padding: 15px 10px 10px 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+  }
+}

@@ -1,0 +1,73 @@
+@import "../../styles/panels";
+
+.info-message {
+  color: #909090;
+  font-size: 1rem;
+  margin: 0;
+}
+
+.choose-image {
+  .mock-input-and-delete-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+
+    .mock-input-file {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 40px;
+      min-width: 90px;
+      border-radius: 5px;
+      border: var(--border);
+      padding: 5px 10px;
+      cursor: pointer;
+    }
+
+    .delete-icon {
+      flex-shrink: 0;
+      cursor: pointer;
+    }
+  }
+}
+
+.show-hide {
+  .mock-input-checkbox {
+    border: var(--border);
+    border-radius: 5px;
+    width: 80px;
+    height: 40px;
+    position: relative;
+    cursor: pointer;
+
+    &::after {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      width: 36px;
+      height: 36px;
+      border-radius: 5px;
+      position: absolute;
+      box-sizing: border-box;
+      border: var(--border);
+      background-color: #fcfcfc;
+      top: 2px;
+      left: 2px;
+      transition: margin 0.3s;
+    }
+
+    &:has(:not(:checked)) {
+      &::after {
+        content: "👻";
+        margin-left: 40px;
+      }
+    }
+
+    &:has(:checked) {
+      &::after {
+        content: "👁️";
+        margin-left: 0;
+      }
+    }
+  }
+}

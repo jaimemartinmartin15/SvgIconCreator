@@ -1,0 +1,33 @@
+<app-collapsible>
+  <span appCollapsibleToggleAction>
+    <svg viewBox="0 0 100 100">
+      <rect stroke="#ff6363" fill="#ff6363" width="100" height="100" rx="25" />
+      <circle stroke="#FFFF" fill="#FFFFFF" cx="50" cy="50" r="40" />
+      <path stroke="#ff6363" fill="#ff6363" d="M45,75L55,75 55,55 65,55 50,40 35,55 45,55Z" />
+      <path stroke="#ff6363" fill="#ff6363" d="M28,45L35,45 35,35 65,35 65,45 72,45 72,30 28,30Z" />
+    </svg>
+
+    <span class="app-label-name">IMPORTAR</span>
+  </span>
+
+  <div appCollapsibleContent>
+    <div class="wrapper">
+      <div class="app-label-and-input texto-svg">
+        <span class="app-label-name">TEXTO SVG</span>
+
+        <textarea #textArea></textarea>
+
+        <button class="load-button" (click)="loadSvgText(textArea.value)">Cargar</button>
+      </div>
+
+      <div class="app-label-and-input file-svg">
+        <span class="app-label-name">FICHERO SVG</span>
+
+        <label>
+          <input type="file" accept=".svg,.txt" (change)="loadFile($event)">
+          <div class="mock-input-file">{{ loadedFile ? loadedFile.name : 'Cargar un fichero'}}</div>
+        </label>
+      </div>
+    </div>
+  </div>
+</app-collapsible>

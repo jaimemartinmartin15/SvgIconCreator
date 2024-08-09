@@ -1,0 +1,36 @@
+@import "../../styles/panels";
+
+:host {
+  --color-picker-slider-border: var(--border);
+  --color-picker-slider-border-radius: 5px;
+}
+
+.colors {
+  gap: 20px;
+
+  .app-label-name {
+    display: flex;
+    align-items: center;
+    gap: 40px;
+
+    .app-label-name {
+      gap: 10px;
+      padding: 4px;
+      cursor: pointer;
+      border-radius: 5px;
+      border: 3px solid transparent;
+
+      &.selected {
+        border: 3px solid #46979a;
+      }
+    }
+
+    .color {
+      display: inline-block;
+      width: 30px;
+      height: 30px;
+      border-radius: 5px;
+      border: var(--border);
+    }
+  }
+}

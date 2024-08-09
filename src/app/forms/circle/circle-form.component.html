@@ -1,0 +1,31 @@
+<app-collapsible [isOpen]="circlePainter.isShapeSelected()">
+  <div class="invoker" [class.selected]="circlePainter.isShapeSelected()">
+    <span cdkDragHandle (click)="$event.stopPropagation()">&#x2630;</span>
+
+    <input #shapeName class="shape-name" (click)="$event.stopPropagation()" (input)="adaptShapeNameSize($event)"
+      [formControl]="getAsFormControl(circlePainter.options.controls['name'])">
+
+    <span class="mock-icon"></span>
+
+    <span (click)="onDeleteShape($event)">🗑️</span>
+  </div>
+
+  <form appCollapsibleContent [formGroup]="circlePainter.options">
+    <div class="shape-options-form">
+      <label class="app-label-and-input">
+        <span class="app-label-name">CX</span>
+        <input type="number" formControlName="cx" (click)="$event.stopPropagation()">
+      </label>
+
+      <label class="app-label-and-input">
+        <span class="app-label-name">CY</span>
+        <input type="number" formControlName="cy" (click)="$event.stopPropagation()">
+      </label>
+
+      <label class="app-label-and-input">
+        <span class="app-label-name">R</span>
+        <input type="number" formControlName="r" (click)="$event.stopPropagation()">
+      </label>
+    </div>
+  </form>
+</app-collapsible>

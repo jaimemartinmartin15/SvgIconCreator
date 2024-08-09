@@ -1,0 +1,72 @@
+<app-collapsible [formGroup]="exportPanelForm">
+  <span appCollapsibleToggleAction>
+    <svg viewBox="0 0 100 100">
+      <rect stroke="#d8a72c" fill="#d8a72c" width="100" height="100" rx="25" />
+      <circle stroke="#FFFFFF" fill="#FFFFFF" cx="50" cy="50" r="40" />
+      <path stroke="#d8a72c" fill="#d8a72c" d="M45,25L55,25 55,45 65,45 50,60 35,45 45,45Z" />
+      <path stroke="#d8a72c" fill="#d8a72c" d="M28,55L35,55 35,65 65,65 65,55 72,55 72,70 28,70Z" />
+    </svg>
+
+    <span class="app-label-name">EXPORTAR</span>
+  </span>
+
+  <div appCollapsibleContent>
+    <div class="wrapper">
+      <div class="app-label-and-input format">
+        <span class="app-label-name">FORMATO</span>
+
+        <div class="export-radio-buttons-container">
+          <label class="mock-radio-button">
+            <input type="radio" formControlName="format" [value]="ExportTypes.SvgOptimized">
+            <span>SVG Optimizado</span>
+          </label>
+
+          <label class="mock-radio-button">
+            <input type="radio" formControlName="format" [value]="ExportTypes.Svg">
+            <span>SVG</span>
+          </label>
+
+          <label class="mock-radio-button">
+            <input type="radio" formControlName="format" [value]="ExportTypes.Png">
+            <span>PNG</span>
+          </label>
+        </div>
+
+        <p class="info-message" *ngIf="exportPanelForm.controls['format'].value === ExportTypes.SvgOptimized">
+          Descarga un fichero .svg con las figuras optimizadas, es decir, con las figuras visibles y con los atributos
+          mínimos.
+        </p>
+
+        <p class="info-message" *ngIf="exportPanelForm.controls['format'].value === ExportTypes.Svg">
+          Descarga un fichero .svg con las figuras tal y como están en el DOM. Mantiene todos los atributos y permite
+          importalo más adelante para continuar.
+        </p>
+
+        <ng-container *ngIf="exportPanelForm.controls['format'].value === ExportTypes.Png">
+          <p class="info-message">
+            Descarga un fichero .png con el tamaño indicado.
+          </p>
+
+          <div class="png-inputs" formGroupName="pngSize">
+            <input type="number" formControlName="width" value="100">
+            <span> x </span>
+            <input type="number" formControlName="height" value="100">
+            <span> px</span>
+          </div>
+        </ng-container>
+      </div>
+
+      <div class="app-label-and-input file-name">
+        <span class="app-label-name">NOMBRE DEL FICHERO</span>
+
+        <div class="input-and-button">
+          <input type="text" [placeholder]="DEFAULT_DOWNLOAD_FILE_NAME" formControlName="fileName">
+
+          <button class="download-button" (click)="downloadDrawing()">
+            Descargar
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</app-collapsible>

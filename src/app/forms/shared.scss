@@ -1,0 +1,51 @@
+:host {
+  display: block;
+  border: var(--border);
+  border-radius: 5px;
+
+  &.selected {
+    background-color: #f0f1f2;
+    border-left: var(--border);
+  }
+
+  .invoker {
+    display: flex;
+    align-items: center;
+    padding: 10px;
+    cursor: pointer;
+
+    &.selected {
+      border-bottom: var(--border);
+
+      .shape-name {
+        background-color: #f0f1f2;
+      }
+    }
+
+    .shape-name {
+      border: none;
+      outline: none;
+      font-size: 1rem;
+      margin: 0px 15px;
+
+      &:focus {
+        border-bottom: 2px solid black;
+      }
+    }
+
+    .mock-icon {
+      flex-grow: 1;
+    }
+  }
+}
+
+.shape-options-form {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 30px;
+  padding: 10px;
+
+  .app-label-and-input {
+    text-align: center;
+  }
+}

@@ -1,0 +1,47 @@
+<app-collapsible>
+  <div appCollapsibleToggleAction>
+    <svg viewBox="0 0 750 600">
+      <line stroke-width="57" stroke="#ec8383" x1="-42" y1="214" x2="205" y2="-35" />
+      <line stroke-width="57" stroke="#ec8383" x1="-25" y1="366" x2="372" y2="-32" />
+      <line stroke-width="57" stroke="#ec8383" x1="-26" y1="535" x2="530" y2="-23" />
+      <line stroke-width="57" stroke="#ec8383" x1="46" y1="630" x2="707" y2="-31" />
+      <line stroke-width="57" stroke="#ec8383" x1="419" y1="419" x2="771" y2="73" />
+      <line stroke-width="57" stroke="#ec8383" x1="538" y1="473" x2="770" y2="242" />
+      <line stroke-width="57" stroke="#e88181" x1="552" y1="638" x2="772" y2="410" />
+      <circle stroke-width="27" stroke="#ffffff" fill="#000000" cx="376" cy="227" r="117" />
+      <rect stroke-width="17" stroke="#ffffff" fill="#ffffff" x="189" y="377" width="389" height="237" rx="6" ry="6" />
+      <rect stroke-width="25" stroke="#000000" fill="#000000" x="216" y="404" width="335" height="202" rx="6" ry="6" />
+    </svg>
+
+    <span class="app-label-name">FONDO</span>
+  </div>
+
+  <div appCollapsibleContent>
+    <div class="wrapper">
+      <p class="info-message">
+        La imagen de fondo no se exporta. Es solo una ayuda para realizar el dibujo.
+      </p>
+
+      <div class="app-label-and-input choose-image">
+        <span class="app-label-name">IMAGEN DE FONDO</span>
+
+        <div class="mock-input-and-delete-wrapper">
+          <label>
+            <input type="file" (change)="onUpdateBackgroundImage($event)">
+            <div class="mock-input-file">{{backgroundImageFile?.name ?? 'Selecciona un fondo'}}</div>
+          </label>
+
+          <span class="delete-icon" (click)="deleteBackground($event)" *ngIf="backgroundImageFile">❌</span>
+        </div>
+      </div>
+
+      <div class="app-label-and-input show-hide">
+        <span class="app-label-name">MOSTRAR / OCULTAR</span>
+
+        <label class="mock-input-checkbox">
+          <input type="checkbox" checked (change)="showHideImage($event)">
+        </label>
+      </div>
+    </div>
+  </div>
+</app-collapsible>

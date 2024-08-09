@@ -1,0 +1,37 @@
+<app-collapsible>
+  <span appCollapsibleToggleAction>
+    <svg viewBox="0 0 100 100">
+      <rect stroke-width="1" stroke="#696363" fill="#FFFFFF" x="1" y="1" width="12" height="12" rx="2" ry="2" />
+      <rect stroke-width="1" stroke="#696363" fill="#FFFFFF" x="87" y="1" width="12" height="12" rx="2" ry="2" />
+      <rect stroke-width="1" stroke="#696363" fill="#FFFFFF" x="87" y="87" width="12" height="12" rx="2" ry="2" />
+      <rect stroke-width="2" stroke="#696363" fill="#c7f4ff" x="7" y="37" width="56" height="57" rx="2" ry="2" />
+      <path stroke-width="2" stroke="#696363" fill="#c7f4ff" d="M68,32L75,25 68,18 84,17 81,32 75,25" />
+      <circle stroke-width="1" fill="#fdbe35" cx="49" cy="55" r="5" />
+      <path stroke-width="0" fill="#8099ff" d="M8,85L31,63 50,83 62,71 62,93 8,93Z" />
+      <line stroke-width="2" x1="7" y1="33" x2="7" y2="16" stroke-dasharray="6" />
+      <line stroke-width="2" x1="16" y1="7" x2="85" y2="7" stroke-dasharray="6" />
+      <line stroke-width="2" x1="93" y1="17" x2="93" y2="85" stroke-dasharray="6" />
+      <line stroke-width="2" x1="84" y1="93" x2="66" y2="93" stroke-dasharray="6" />
+    </svg>
+
+    <span class="app-label-name">TAMAÑO</span>
+  </span>
+
+  <div appCollapsibleContent>
+    <div class="wrapper">
+      <div class="app-label-and-input view-box">
+        <span class="app-label-name">VIEW BOX</span>
+
+        <div class="inputs-wrapper" [formGroup]="viewBoxForm">
+          <input type="number" formControlName="x">
+          <span>:</span>
+          <input type="number" formControlName="y">
+          <span>:</span>
+          <input type="number" formControlName="width">
+          <span>:</span>
+          <input type="number" formControlName="height">
+        </div>
+      </div>
+    </div>
+  </div>
+</app-collapsible>

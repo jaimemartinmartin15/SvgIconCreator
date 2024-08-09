@@ -1,0 +1,35 @@
+<app-collapsible [isOpen]="pathPainter.isShapeSelected()" [formGroup]="pathPainter.options">
+  <div class="invoker" [class.selected]="pathPainter.isShapeSelected()">
+    <span cdkDragHandle (click)="$event.stopPropagation()">&#x2630;</span>
+
+    <input #shapeName class="shape-name" (click)="$event.stopPropagation()" (input)="adaptShapeNameSize($event)"
+      [formControl]="getAsFormControl(pathPainter.options.controls['name'])">
+
+    <span class="mock-icon"></span>
+
+    <span (click)="onDeleteShape($event)">🗑️</span>
+  </div>
+
+  <form appCollapsibleContent formArrayName="commands">
+    <div class="shape-options-form">
+      <label
+        *ngFor="let commandControl of getAsFormArray(pathPainter.options.controls['commands']).controls; let i = index"
+        formGroupName="{{i}}" class="command" (mouseenter)="mouseHoverIndex = i" (mouseleave)="mouseHoverIndex = -i">
+
+        <div class="command-type">
+          <span *ngIf="mouseHoverIndex !== i || mouseHoverIndex === 0">{{commandControl.value.type}}</span>
+          <span *ngIf="mouseHoverIndex === i && mouseHoverIndex !== 0" (click)="deleteCommand(i, $event)">🗑️</span>
+        </div>
+
+        <div formArrayName="coords" class="coords-list">
+          <div class="point-coords-input"
+            *ngFor="let p of getAsFormArray(commandControl.get('coords')!).controls; let i = index"
+            formGroupName="{{i}}">
+            <input type="number" formControlName="x" (click)="$event.stopPropagation()">
+            <input type="number" formControlName="y" (click)="$event.stopPropagation()">
+          </div>
+        </div>
+      </label>
+    </div>
+  </form>
+</app-collapsible>

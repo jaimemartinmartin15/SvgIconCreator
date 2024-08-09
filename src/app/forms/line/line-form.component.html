@@ -1,0 +1,36 @@
+<app-collapsible [isOpen]="linePainter.isShapeSelected()">
+  <div class="invoker" [class.selected]="linePainter.isShapeSelected()">
+    <span cdkDragHandle (click)="$event.stopPropagation()">&#x2630;</span>
+
+    <input #shapeName class="shape-name" (click)="$event.stopPropagation()" (input)="adaptShapeNameSize($event)"
+      [formControl]="getAsFormControl(linePainter.options.controls['name'])">
+
+    <span class="mock-icon"></span>
+
+    <span (click)="onDeleteShape($event)">🗑️</span>
+  </div>
+
+  <form appCollapsibleContent [formGroup]="linePainter.options">
+    <div class="shape-options-form">
+      <label class="app-label-and-input">
+        <span class="app-label-name">X1</span>
+        <input type="number" formControlName="x1" (click)="$event.stopPropagation()">
+      </label>
+
+      <label class="app-label-and-input">
+        <span class="app-label-name">Y1</span>
+        <input type="number" formControlName="y1" (click)="$event.stopPropagation()">
+      </label>
+
+      <label class="app-label-and-input">
+        <span class="app-label-name">X2</span>
+        <input type="number" formControlName="x2" (click)="$event.stopPropagation()">
+      </label>
+
+      <label class="app-label-and-input">
+        <span class="app-label-name">Y2</span>
+        <input type="number" formControlName="y2" (click)="$event.stopPropagation()">
+      </label>
+    </div>
+  </form>
+</app-collapsible>

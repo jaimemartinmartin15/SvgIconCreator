@@ -1,27 +1,53 @@
-# CreadorIconosSvg
+# SvgIconCreator
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 17.0.3.
+Angular application that allows to draw pictures with svg. Deployed to <https://jaimeelingeniero.es/creador-iconos-svg>
 
-## Development server
+[![Build And Deploy](https://github.com/jaimemartinmartin15/SvgIconCreator/actions/workflows/build-and-publish.yml/badge.svg)](https://github.com/jaimemartinmartin15/SvgIconCreator/actions/workflows/build-and-publish.yml)
 
-Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The application will automatically reload if you change any of the source files.
+## Development
 
-## Code scaffolding
+**Clone** the repository:
 
-Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module`.
+```text
+git clone https://github.com/jaimemartinmartin15/SvgIconCreator.git
+```
+
+**Install** dependencies:
+
+```text
+npm i
+```
+
+You might need a valid personal access token to download some scoped dependencies on GPR (Github Package Registry).
+
+**Start** the server:
+
+```text
+npm run start
+```
 
 ## Build
 
-Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory.
+To build the project run:
 
-## Running unit tests
+```text
+npm run build
+```
 
-Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
+## Deploy
 
-## Running end-to-end tests
+After doing the changes in your branch, increase the [package.json](./package.json) version and then run `npm i` to update the package-lock.json
 
-Run `ng e2e` to execute the end-to-end tests via a platform of your choice. To use this command, you need to first add a package that implements end-to-end testing capabilities.
+Update also [CHANGELOG.md](./CHANGELOG.md) file.
 
-## Further help
+Then merge the changes in `main` branch and create a tag with the same version than in the package.json
 
-To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI Overview and Command Reference](https://angular.io/cli) page.
+When pushing the tag to the remote, it will trigger the workflow **build-and-publish.yml** automatically to deploy it.
+
+## Workflows
+
+### build-and-publish.yml
+
+Builds and deploys the application to the server.
+
+Basically, it copies the files in the `dist` folder and puts them in `creador-iconos-svg/` folder in the server.

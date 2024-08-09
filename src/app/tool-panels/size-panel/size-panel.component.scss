@@ -1,0 +1,13 @@
+@import "../../styles/panels";
+
+.view-box {
+  .inputs-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+
+    input {
+      max-width: 60px;
+    }
+  }
+}
