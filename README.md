@@ -1,15 +1,15 @@
-# TODO
+# SvgIconCreator
 
-Angular web page that TODO. Deployed to <https://jaimeelingeniero.es/TODO>
+Angular application that allows to draw pictures with svg. Deployed to <https://jaimeelingeniero.es/crea-iconos-svg>
 
-[![Build And Deploy](https://github.com/jaimemartinmartin15/TODO/actions/workflows/build-and-publish.yml/badge.svg)](https://github.com/jaimemartinmartin15/TODO/actions/workflows/build-and-publish.yml)
+[![Build And Deploy](https://github.com/jaimemartinmartin15/SvgIconCreator/actions/workflows/build-and-publish.yml/badge.svg)](https://github.com/jaimemartinmartin15/SvgIconCreator/actions/workflows/build-and-publish.yml)
 
 ## Development
 
 **Clone** the repository:
 
 ```text
-git clone https://github.com/jaimemartinmartin15/TODO.git
+git clone https://github.com/jaimemartinmartin15/SvgIconCreator.git
 ```
 
 **Install** dependencies:
@@ -50,4 +50,4 @@ When pushing the tag to the remote, it will trigger the workflow **build-and-pub
 
 Builds and deploys the application to the server.
 
-Basically, it copies the files in the `dist` folder and puts them in `todo/` folder in the server.
+Basically, it copies the files in the `dist` folder and puts them in `crea-iconos-svg/` folder in the server.
