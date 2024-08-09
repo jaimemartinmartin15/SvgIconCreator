@@ -73,7 +73,7 @@ export class AppComponent implements AfterViewInit {
 
   @HostListener('document:keypress', ['$event'])
   public onKeypressHandler(event: KeyboardEvent) {
-    if (!this.shapePainter.isShapeType(Shape.PATH)) {
+    if (!this.shapePainter.isShapeType(Shape.PATH) || this.shapePainter.isShapeSelected()) {
       return;
     }
 

@@ -1,13 +1,13 @@
 <div class="panels-list">
-  <app-background-panel></app-background-panel>
-
-  <app-size-panel></app-size-panel>
-
   <app-shapes-panel (onSelectShape)="onChangeShapeToDraw($event)"
     [pathCommand]="shapePainter && shapePainter.isShapeType(Shape.PATH) && shapePainter.currentCommand || ''">
   </app-shapes-panel>
 
   <app-options-panel *ngIf="shapePainter" [shapePainter]="shapePainter"></app-options-panel>
+
+  <app-background-panel></app-background-panel>
+
+  <app-size-panel></app-size-panel>
 
   <app-export-panel [shapeList]="shapeList"></app-export-panel>
 
