@@ -1,0 +1,41 @@
+name: Build And Deploy
+run-name: Deploy SvgIconCreator to AWS S3
+
+on:
+  workflow_dispatch: # allow manual trigger
+  push:
+    tags: ["[1-9].[0-9][0-9]?.[0-9][0-9]?"]
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          registry-url: https://npm.pkg.github.com/
+          scope: "@jaimemartinmartin15"
+      - name: Install
+        run: npm ci --no-audit --no-fund
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.GH_REGISTRY_TOKEN }}
+      - name: Build
+        run: npm run build
+      - name: Set AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          mask-aws-account-id: true
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: eu-south-2
+      - name: Deploy
+        run: |
+          aws --version
+          aws s3 sync ./dist/creador-iconos-svg/browser \
+                      s3://jaimeelingeniero.es/creador-iconos-svg \
+                      --delete
+          aws s3 cp ./dist/creador-iconos-svg/3rdpartylicenses.txt s3://jaimeelingeniero.es/creador-iconos-svg/3rdpartylicenses.txt

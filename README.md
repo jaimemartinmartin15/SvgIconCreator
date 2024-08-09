@@ -1,6 +1,6 @@
 # SvgIconCreator
 
-Angular application that allows to draw pictures with svg. Deployed to <https://jaimeelingeniero.es/crea-iconos-svg>
+Angular application that allows to draw pictures with svg. Deployed to <https://jaimeelingeniero.es/creador-iconos-svg>
 
 [![Build And Deploy](https://github.com/jaimemartinmartin15/SvgIconCreator/actions/workflows/build-and-publish.yml/badge.svg)](https://github.com/jaimemartinmartin15/SvgIconCreator/actions/workflows/build-and-publish.yml)
 
@@ -50,4 +50,4 @@ When pushing the tag to the remote, it will trigger the workflow **build-and-pub
 
 Builds and deploys the application to the server.
 
-Basically, it copies the files in the `dist` folder and puts them in `crea-iconos-svg/` folder in the server.
+Basically, it copies the files in the `dist` folder and puts them in `creador-iconos-svg/` folder in the server.
