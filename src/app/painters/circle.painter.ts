@@ -26,10 +26,10 @@ export class CirclePainter extends ShapePainter {
   public loadFromElement(shape: SVGCircleElement) {
     this.shapeEl = shape;
     this.options.setValue({
-      name: this.shapeEl.getAttribute('name'),
-      stroke: this.shapeEl.getAttribute('stroke'),
+      name: this.shapeEl.getAttribute('name') || 'circle',
+      stroke: this.shapeEl.getAttribute('stroke') || '#00000000',
       strokeWidth: this.getSvgAttribute('stroke-width'),
-      fill: this.shapeEl.getAttribute('fill'),
+      fill: this.shapeEl.getAttribute('fill') || '#00000000',
       cx: this.getSvgAttribute('cx'),
       cy: this.getSvgAttribute('cy'),
       r: this.getSvgAttribute('r'),

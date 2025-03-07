@@ -27,10 +27,10 @@ export class LinePainter extends ShapePainter {
   public loadFromElement(shape: SVGLineElement) {
     this.shapeEl = shape;
     this.options.setValue({
-      name: this.shapeEl.getAttribute('name'),
-      stroke: this.shapeEl.getAttribute('stroke'),
+      name: this.shapeEl.getAttribute('name') || 'line',
+      stroke: this.shapeEl.getAttribute('stroke') || '#00000000',
       strokeWidth: this.getSvgAttribute('stroke-width'),
-      fill: this.shapeEl.getAttribute('fill'),
+      fill: this.shapeEl.getAttribute('fill') || '#00000000',
       x1: this.getSvgAttribute('x1'),
       y1: this.getSvgAttribute('y1'),
       x2: this.getSvgAttribute('x2'),

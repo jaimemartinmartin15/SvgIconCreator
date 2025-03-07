@@ -74,8 +74,8 @@ export class ImportPanelComponent {
     this.loadedFile = inputEl.files![0];
 
     const reader = new FileReader();
-    reader.readAsText(this.loadedFile, 'UTF-8');
     reader.onload = (evt) => this.loadSvgText(evt.target?.result as string);
     reader.onerror = () => (this.loadedFile = undefined);
+    reader.readAsText(this.loadedFile, 'UTF-8');
   }
 }
