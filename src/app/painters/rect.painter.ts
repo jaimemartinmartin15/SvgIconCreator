@@ -29,10 +29,10 @@ export class RectPainter extends ShapePainter {
   public loadFromElement(shape: SVGRectElement) {
     this.shapeEl = shape;
     this.options.setValue({
-      name: this.shapeEl.getAttribute('name'),
-      stroke: this.shapeEl.getAttribute('stroke'),
+      name: this.shapeEl.getAttribute('name') || 'rect',
+      stroke: this.shapeEl.getAttribute('stroke') || '#00000000',
       strokeWidth: this.getSvgAttribute('stroke-width'),
-      fill: this.shapeEl.getAttribute('fill'),
+      fill: this.shapeEl.getAttribute('fill') || '#00000000',
       x: this.getSvgAttribute('x'),
       y: this.getSvgAttribute('y'),
       width: this.getSvgAttribute('width'),

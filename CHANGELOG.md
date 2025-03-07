@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## 1.0.1
+
+Fix export of optimized lines
+
+Use default names and transparent colors when loading files to avoid errors when exporting later.
+
 ## 1.0.0
 
 Initial release:

@@ -45,10 +45,10 @@ export class PathPainter extends ShapePainter {
     this.options.setControl('commands', this.getCommandsFromPath(this.shapeEl.getAttribute('d')!), { emitEvent: false });
 
     this.options.patchValue({
-      name: this.shapeEl.getAttribute('name'),
-      stroke: this.shapeEl.getAttribute('stroke'),
+      name: this.shapeEl.getAttribute('name') || 'path',
+      stroke: this.shapeEl.getAttribute('stroke') || '#00000000',
       strokeWidth: this.getSvgAttribute('stroke-width'),
-      fill: this.shapeEl.getAttribute('fill'),
+      fill: this.shapeEl.getAttribute('fill') || '#00000000',
     });
   }
 
