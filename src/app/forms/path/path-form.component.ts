@@ -6,11 +6,10 @@ import { adaptWidthOfInputToWidthOfText, CollapsibleModule } from '@jaimemartinm
 import { PathPainter } from '../../painters/path.painter';
 
 @Component({
-  selector: 'app-path-form',
-  standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, CollapsibleModule, CdkDragHandle],
-  templateUrl: './path-form.component.html',
-  styleUrls: ['../shared.scss', './path-form.component.scss'],
+    selector: 'app-path-form',
+    imports: [CommonModule, ReactiveFormsModule, CollapsibleModule, CdkDragHandle],
+    templateUrl: './path-form.component.html',
+    styleUrls: ['../shared.scss', './path-form.component.scss']
 })
 export class PathFormComponent implements AfterViewInit {
   @ViewChild('shapeName')

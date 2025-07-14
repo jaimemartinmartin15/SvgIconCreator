@@ -13,11 +13,10 @@ const KEY_MAPPING: { [key: string]: Shape } = {
 };
 
 @Component({
-  selector: 'app-shapes-panel',
-  standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, CollapsibleModule],
-  templateUrl: './shapes-panel.component.html',
-  styleUrls: ['./shapes-panel.component.scss'],
+    selector: 'app-shapes-panel',
+    imports: [CommonModule, ReactiveFormsModule, CollapsibleModule],
+    templateUrl: './shapes-panel.component.html',
+    styleUrls: ['./shapes-panel.component.scss']
 })
 export class ShapesPanelComponent {
   public Shape = Shape;
