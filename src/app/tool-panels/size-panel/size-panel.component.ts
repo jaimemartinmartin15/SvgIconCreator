@@ -5,11 +5,10 @@ import { CollapsibleModule, ElementsRefService } from '@jaimemartinmartin15/jei-
 import { debounceTime } from 'rxjs';
 
 @Component({
-  selector: 'app-size-panel',
-  standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, CollapsibleModule],
-  templateUrl: './size-panel.component.html',
-  styleUrls: ['./size-panel.component.scss'],
+    selector: 'app-size-panel',
+    imports: [CommonModule, ReactiveFormsModule, CollapsibleModule],
+    templateUrl: './size-panel.component.html',
+    styleUrls: ['./size-panel.component.scss']
 })
 export class SizePanelComponent implements OnInit, AfterViewInit {
   private canvas: SVGSVGElement;

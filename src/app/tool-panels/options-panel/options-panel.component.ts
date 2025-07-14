@@ -7,11 +7,10 @@ import { ShapePainter } from '../../painters/shape.painter';
 import { Shape } from '../../shape';
 
 @Component({
-  selector: 'app-options-panel',
-  standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, CollapsibleModule, ColorPickerComponent],
-  templateUrl: './options-panel.component.html',
-  styleUrls: ['./options-panel.component.scss'],
+    selector: 'app-options-panel',
+    imports: [CommonModule, ReactiveFormsModule, CollapsibleModule, ColorPickerComponent],
+    templateUrl: './options-panel.component.html',
+    styleUrls: ['./options-panel.component.scss']
 })
 export class OptionsPanelComponent implements OnChanges {
   public Shape = Shape;

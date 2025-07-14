@@ -6,11 +6,10 @@ import { adaptWidthOfInputToWidthOfText, CollapsibleModule } from '@jaimemartinm
 import { RectPainter } from '../../painters/rect.painter';
 
 @Component({
-  selector: 'app-rect-form',
-  standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, CollapsibleModule, CdkDragHandle],
-  templateUrl: './rect-form.component.html',
-  styleUrls: ['../shared.scss'],
+    selector: 'app-rect-form',
+    imports: [CommonModule, ReactiveFormsModule, CollapsibleModule, CdkDragHandle],
+    templateUrl: './rect-form.component.html',
+    styleUrls: ['../shared.scss']
 })
 export class RectFormComponent implements AfterViewInit {
   @ViewChild('shapeName')

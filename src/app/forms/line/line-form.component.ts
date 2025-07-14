@@ -6,11 +6,10 @@ import { adaptWidthOfInputToWidthOfText, CollapsibleModule } from '@jaimemartinm
 import { LinePainter } from '../../painters/line.painter';
 
 @Component({
-  selector: 'app-line-form',
-  standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, CollapsibleModule, CdkDragHandle],
-  templateUrl: './line-form.component.html',
-  styleUrls: ['../shared.scss'],
+    selector: 'app-line-form',
+    imports: [CommonModule, ReactiveFormsModule, CollapsibleModule, CdkDragHandle],
+    templateUrl: './line-form.component.html',
+    styleUrls: ['../shared.scss']
 })
 export class LineFormComponent implements AfterViewInit {
   @ViewChild('shapeName')

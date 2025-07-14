@@ -19,33 +19,32 @@ import { ShapesPanelComponent } from './tool-panels/shapes-panel/shapes-panel.co
 import { SizePanelComponent } from './tool-panels/size-panel/size-panel.component';
 
 @Component({
-  selector: 'app-root',
-  standalone: true,
-  imports: [
-    // angular
-    CommonModule,
-    DragDropModule,
-    FormsModule,
-    ReactiveFormsModule,
-    // jei-devkit
-    CollapsibleModule,
-    ElementRefDirective,
-    // panels
-    BackgroundPanelComponent,
-    ExportPanelComponent,
-    ImportPanelComponent,
-    OptionsPanelComponent,
-    ShapesPanelComponent,
-    SizePanelComponent,
-    // shape list form components
-    CircleFormComponent,
-    LineFormComponent,
-    PathFormComponent,
-    RectFormComponent,
-    TextFormComponent,
-  ],
-  templateUrl: './app.component.html',
-  styleUrl: './app.component.scss',
+    selector: 'app-root',
+    imports: [
+        // angular
+        CommonModule,
+        DragDropModule,
+        FormsModule,
+        ReactiveFormsModule,
+        // jei-devkit
+        CollapsibleModule,
+        ElementRefDirective,
+        // panels
+        BackgroundPanelComponent,
+        ExportPanelComponent,
+        ImportPanelComponent,
+        OptionsPanelComponent,
+        ShapesPanelComponent,
+        SizePanelComponent,
+        // shape list form components
+        CircleFormComponent,
+        LineFormComponent,
+        PathFormComponent,
+        RectFormComponent,
+        TextFormComponent,
+    ],
+    templateUrl: './app.component.html',
+    styleUrl: './app.component.scss'
 })
 export class AppComponent implements AfterViewInit {
   public Shape = Shape;

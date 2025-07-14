@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## Unreleased
+
+- Upgrade from angular 17 to angular 20.
+
 ## 1.0.1
 
 Fix export of optimized lines

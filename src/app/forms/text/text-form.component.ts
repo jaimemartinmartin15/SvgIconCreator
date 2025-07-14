@@ -6,11 +6,10 @@ import { adaptWidthOfInputToWidthOfText, CollapsibleModule } from '@jaimemartinm
 import { TextPainter } from '../../painters/text.painter';
 
 @Component({
-  selector: 'app-text-form',
-  standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, CollapsibleModule, CdkDragHandle],
-  templateUrl: './text-form.component.html',
-  styleUrls: ['../shared.scss'],
+    selector: 'app-text-form',
+    imports: [CommonModule, ReactiveFormsModule, CollapsibleModule, CdkDragHandle],
+    templateUrl: './text-form.component.html',
+    styleUrls: ['../shared.scss']
 })
 export class TextFormComponent implements AfterViewInit {
   @ViewChild('shapeName')

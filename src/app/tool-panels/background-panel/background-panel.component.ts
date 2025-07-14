@@ -3,11 +3,10 @@ import { AfterViewInit, Component } from '@angular/core';
 import { CollapsibleModule, ElementsRefService } from '@jaimemartinmartin15/jei-devkit-angular-shared';
 
 @Component({
-  selector: 'app-background-panel',
-  standalone: true,
-  imports: [CommonModule, CollapsibleModule],
-  templateUrl: './background-panel.component.html',
-  styleUrls: ['./background-panel.component.scss'],
+    selector: 'app-background-panel',
+    imports: [CommonModule, CollapsibleModule],
+    templateUrl: './background-panel.component.html',
+    styleUrls: ['./background-panel.component.scss']
 })
 export class BackgroundPanelComponent implements AfterViewInit {
   private canvas: SVGSVGElement;

@@ -9,11 +9,10 @@ import { ShapePainter } from '../../painters/shape.painter';
 import { TextPainter } from '../../painters/text.painter';
 
 @Component({
-  selector: 'app-import-panel',
-  standalone: true,
-  imports: [CommonModule, CollapsibleModule],
-  templateUrl: './import-panel.component.html',
-  styleUrls: ['./import-panel.component.scss'],
+    selector: 'app-import-panel',
+    imports: [CommonModule, CollapsibleModule],
+    templateUrl: './import-panel.component.html',
+    styleUrls: ['./import-panel.component.scss']
 })
 export class ImportPanelComponent {
   private canvas: SVGSVGElement;

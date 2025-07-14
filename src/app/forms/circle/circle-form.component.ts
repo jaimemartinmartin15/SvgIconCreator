@@ -6,11 +6,10 @@ import { adaptWidthOfInputToWidthOfText, CollapsibleModule } from '@jaimemartinm
 import { CirclePainter } from '../../painters/circle.painter';
 
 @Component({
-  selector: 'app-circle-form',
-  standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, CollapsibleModule, CdkDragHandle],
-  templateUrl: './circle-form.component.html',
-  styleUrls: ['../shared.scss'],
+    selector: 'app-circle-form',
+    imports: [CommonModule, ReactiveFormsModule, CollapsibleModule, CdkDragHandle],
+    templateUrl: './circle-form.component.html',
+    styleUrls: ['../shared.scss']
 })
 export class CircleFormComponent implements AfterViewInit {
   @ViewChild('shapeName')

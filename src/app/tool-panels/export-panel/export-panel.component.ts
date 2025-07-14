@@ -11,11 +11,10 @@ enum ExportTypes {
 }
 
 @Component({
-  selector: 'app-export-panel',
-  standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, CollapsibleModule, ColorPickerComponent],
-  templateUrl: './export-panel.component.html',
-  styleUrls: ['./export-panel.component.scss'],
+    selector: 'app-export-panel',
+    imports: [CommonModule, ReactiveFormsModule, CollapsibleModule, ColorPickerComponent],
+    templateUrl: './export-panel.component.html',
+    styleUrls: ['./export-panel.component.scss']
 })
 export class ExportPanelComponent {
   private canvas: SVGSVGElement;
