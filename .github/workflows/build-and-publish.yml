@@ -16,13 +16,15 @@ jobs:
       - name: Setup node
         uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 22
           registry-url: https://npm.pkg.github.com/
           scope: "@jaimemartinmartin15"
       - name: Install
         run: npm ci --no-audit --no-fund
         env:
           NODE_AUTH_TOKEN: ${{ secrets.GH_REGISTRY_TOKEN }}
+      - name: Generate icons
+        run: npm run icons
       - name: Build
         run: npm run build
       - name: Set AWS credentials
