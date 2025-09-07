@@ -1,0 +1,12 @@
+<button class="open-dialog-button" [style]="{backgroundColor: form.value}" (click)="showModal(colorPickerDialog)">
+</button>
+
+<span class="app-control-label" #label>{{attribute.toUpperCase()}}</span>
+
+<dialog class="dialog" #colorPickerDialog [style]="positionDialog">
+  <div class="content">
+    <button class="close-dialog-button" (click)="colorPickerDialog.close()"></button>
+
+    <jei-color-picker [formControl]="form"></jei-color-picker>
+  </div>
+</dialog>

@@ -1,0 +1,33 @@
+{
+  "name": "svgiconcreator",
+  "version": "0.0.0",
+  "scripts": {
+    "start": "ng serve -o",
+    "start:public": "ng serve -o --host 0.0.0.0 --port 80",
+    "start:prod": "mv dist/creador-iconos-svg dist/dist && mv dist/dist/browser dist/dist/creador-iconos-svg && cd dist/dist/ && live-server . --open=creador-iconos-svg",
+    "build": "ng build --base-href /creador-iconos-svg/",
+    "icons": "ng run svgiconcreator:icons"
+  },
+  "private": true,
+  "dependencies": {
+    "@angular/cdk": "^20.1.2",
+    "@angular/common": "^20.0.0",
+    "@angular/compiler": "^20.0.0",
+    "@angular/core": "^20.0.0",
+    "@angular/forms": "^20.0.0",
+    "@angular/platform-browser": "^20.0.0",
+    "@angular/router": "^20.0.0",
+    "@jaimemartinmartin15/jei-devkit-angular-shared": "^4.0.0",
+    "@jaimemartinmartin15/svg-icons": "^1.3.0",
+    "rxjs": "~7.8.0",
+    "tslib": "^2.3.0",
+    "zone.js": "~0.15.0"
+  },
+  "devDependencies": {
+    "@angular/build": "^20.0.1",
+    "@angular/cli": "^20.0.1",
+    "@angular/compiler-cli": "^20.0.0",
+    "@jaimemartinmartin15/jei-devkit-angular-builders": "^3.1.2",
+    "typescript": "~5.8.2"
+  }
+}

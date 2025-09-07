@@ -1,0 +1,27 @@
+<jei-collapsible [formGroup]="lineHost.form" [isOpen]="true" #collapsible>
+  <app-shape-invoker jeiCollapsibleToggleAction [host]="lineHost" [isExpanded]="collapsible.isOpen"></app-shape-invoker>
+
+  <div jeiCollapsibleContent>
+    <form (click)="selectShape($event)">
+      <label class="app-label-and-input">
+        <span class="app-control-label">X1</span>
+        <input type="text" jeiInputNumber formControlName="x1">
+      </label>
+
+      <label class="app-label-and-input">
+        <span class="app-control-label">Y1</span>
+        <input type="text" jeiInputNumber formControlName="y1">
+      </label>
+
+      <label class="app-label-and-input">
+        <span class="app-control-label">X2</span>
+        <input type="text" jeiInputNumber formControlName="x2">
+      </label>
+
+      <label class="app-label-and-input">
+        <span class="app-control-label">Y2</span>
+        <input type="text" jeiInputNumber formControlName="y2">
+      </label>
+    </form>
+  </div>
+</jei-collapsible>

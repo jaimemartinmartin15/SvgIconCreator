@@ -1,0 +1,38 @@
+:host {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+
+.shapes {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+
+  label {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 25px;
+    height: 25px;
+    padding: 5px;
+    border: 1px solid #595959;
+    border-radius: 5px;
+    background-color: transparent;
+    cursor: pointer;
+
+    &:hover {
+      background-color: lightgray;
+    }
+
+    &:has(:checked) {
+      background-color: lightcyan;
+    }
+
+    svg {
+      width: 100%;
+      height: 100%;
+    }
+  }
+}
