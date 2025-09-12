@@ -37,7 +37,7 @@ jobs:
       - name: Deploy
         run: |
           aws --version
-          aws s3 sync ./dist/creador-iconos-svg/browser \
+          aws s3 sync ./dist/svgiconcreator/browser \
                       s3://jaimeelingeniero.es/creador-iconos-svg \
                       --delete
-          aws s3 cp ./dist/creador-iconos-svg/3rdpartylicenses.txt s3://jaimeelingeniero.es/creador-iconos-svg/3rdpartylicenses.txt
+          aws s3 cp ./dist/svgiconcreator/3rdpartylicenses.txt s3://jaimeelingeniero.es/creador-iconos-svg/3rdpartylicenses.txt
