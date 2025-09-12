@@ -31,16 +31,17 @@ npm run start
 To build the project run:
 
 ```text
+npm run icons
 npm run build
 ```
 
 ## Deploy
 
-After doing the changes in your branch, increase the [package.json](./package.json) version and then run `npm i` to update the package-lock.json
+After doing the changes in your branch, increase the [package.json](./package.json) version and then run `npm i` to update the [package-lock.json](./package-lock.json).
 
 Update also [CHANGELOG.md](./CHANGELOG.md) file.
 
-Then merge the changes in `main` branch and create a tag with the same version than in the package.json
+Then merge the changes in `main` branch and create a tag with the same version than in the [package.json](./package.json).
 
 When pushing the tag to the remote, it will trigger the workflow **build-and-publish.yml** automatically to deploy it.
 

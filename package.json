@@ -1,10 +1,10 @@
 {
   "name": "svgiconcreator",
-  "version": "0.0.0",
+  "version": "2.0.0",
   "scripts": {
     "start": "ng serve -o",
     "start:public": "ng serve -o --host 0.0.0.0 --port 80",
-    "start:prod": "mv dist/creador-iconos-svg dist/dist && mv dist/dist/browser dist/dist/creador-iconos-svg && cd dist/dist/ && live-server . --open=creador-iconos-svg",
+    "start:prod": "mv dist/svgiconcreator dist/dist && mv dist/dist/browser dist/dist/creador-iconos-svg && cd dist/dist/ && live-server . --open=creador-iconos-svg",
     "build": "ng build --base-href /creador-iconos-svg/",
     "icons": "ng run svgiconcreator:icons"
   },

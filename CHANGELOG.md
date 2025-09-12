@@ -1,7 +1,8 @@
 # CHANGELOG
 
-## Unreleased
+## 2.0.0
 
+- Refactor all application.
 - Upgrade from angular 17 to angular 20.
 
 ## 1.0.1
