@@ -108,8 +108,8 @@ export class CircleHost extends ShapeHost {
   protected override isShapeVisible(): boolean {
     const { r } = this.form.controls;
 
-    let isVisible = super.isShapeVisible();
-    let hasSize = r.value > 0;
+    const isVisible = super.isShapeVisible();
+    const hasSize = r.value > 0;
 
     return isVisible && hasSize;
   }

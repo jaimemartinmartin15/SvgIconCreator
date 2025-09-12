@@ -48,7 +48,7 @@ export class ExportSvgComponent {
   public downloadOptimizedSvg() {
     // create a svg string from shapeList
     const svgVb = this.canvas.viewBox.baseVal;
-    let svgTemplate = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="${svgVb.x} ${svgVb.y} ${svgVb.width} ${svgVb.height}">
+    const svgTemplate = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="${svgVb.x} ${svgVb.y} ${svgVb.width} ${svgVb.height}">
   ${this.shapeListService.shapeList
         .map((sp) => sp.parseOptimizedString())
         .filter((s) => s !== '')

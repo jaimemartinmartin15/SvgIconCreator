@@ -107,10 +107,10 @@ export class RectHost extends ShapeHost {
 
   //#region mouse drag edit
   public override mouseDragEdit(coord: CoordWithDelta): void {
-    let x = coord.x < this.pivot.x ? coord.x : this.pivot.x;
-    let y = coord.y < this.pivot.y ? coord.y : this.pivot.y;
-    let width = Math.abs(coord.x - this.pivot.x);
-    let height = Math.abs(coord.y - this.pivot.y);
+    const x = coord.x < this.pivot.x ? coord.x : this.pivot.x;
+    const y = coord.y < this.pivot.y ? coord.y : this.pivot.y;
+    const width = Math.abs(coord.x - this.pivot.x);
+    const height = Math.abs(coord.y - this.pivot.y);
 
     // update the selected edit point index if it crosses the pivot
     this.selectedEditPointIndex = this.getEditPointIndexUnderCoord(coord);
@@ -164,8 +164,8 @@ export class RectHost extends ShapeHost {
   protected override isShapeVisible(): boolean {
     const { width, height } = this.form.controls;
 
-    let isVisible = super.isShapeVisible();
-    let hasSize = width.value > 0 && height.value > 0;
+    const isVisible = super.isShapeVisible();
+    const hasSize = width.value > 0 && height.value > 0;
 
     return isVisible && hasSize;
   }

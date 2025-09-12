@@ -89,8 +89,8 @@ export class TextHost extends ShapeHost {
   protected override isShapeVisible(): boolean {
     const { text, fontSize } = this.form.controls;
 
-    let isVisible = super.isShapeVisible();
-    let hasSize = text.value.trim() !== '' && fontSize.value > 0;
+    const isVisible = super.isShapeVisible();
+    const hasSize = text.value.trim() !== '' && fontSize.value > 0;
 
     return isVisible && hasSize;
   }

@@ -113,8 +113,8 @@ export class LineHost extends ShapeHost {
   protected override isShapeVisible(): boolean {
     const { strokeWidth, stroke, x1, y1, x2, y2 } = this.form.controls;
 
-    let isVisible = !stroke.value.endsWith('00') && strokeWidth.value !== 0;
-    let hasSize = x1.value !== x2.value || x2.value !== y1.value || y1.value !== y2.value;
+    const isVisible = !stroke.value.endsWith('00') && strokeWidth.value !== 0;
+    const hasSize = x1.value !== x2.value || x2.value !== y1.value || y1.value !== y2.value;
 
     return isVisible && hasSize;
   }

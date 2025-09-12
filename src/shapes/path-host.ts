@@ -240,8 +240,8 @@ export class PathHost extends ShapeHost {
 
   //#region export
   protected override isShapeVisible(): boolean {
-    let isVisible = super.isShapeVisible();
-    let hasSize = this.form.value.commands!.length > 1;
+    const isVisible = super.isShapeVisible();
+    const hasSize = this.form.value.commands!.length > 1;
 
     return isVisible && hasSize;
   }
