@@ -17,7 +17,7 @@ export class StrokeWidthSelectorComponent implements OnInit {
 
   private otherShapeIsSelected$ = new Subject<void>();
 
-  public constructor(private readonly shapeListService: ShapeListService) { }
+  public constructor(private readonly shapeListService: ShapeListService) {}
 
   public ngOnInit(): void {
     this.fallbackFormControl.setValue(1);
@@ -29,9 +29,7 @@ export class StrokeWidthSelectorComponent implements OnInit {
       if (!shapeHost) return;
 
       // listen to changes for next shape
-      shapeHost.form.controls[this.attributeName].valueChanges
-        .pipe(takeUntil(this.otherShapeIsSelected$))
-        .subscribe((v) => (this.fallbackFormControl.setValue(v)));
+      shapeHost.form.controls[this.attributeName].valueChanges.pipe(takeUntil(this.otherShapeIsSelected$)).subscribe((v) => this.fallbackFormControl.setValue(v));
 
       if (!shapeHost.isShapeFinished) {
         // if it changes the shape and it is not finised (it is a new one), set last used
@@ -45,7 +43,7 @@ export class StrokeWidthSelectorComponent implements OnInit {
         // if it selects another existing shape, set fallback form value so next shape picks strokeWidth of the existing one
         this.fallbackFormControl.setValue(shapeHost.form.controls[this.attributeName].value);
       }
-    })
+    });
   }
 
   public get form(): FormControl<number> {

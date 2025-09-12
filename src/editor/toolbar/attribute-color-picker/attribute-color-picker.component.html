@@ -1,7 +1,6 @@
-<button class="open-dialog-button" [style]="{backgroundColor: form.value}" (click)="showModal(colorPickerDialog)">
-</button>
+<button class="open-dialog-button" [style]="{ backgroundColor: form.value }" (click)="showModal(colorPickerDialog)"></button>
 
-<span class="app-control-label" #label>{{attribute.toUpperCase()}}</span>
+<span class="app-control-label" #label>{{ attribute.toUpperCase() }}</span>
 
 <dialog class="dialog" #colorPickerDialog [style]="positionDialog">
   <div class="content">

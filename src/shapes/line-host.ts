@@ -1,10 +1,10 @@
-import { FormControl, FormGroup } from "@angular/forms";
-import { Coord } from "../models/coord";
-import { CoordWithDelta } from "../models/coord-with-delta";
-import { LineModel } from "../models/line.model";
-import { Shape } from "../models/shape";
-import { ConvertToForm } from "../utils/convert-to-form";
-import { ShapeHost } from "./shape-host";
+import { FormControl, FormGroup } from '@angular/forms';
+import { Coord } from '../models/coord';
+import { CoordWithDelta } from '../models/coord-with-delta';
+import { LineModel } from '../models/line.model';
+import { Shape } from '../models/shape';
+import { ConvertToForm } from '../utils/convert-to-form';
+import { ShapeHost } from './shape-host';
 
 export class LineHost extends ShapeHost {
   public override readonly type = Shape.LINE;
@@ -105,7 +105,7 @@ export class LineHost extends ShapeHost {
       y2: this.getSvgAttribute('y2'),
     });
 
-    super.loadFromElement(svg)
+    super.loadFromElement(svg);
   }
   //#endregion
 

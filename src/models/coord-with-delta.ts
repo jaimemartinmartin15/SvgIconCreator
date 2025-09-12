@@ -1,4 +1,4 @@
-import { Coord } from "./coord";
+import { Coord } from './coord';
 
 export interface CoordWithDelta extends Coord {
   dx: number;

@@ -16,20 +16,15 @@ export abstract class ShapeFormComponent implements OnInit, OnDestroy {
   @Input()
   public host: ShapeHost;
 
-  public constructor(
-    private readonly shapeListService: ShapeListService,
-  ) { }
+  public constructor(private readonly shapeListService: ShapeListService) {}
 
   //#region  hooks
   public ngOnInit(): void {
-    this.host.form.valueChanges
-      .pipe(takeUntil(this.componentDestroyed$))
-      .subscribe((v) => {
-        this.host.updateSvgAttributes(v);
-        this.host.updatePositionSvgEditPoints(v)
-      });
+    this.host.form.valueChanges.pipe(takeUntil(this.componentDestroyed$)).subscribe((v) => {
+      this.host.updateSvgAttributes(v);
+      this.host.updatePositionSvgEditPoints(v);
+    });
   }
-
 
   public ngOnDestroy(): void {
     this.componentDestroyed$.next();

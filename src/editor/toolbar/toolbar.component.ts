@@ -10,6 +10,6 @@ import { StrokeWidthSelectorComponent } from './stroke-width-selector/stroke-wid
   selector: 'app-toolbar',
   templateUrl: './toolbar.component.html',
   styleUrls: ['./toolbar.component.scss'],
-  imports: [ImportSvgComponent, ExportSvgComponent, CanvasOptionsComponent, ShapeSelectorComponent, AttributeColorPickerComponent, StrokeWidthSelectorComponent]
+  imports: [ImportSvgComponent, ExportSvgComponent, CanvasOptionsComponent, ShapeSelectorComponent, AttributeColorPickerComponent, StrokeWidthSelectorComponent],
 })
-export class ToolbarComponent { }
+export class ToolbarComponent {}

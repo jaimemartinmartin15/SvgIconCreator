@@ -1,10 +1,10 @@
-import { FormControl, FormGroup } from "@angular/forms";
-import { CircleModel } from "../models/circle.model";
-import { Coord } from "../models/coord";
-import { CoordWithDelta } from "../models/coord-with-delta";
-import { Shape } from "../models/shape";
-import { ConvertToForm } from "../utils/convert-to-form";
-import { ShapeHost } from "./shape-host";
+import { FormControl, FormGroup } from '@angular/forms';
+import { CircleModel } from '../models/circle.model';
+import { Coord } from '../models/coord';
+import { CoordWithDelta } from '../models/coord-with-delta';
+import { Shape } from '../models/shape';
+import { ConvertToForm } from '../utils/convert-to-form';
+import { ShapeHost } from './shape-host';
 
 export class CircleHost extends ShapeHost {
   public override readonly type = Shape.CIRCLE;
@@ -50,7 +50,7 @@ export class CircleHost extends ShapeHost {
   public override mouseDrag(coord: CoordWithDelta): void {
     const cx = this.toFixed(coord.x - coord.dx);
     const cy = this.toFixed(coord.y - coord.dy);
-    const radius = this.calculateRadius({ x: cx, y: cy }, coord)
+    const radius = this.calculateRadius({ x: cx, y: cy }, coord);
 
     this.updateForm({ x: cx, y: cy }, radius);
   }
@@ -100,7 +100,7 @@ export class CircleHost extends ShapeHost {
       r: this.getSvgAttribute('r'),
     });
 
-    super.loadFromElement(svg)
+    super.loadFromElement(svg);
   }
   //#endregion
 
@@ -143,9 +143,8 @@ export class CircleHost extends ShapeHost {
       ...this.form.value,
       cx: center.x,
       cy: center.y,
-      r: radius
-    } as CircleModel
-    );
+      r: radius,
+    } as CircleModel);
   }
   //#endregion
 }

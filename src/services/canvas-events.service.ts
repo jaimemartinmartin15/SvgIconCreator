@@ -4,7 +4,7 @@ import { Coord } from '../models/coord';
 import { CoordWithDelta } from '../models/coord-with-delta';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class CanvasEventsService {
   public canvasPointerDown$: Subject<Coord> = new Subject<Coord>();

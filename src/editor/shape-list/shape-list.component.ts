@@ -19,9 +19,7 @@ import { TextFormComponent } from './text/text-form.component';
 export class ShapeListComponent {
   public readonly Shape = Shape;
 
-  public constructor(
-    private readonly shapeListService: ShapeListService,
-  ) { }
+  public constructor(private readonly shapeListService: ShapeListService) {}
 
   public get shapes(): ShapeHost[] {
     return this.shapeListService.shapeList;

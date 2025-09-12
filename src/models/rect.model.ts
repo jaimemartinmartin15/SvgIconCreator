@@ -1,4 +1,4 @@
-import { ShapeModel } from "./shape.model";
+import { ShapeModel } from './shape.model';
 
 export interface RectModel extends ShapeModel {
   x: number;

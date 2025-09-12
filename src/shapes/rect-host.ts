@@ -1,10 +1,10 @@
-import { FormControl, FormGroup } from "@angular/forms";
-import { Coord } from "../models/coord";
-import { CoordWithDelta } from "../models/coord-with-delta";
-import { RectModel } from "../models/rect.model";
-import { Shape } from "../models/shape";
-import { ConvertToForm } from "../utils/convert-to-form";
-import { ShapeHost } from "./shape-host";
+import { FormControl, FormGroup } from '@angular/forms';
+import { Coord } from '../models/coord';
+import { CoordWithDelta } from '../models/coord-with-delta';
+import { RectModel } from '../models/rect.model';
+import { Shape } from '../models/shape';
+import { ConvertToForm } from '../utils/convert-to-form';
+import { ShapeHost } from './shape-host';
 
 export class RectHost extends ShapeHost {
   //#region rect host vars
@@ -156,7 +156,7 @@ export class RectHost extends ShapeHost {
       ry: this.getSvgAttribute('ry'),
     });
 
-    super.loadFromElement(svg)
+    super.loadFromElement(svg);
   }
   //#endregion
 
@@ -193,10 +193,10 @@ export class RectHost extends ShapeHost {
 
   //#region rect host
   private updateFormWithCoords(coords: Coord[]) {
-    const x = Math.min(...coords.map(c => c.x));
-    const y = Math.min(...coords.map(c => c.y));
-    const width = this.toFixed(Math.max(...coords.map(c => c.x)) - x);
-    const height = this.toFixed(Math.max(...coords.map(c => c.y)) - y);
+    const x = Math.min(...coords.map((c) => c.x));
+    const y = Math.min(...coords.map((c) => c.y));
+    const width = this.toFixed(Math.max(...coords.map((c) => c.x)) - x);
+    const height = this.toFixed(Math.max(...coords.map((c) => c.y)) - y);
 
     const patchValue: RectModel = { ...this.form.value, x, y, width, height } as RectModel;
     this.form.setValue(patchValue);

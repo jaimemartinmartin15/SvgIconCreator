@@ -21,8 +21,8 @@
         <span class="app-control-label">FICHERO SVG</span>
 
         <label>
-          <input type="file" accept=".svg,.txt" (change)="loadFile($event)">
-          <div class="mock-input-file">{{ loadedFile ? loadedFile.name : 'Cargar un fichero'}}</div>
+          <input type="file" accept=".svg,.txt" (change)="loadFile($event)" />
+          <div class="mock-input-file">{{ loadedFile ? loadedFile.name : 'Cargar un fichero' }}</div>
         </label>
       </div>
     </form>

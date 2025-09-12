@@ -11,7 +11,7 @@ import { IconsSvgModule } from '../../../svg-output/icons-svg.module';
   selector: 'app-canvas-options',
   templateUrl: './canvas-options.component.html',
   styleUrls: ['./canvas-options.component.scss'],
-  imports: [CommonModule, ReactiveFormsModule, ElementRefDirective, IconsSvgModule, InputNumberDirective]
+  imports: [CommonModule, ReactiveFormsModule, ElementRefDirective, IconsSvgModule, InputNumberDirective],
 })
 export class CanvasOptionsComponent implements OnInit {
   private svgImageEl: SVGImageElement = document.createElementNS('http://www.w3.org/2000/svg', 'image');
@@ -20,7 +20,7 @@ export class CanvasOptionsComponent implements OnInit {
   public constructor(
     private readonly elementsRefService: ElementsRefService,
     private readonly formsService: FormsService,
-  ) { }
+  ) {}
 
   public ngOnInit(): void {
     this.canvasOptionsViewBoxForm.valueChanges.pipe(debounceTime(200)).subscribe((v) => this.updateCanvasSize(v));
@@ -32,11 +32,11 @@ export class CanvasOptionsComponent implements OnInit {
   }
 
   private get canvasEl(): SVGSVGElement {
-    return this.elementsRefService.getNativeElement<SVGSVGElement>('canvas')
+    return this.elementsRefService.getNativeElement<SVGSVGElement>('canvas');
   }
 
   private get backgroundImageInputEl(): HTMLInputElement {
-    return this.elementsRefService.getNativeElement<HTMLInputElement>('backgroundImageInputEl')
+    return this.elementsRefService.getNativeElement<HTMLInputElement>('backgroundImageInputEl');
   }
 
   public get backgroundImageFile(): File | undefined {

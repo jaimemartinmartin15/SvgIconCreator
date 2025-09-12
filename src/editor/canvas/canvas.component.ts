@@ -6,26 +6,24 @@ import { CanvasEventsService } from '../../services/canvas-events.service';
   selector: 'app-canvas',
   templateUrl: './canvas.component.html',
   styleUrls: ['./canvas.component.scss'],
-  imports: [ElementRefDirective, SvgMouseEventsDirective]
+  imports: [ElementRefDirective, SvgMouseEventsDirective],
 })
 export class CanvasComponent {
-  public constructor(
-    private readonly canvasEventsService: CanvasEventsService,
-  ) { }
+  public constructor(private readonly canvasEventsService: CanvasEventsService) {}
 
   public onMouseMove(coord: Coord) {
-    this.canvasEventsService.canvasPointerMove$.next(coord)
+    this.canvasEventsService.canvasPointerMove$.next(coord);
   }
 
   public onMouseUp(coord: CoordWithDelta) {
-    this.canvasEventsService.canvasPointerUp$.next(coord)
+    this.canvasEventsService.canvasPointerUp$.next(coord);
   }
 
   public onMouseDrag(coord: CoordWithDelta) {
-    this.canvasEventsService.canvasPointerDrag$.next(coord)
+    this.canvasEventsService.canvasPointerDrag$.next(coord);
   }
 
   public onMouseDown(coord: Coord) {
-    this.canvasEventsService.canvasPointerDown$.next(coord)
+    this.canvasEventsService.canvasPointerDown$.next(coord);
   }
 }

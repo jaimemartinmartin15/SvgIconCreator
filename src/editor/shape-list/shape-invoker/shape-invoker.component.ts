@@ -9,7 +9,7 @@ import { ShapeHost } from '../../../shapes/shape-host';
   selector: 'app-shape-invoker',
   templateUrl: './shape-invoker.component.html',
   styleUrls: ['./shape-invoker.component.scss'],
-  imports: [CommonModule, CollapsibleModule, ReactiveFormsModule]
+  imports: [CommonModule, CollapsibleModule, ReactiveFormsModule],
 })
 export class ShapeInvokerComponent {
   @ViewChild('shapeName')
@@ -22,9 +22,7 @@ export class ShapeInvokerComponent {
   @Input()
   public host: ShapeHost;
 
-  public constructor(
-    private readonly shapeListService: ShapeListService,
-  ) { }
+  public constructor(private readonly shapeListService: ShapeListService) {}
 
   public ngAfterViewInit(): void {
     adaptWidthOfInputToWidthOfText(this.shapeNameInput.nativeElement);
@@ -61,7 +59,7 @@ export class ShapeInvokerComponent {
   }
 
   public onDeleteShape(event: MouseEvent) {
-    event.stopPropagation()
+    event.stopPropagation();
     this.host.delete();
   }
 }

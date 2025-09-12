@@ -19,7 +19,7 @@ import { ToolbarComponent } from './toolbar/toolbar.component';
   selector: 'app-editor',
   templateUrl: './editor.component.html',
   styleUrls: ['./editor.component.scss'],
-  imports: [ToolbarComponent, CanvasComponent, ShapeListComponent]
+  imports: [ToolbarComponent, CanvasComponent, ShapeListComponent],
 })
 export class EditorComponent {
   public constructor(
@@ -27,7 +27,7 @@ export class EditorComponent {
     private readonly canvasEventsService: CanvasEventsService,
     private readonly elementsRefService: ElementsRefService,
     private readonly formsService: FormsService,
-  ) { }
+  ) {}
 
   public ngOnInit(): void {
     this.canvasEventsService.canvasPointerDown$.subscribe((coord) => {
@@ -44,7 +44,7 @@ export class EditorComponent {
       }
     });
 
-    this.canvasEventsService.canvasPointerDrag$.subscribe(coord => {
+    this.canvasEventsService.canvasPointerDrag$.subscribe((coord) => {
       if (!this.shapeListService.selectedShape!.isShapeFinished) {
         this.shapeListService.selectedShape!.mouseDrag(coord);
       } else {
@@ -52,7 +52,7 @@ export class EditorComponent {
       }
     });
 
-    this.canvasEventsService.canvasPointerUp$.subscribe(coord => {
+    this.canvasEventsService.canvasPointerUp$.subscribe((coord) => {
       if (!this.shapeListService.selectedShape!.isShapeFinished) {
         this.shapeListService.selectedShape!.mouseUp(coord);
       } else {
@@ -60,11 +60,11 @@ export class EditorComponent {
       }
     });
 
-    this.canvasEventsService.canvasPointerMove$.subscribe(coord => {
+    this.canvasEventsService.canvasPointerMove$.subscribe((coord) => {
       this.shapeListService.selectedShape?.mouseMove(coord);
-    })
+    });
 
-    fromEvent<KeyboardEvent>(window, 'keydown').subscribe(event => {
+    fromEvent<KeyboardEvent>(window, 'keydown').subscribe((event) => {
       const key = event.key.toUpperCase();
 
       // allow to change path command using the keyboard

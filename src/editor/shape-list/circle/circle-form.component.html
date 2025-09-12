@@ -1,22 +1,21 @@
 <jei-collapsible [formGroup]="circleHost.form" [isOpen]="true" #collapsible>
-  <app-shape-invoker jeiCollapsibleToggleAction [host]="circleHost" [isExpanded]="collapsible.isOpen">
-  </app-shape-invoker>
+  <app-shape-invoker jeiCollapsibleToggleAction [host]="circleHost" [isExpanded]="collapsible.isOpen"> </app-shape-invoker>
 
   <div jeiCollapsibleContent>
     <form (click)="selectShape($event)">
       <label class="app-label-and-input">
         <span class="app-control-label">CX</span>
-        <input type="text" jeiInputNumber formControlName="cx">
+        <input type="text" jeiInputNumber formControlName="cx" />
       </label>
 
       <label class="app-label-and-input">
         <span class="app-control-label">CY</span>
-        <input type="text" jeiInputNumber formControlName="cy">
+        <input type="text" jeiInputNumber formControlName="cy" />
       </label>
 
       <label class="app-label-and-input">
         <span class="app-control-label">R</span>
-        <input type="text" jeiInputNumber [min]="0" formControlName="r">
+        <input type="text" jeiInputNumber [min]="0" formControlName="r" />
       </label>
     </form>
   </div>

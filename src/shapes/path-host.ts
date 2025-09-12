@@ -1,10 +1,10 @@
-import { FormArray, FormControl, FormGroup } from "@angular/forms";
-import { Coord } from "../models/coord";
-import { CoordWithDelta } from "../models/coord-with-delta";
-import { Command, PathInstruction, PathModel } from "../models/path.model";
-import { Shape } from "../models/shape";
-import { ConvertToForm } from "../utils/convert-to-form";
-import { ShapeHost } from "./shape-host";
+import { FormArray, FormControl, FormGroup } from '@angular/forms';
+import { Coord } from '../models/coord';
+import { CoordWithDelta } from '../models/coord-with-delta';
+import { Command, PathInstruction, PathModel } from '../models/path.model';
+import { Shape } from '../models/shape';
+import { ConvertToForm } from '../utils/convert-to-form';
+import { ShapeHost } from './shape-host';
 
 export function isPathInstruction(key: string): key is PathInstruction {
   return ['M', 'L', 'C', 'Z'].includes(key);
@@ -19,20 +19,22 @@ export const COMMANDS = {
 
 export class PathHost extends ShapeHost {
   //#region path host vars
-  /** 
-  * 0 -> no points added
-  * 1 -> end point added
-  * 2 -> control point 1 added
-  * 3 -> control point 2 added
-  */
+  /**
+   * 0 -> no points added
+   * 1 -> end point added
+   * 2 -> control point 1 added
+   * 3 -> control point 2 added
+   */
   private stateCubicBezier: number = 0;
 
   private _currentCommand: PathInstruction = 'M';
-  public get currentCommand(): PathInstruction { return this._currentCommand };
+  public get currentCommand(): PathInstruction {
+    return this._currentCommand;
+  }
   public set currentCommand(command: PathInstruction) {
     this.stateCubicBezier = 0;
     this._currentCommand = command;
-  };
+  }
   //#endregion
 
   public override readonly type = Shape.PATH;
@@ -60,10 +62,12 @@ export class PathHost extends ShapeHost {
   public override updatePositionSvgEditPoints(model: PathModel) {
     if (this.svgEditPoints.length === 0) return;
 
-    model.commands.flatMap(c => c.coords).forEach((c, i) => {
-      this.setSvgAttribute('cx', c.x, this.svgEditPoints[i]);
-      this.setSvgAttribute('cy', c.y, this.svgEditPoints[i]);
-    });
+    model.commands
+      .flatMap((c) => c.coords)
+      .forEach((c, i) => {
+        this.setSvgAttribute('cx', c.x, this.svgEditPoints[i]);
+        this.setSvgAttribute('cy', c.y, this.svgEditPoints[i]);
+      });
   }
   //#endregion
 
@@ -102,7 +106,7 @@ export class PathHost extends ShapeHost {
         new FormGroup({
           x: new FormControl(coord.x, { nonNullable: true }),
           y: new FormControl(coord.y, { nonNullable: true }),
-        })
+        }),
       );
     } else {
       // add a new command
@@ -160,7 +164,7 @@ export class PathHost extends ShapeHost {
   private onMouseMoveLineTo(coord: Coord, currentCommandControl: ConvertToForm<Command>) {
     const coordsFormArrayControls = currentCommandControl.controls['coords'].controls;
     const pointsLength = coordsFormArrayControls.length;
-    coordsFormArrayControls[pointsLength - 1].patchValue({ x: coord.x, y: coord.y, });
+    coordsFormArrayControls[pointsLength - 1].patchValue({ x: coord.x, y: coord.y });
   }
 
   private onMouseDragCubicBezier(coord: Coord, currentCommandControl: ConvertToForm<Command>) {
@@ -202,8 +206,7 @@ export class PathHost extends ShapeHost {
 
   //#region mouse drag edit
   public override mouseDragEdit(coord: CoordWithDelta): void {
-    const coordControls = this.form.controls.commands.controls
-      .flatMap((c) => (c.controls.coords.controls));
+    const coordControls = this.form.controls.commands.controls.flatMap((c) => c.controls.coords.controls);
     coordControls[this.selectedEditPointIndex].patchValue({
       x: coord.x,
       y: coord.y,
@@ -213,7 +216,7 @@ export class PathHost extends ShapeHost {
 
   //#region edit point
   protected override getEditPointsCoordsFromForm(): Coord[] {
-    return this.form.controls.commands.value.flatMap(c => (c.coords ?? []) as Coord[]);
+    return this.form.controls.commands.value.flatMap((c) => (c.coords ?? []) as Coord[]);
   }
   //#endregion
 
@@ -224,7 +227,7 @@ export class PathHost extends ShapeHost {
     const commandsFromPath = this.getCommandsFromPath(this.svg.getAttribute('d') ?? '');
 
     // the FormArray needs to be populated first with the same amount of controls to be set
-    commandsFromPath.forEach(command => this.form.controls.commands.push(this.createCommandFormWithCoords(command.instruction, command.coords)));
+    commandsFromPath.forEach((command) => this.form.controls.commands.push(this.createCommandFormWithCoords(command.instruction, command.coords)));
 
     this.form.setValue({
       name: this.svg.getAttribute('name') || 'path',
@@ -269,7 +272,7 @@ export class PathHost extends ShapeHost {
       new FormGroup({
         instruction: new FormControl(COMMANDS.CLOSE_PATH, { nonNullable: true }) as ConvertToForm<PathInstruction>,
         coords: new FormArray([] as ConvertToForm<Coord>[]),
-      })
+      }),
     );
     this.isShapeFinished = true;
     this.createEditPoints();
@@ -279,12 +282,15 @@ export class PathHost extends ShapeHost {
     return new FormGroup({
       instruction: new FormControl(instruction, { nonNullable: true }) as ConvertToForm<PathInstruction>,
       coords: new FormArray(
-        coords.map(coord => new FormGroup({
-          x: new FormControl(coord.x, { nonNullable: true }),
-          y: new FormControl(coord.y, { nonNullable: true }),
-        }))
+        coords.map(
+          (coord) =>
+            new FormGroup({
+              x: new FormControl(coord.x, { nonNullable: true }),
+              y: new FormControl(coord.y, { nonNullable: true }),
+            }),
+        ),
       ),
-    })
+    });
   }
 
   private getCommandsFromPath(d: string): Command[] {

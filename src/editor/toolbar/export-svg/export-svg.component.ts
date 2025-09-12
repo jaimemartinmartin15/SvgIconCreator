@@ -36,7 +36,7 @@ export class ExportSvgComponent {
   public constructor(
     private readonly elementsRefService: ElementsRefService,
     private readonly shapeListService: ShapeListService,
-  ) { }
+  ) {}
 
   public downloadDrawing(): void {
     const format = this.exportSvgForm.controls.format.value;
@@ -50,9 +50,9 @@ export class ExportSvgComponent {
     const svgVb = this.canvas.viewBox.baseVal;
     const svgTemplate = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="${svgVb.x} ${svgVb.y} ${svgVb.width} ${svgVb.height}">
   ${this.shapeListService.shapeList
-        .map((sp) => sp.parseOptimizedString())
-        .filter((s) => s !== '')
-        .join('\n  ')}
+    .map((sp) => sp.parseOptimizedString())
+    .filter((s) => s !== '')
+    .join('\n  ')}
 </svg>`;
 
     // download the file

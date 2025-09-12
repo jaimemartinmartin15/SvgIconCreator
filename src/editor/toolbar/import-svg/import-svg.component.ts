@@ -27,7 +27,7 @@ export class ImportSvgComponent {
     private readonly elementsRefService: ElementsRefService,
     private readonly shapeListService: ShapeListService,
     private readonly formsService: FormsService,
-  ) { }
+  ) {}
 
   public loadSvgText(svgText: string) {
     if (!svgText.includes('svg')) return;
@@ -42,7 +42,7 @@ export class ImportSvgComponent {
       x: viewBox.x,
       y: viewBox.y,
       width: viewBox.width,
-      height: viewBox.height
+      height: viewBox.height,
     });
 
     Array.from(svg.children).forEach((svgShape) => {

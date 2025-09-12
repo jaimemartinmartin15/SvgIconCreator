@@ -15,13 +15,13 @@
         <span class="app-control-label">TAMAÑO - VIEW BOX</span>
 
         <div class="inputs-wrapper" [formGroup]="canvasOptionsViewBoxForm">
-          <input type="text" jeiInputNumber formControlName="x">
+          <input type="text" jeiInputNumber formControlName="x" />
           <span>:</span>
-          <input type="text" jeiInputNumber formControlName="y">
+          <input type="text" jeiInputNumber formControlName="y" />
           <span>:</span>
-          <input type="text" jeiInputNumber [min]="0" formControlName="width">
+          <input type="text" jeiInputNumber [min]="0" formControlName="width" />
           <span>:</span>
-          <input type="text" jeiInputNumber [min]="0" formControlName="height">
+          <input type="text" jeiInputNumber [min]="0" formControlName="height" />
         </div>
       </div>
 
@@ -30,14 +30,12 @@
       <div class="form-element choose-image">
         <span class="app-control-label">FONDO - IMAGEN GUÍA</span>
 
-        <p class="info-message">
-          La imagen de fondo no se exporta. Es solo una ayuda para realizar el dibujo.
-        </p>
+        <p class="info-message">La imagen de fondo no se exporta. Es solo una ayuda para realizar el dibujo.</p>
 
         <div class="mock-input-and-delete-wrapper">
           <label>
-            <input type="file" (change)="onUpdateBackgroundImage()" jeiElementRef="backgroundImageInputEl">
-            <div class="mock-input-file">{{backgroundImageFile?.name ?? 'Selecciona un fondo'}}</div>
+            <input type="file" (change)="onUpdateBackgroundImage()" jeiElementRef="backgroundImageInputEl" />
+            <div class="mock-input-file">{{ backgroundImageFile?.name ?? 'Selecciona un fondo' }}</div>
           </label>
 
           <span class="delete-icon" (click)="deleteBackground()" *ngIf="backgroundImageFile">❌</span>
@@ -48,7 +46,7 @@
         <span class="app-control-label">FONDO - MOSTRAR / OCULTAR</span>
 
         <label class="mock-input-checkbox">
-          <input type="checkbox" checked (change)="toggleBackgroundImage()">
+          <input type="checkbox" checked (change)="toggleBackgroundImage()" />
         </label>
       </div>
     </form>

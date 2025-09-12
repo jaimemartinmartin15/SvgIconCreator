@@ -16,7 +16,7 @@ export class ShapeSelectorComponent implements OnInit {
   public constructor(
     private readonly formsService: FormsService,
     private readonly shapeListService: ShapeListService,
-  ) { }
+  ) {}
 
   public ngOnInit(): void {
     this.form.valueChanges.subscribe(() => {
@@ -25,7 +25,7 @@ export class ShapeSelectorComponent implements OnInit {
         this.shapeListService.selectedShape.clearEditPoints();
         this.shapeListService.selectedShape = undefined;
       }
-    })
+    });
   }
 
   public get form(): FormControl<Shape> {

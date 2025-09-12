@@ -1,16 +1,16 @@
-import { FormGroup } from "@angular/forms";
-import { ElementsRefService } from "@jaimemartinmartin15/jei-devkit-angular-shared";
-import { Coord } from "../models/coord";
-import { CoordWithDelta } from "../models/coord-with-delta";
-import { Shape } from "../models/shape";
-import { ShapeModel } from "../models/shape.model";
-import { ShapeListService } from "../services/shape-list.service";
+import { FormGroup } from '@angular/forms';
+import { ElementsRefService } from '@jaimemartinmartin15/jei-devkit-angular-shared';
+import { Coord } from '../models/coord';
+import { CoordWithDelta } from '../models/coord-with-delta';
+import { Shape } from '../models/shape';
+import { ShapeModel } from '../models/shape.model';
+import { ShapeListService } from '../services/shape-list.service';
 
 export abstract class ShapeHost {
   public constructor(
     protected readonly elementsRefService: ElementsRefService,
     protected readonly shapeListService: ShapeListService,
-  ) { }
+  ) {}
 
   public abstract readonly type: Shape;
   public abstract readonly form: FormGroup;
@@ -57,7 +57,7 @@ export abstract class ShapeHost {
 
   protected abstract getEditPointsCoordsFromForm(): Coord[];
   protected getEditPointsCoordsFromSvg(): Coord[] {
-    return this.svgEditPoints.map(p => ({ x: this.getSvgAttribute('cx', p), y: this.getSvgAttribute('cy', p) }));
+    return this.svgEditPoints.map((p) => ({ x: this.getSvgAttribute('cx', p), y: this.getSvgAttribute('cy', p) }));
   }
 
   public createEditPoints(): void {
@@ -90,10 +90,7 @@ export abstract class ShapeHost {
   }
 
   protected getEditPointIndexUnderCoord(coord: Coord): number {
-    return this.getEditPointsCoordsFromForm().findIndex((c) =>
-      Math.abs(c.x - coord.x) < this.getEditPointWidth()
-      && Math.abs(c.y - coord.y) < this.getEditPointWidth()
-    );
+    return this.getEditPointsCoordsFromForm().findIndex((c) => Math.abs(c.x - coord.x) < this.getEditPointWidth() && Math.abs(c.y - coord.y) < this.getEditPointWidth());
   }
 
   public getEditPointUnderMousePoint(mousePoint: Coord): SVGCircleElement | undefined {
@@ -102,7 +99,7 @@ export abstract class ShapeHost {
 
   protected highlightSelectedEditPoint(color: 'orange' | 'red'): void {
     // reset color of all points and highlight only the one under the mouse (if it exists)
-    this.svgEditPoints.forEach(p => p.setAttribute('stroke', 'blue'));
+    this.svgEditPoints.forEach((p) => p.setAttribute('stroke', 'blue'));
     this.svgEditPoints[this.selectedEditPointIndex]?.setAttribute('stroke', color);
   }
   //#endregion
@@ -124,7 +121,7 @@ export abstract class ShapeHost {
   public setVisibility(isVisible: boolean) {
     const display = isVisible ? '' : 'none';
     this.svg.style.display = display;
-    this.svgEditPoints.forEach(p => p.style.display = display)
+    this.svgEditPoints.forEach((p) => (p.style.display = display));
   }
 
   public delete(): void {

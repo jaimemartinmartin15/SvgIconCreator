@@ -8,7 +8,7 @@ body {
   height: 100vh;
   padding: 0;
   margin: 0;
-  font-family: "ProximaNova", sans-serif;
+  font-family: 'ProximaNova', sans-serif;
   font-size: 1.125rem;
 }
 
@@ -24,14 +24,14 @@ body {
   color: #595959;
 }
 
-input[type="number"]::-webkit-outer-spin-button,
-input[type="number"]::-webkit-inner-spin-button {
+input[type='number']::-webkit-outer-spin-button,
+input[type='number']::-webkit-inner-spin-button {
   /* hide arrows */
   -webkit-appearance: none;
 }
 
-input[type="text"],
-input[type="number"] {
+input[type='text'],
+input[type='number'] {
   height: 40px;
   width: 90px;
   padding: 0 8px;
@@ -43,14 +43,14 @@ input[type="number"] {
   box-sizing: border-box;
 }
 
-input[type="number"]:focus {
+input[type='number']:focus {
   border: 3px solid black;
 }
 
-input[type="file"],
-input[type="checkbox"],
-input[type="color"],
-input[type="radio"] {
+input[type='file'],
+input[type='checkbox'],
+input[type='color'],
+input[type='radio'] {
   /* make them no visible */
   visibility: hidden;
   width: 0;

@@ -1,10 +1,10 @@
-import { FormControl, FormGroup } from "@angular/forms";
-import { Coord } from "../models/coord";
-import { CoordWithDelta } from "../models/coord-with-delta";
-import { Shape } from "../models/shape";
-import { TextModel } from "../models/text.model";
-import { ConvertToForm } from "../utils/convert-to-form";
-import { ShapeHost } from "./shape-host";
+import { FormControl, FormGroup } from '@angular/forms';
+import { Coord } from '../models/coord';
+import { CoordWithDelta } from '../models/coord-with-delta';
+import { Shape } from '../models/shape';
+import { TextModel } from '../models/text.model';
+import { ConvertToForm } from '../utils/convert-to-form';
+import { ShapeHost } from './shape-host';
 
 export class TextHost extends ShapeHost {
   public override readonly type = Shape.TEXT;
@@ -45,7 +45,7 @@ export class TextHost extends ShapeHost {
   }
 
   public override mouseDrag(coord: CoordWithDelta): void {
-    this.form.patchValue({ x: coord.x, y: coord.y, })
+    this.form.patchValue({ x: coord.x, y: coord.y });
   }
 
   public override mouseUp(coord: CoordWithDelta): void {
@@ -81,7 +81,7 @@ export class TextHost extends ShapeHost {
       fontSize: this.getSvgAttribute('font-size'),
     });
 
-    super.loadFromElement(svg)
+    super.loadFromElement(svg);
   }
   //#endregion
 

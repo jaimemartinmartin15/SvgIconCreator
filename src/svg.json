@@ -1,11 +1,11 @@
 {
-    "inputDirs": ["~@jaimemartinmartin15/svg-icons"],
-    "outputDir": "src/svg-output",
-    "prefix": "app",
-    "modules": [
-        {
-            "name": "IconsSvg",
-            "files": ["export", "import", "canvas"]
-        }
-    ]
+  "inputDirs": ["~@jaimemartinmartin15/svg-icons"],
+  "outputDir": "src/svg-output",
+  "prefix": "app",
+  "modules": [
+    {
+      "name": "IconsSvg",
+      "files": ["export", "import", "canvas"]
+    }
+  ]
 }

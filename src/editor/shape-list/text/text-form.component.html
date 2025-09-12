@@ -5,22 +5,22 @@
     <form (click)="selectShape($event)">
       <label class="app-label-and-input">
         <span class="app-control-label">X</span>
-        <input type="text" jeiInputNumber formControlName="x">
+        <input type="text" jeiInputNumber formControlName="x" />
       </label>
 
       <label class="app-label-and-input">
         <span class="app-control-label">Y</span>
-        <input type="text" jeiInputNumber formControlName="y">
+        <input type="text" jeiInputNumber formControlName="y" />
       </label>
 
       <label class="app-label-and-input">
         <span class="app-control-label">TEXT</span>
-        <input type="text" formControlName="text">
+        <input type="text" formControlName="text" />
       </label>
 
       <label class="app-label-and-input">
         <span class="app-control-label">FONT SIZE</span>
-        <input type="text" jeiInputNumber [min]="0" [shiftStep]="3" formControlName="fontSize">
+        <input type="text" jeiInputNumber [min]="0" [shiftStep]="3" formControlName="fontSize" />
       </label>
     </form>
   </div>

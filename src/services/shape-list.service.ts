@@ -3,7 +3,7 @@ import { Subject } from 'rxjs';
 import { ShapeHost } from '../shapes/shape-host';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class ShapeListService {
   public readonly shapeList: ShapeHost[] = [];

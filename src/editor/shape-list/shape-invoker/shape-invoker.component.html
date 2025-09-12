@@ -1,13 +1,18 @@
 <span class="handler" cdkDragHandle (click)="$event.stopPropagation()">&#x2630;</span>
 
 <label class="visibility">
-  <input type="checkbox" checked (change)="toggleVisibility($event)">
+  <input type="checkbox" checked (change)="toggleVisibility($event)" />
   <span>👀</span>
 </label>
 
-<input #shapeName class="shape-name" (input)="adaptShapeNameSize($event)"
-  [formControl]="getAsFormControl(host.form.controls['name'])" (click)="$event.stopPropagation()"
-  (focus)="selectShape($event)">
+<input
+  #shapeName
+  class="shape-name"
+  (input)="adaptShapeNameSize($event)"
+  [formControl]="getAsFormControl(host.form.controls['name'])"
+  (click)="$event.stopPropagation()"
+  (focus)="selectShape($event)"
+/>
 
 <span class="remaining-space"></span>
 

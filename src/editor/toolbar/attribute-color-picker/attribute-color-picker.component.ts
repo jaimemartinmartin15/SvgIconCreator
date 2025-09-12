@@ -1,6 +1,6 @@
 import { Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
-import { ColorPickerComponent as JeiColorPickerComponent } from "@jaimemartinmartin15/jei-devkit-angular-shared";
+import { ColorPickerComponent as JeiColorPickerComponent } from '@jaimemartinmartin15/jei-devkit-angular-shared';
 import { Subject, takeUntil } from 'rxjs';
 import { ShapeListService } from '../../../services/shape-list.service';
 
@@ -8,7 +8,7 @@ import { ShapeListService } from '../../../services/shape-list.service';
   selector: 'app-attribute-color-picker',
   templateUrl: './attribute-color-picker.component.html',
   styleUrls: ['./attribute-color-picker.component.scss'],
-  imports: [JeiColorPickerComponent, ReactiveFormsModule]
+  imports: [JeiColorPickerComponent, ReactiveFormsModule],
 })
 export class AttributeColorPickerComponent implements OnInit {
   @ViewChild('label') label: ElementRef<HTMLSpanElement>;
@@ -23,7 +23,7 @@ export class AttributeColorPickerComponent implements OnInit {
 
   private otherShapeIsSelected$ = new Subject<void>();
 
-  public constructor(private readonly shapeListService: ShapeListService) { }
+  public constructor(private readonly shapeListService: ShapeListService) {}
 
   public ngOnInit(): void {
     this.fallbackFormControl.setValue(this.initialColor);
@@ -35,9 +35,7 @@ export class AttributeColorPickerComponent implements OnInit {
       if (!shapeHost) return;
 
       // listen to changes for next shape
-      shapeHost.form.controls[this.attribute].valueChanges
-        .pipe(takeUntil(this.otherShapeIsSelected$))
-        .subscribe((v) => (this.fallbackFormControl.setValue(v)));
+      shapeHost.form.controls[this.attribute].valueChanges.pipe(takeUntil(this.otherShapeIsSelected$)).subscribe((v) => this.fallbackFormControl.setValue(v));
 
       if (!shapeHost.isShapeFinished) {
         // if it changes the shape and it is not finised (it is a new one), set last used colors in colorpicker
@@ -46,7 +44,7 @@ export class AttributeColorPickerComponent implements OnInit {
         // if it selects another existing shape, set fallback form value so next shape picks colors of the existing one
         this.fallbackFormControl.setValue(shapeHost.form.controls[this.attribute].value);
       }
-    })
+    });
   }
 
   public get form(): FormControl<string> {
@@ -54,10 +52,10 @@ export class AttributeColorPickerComponent implements OnInit {
   }
 
   public showModal(dialog: HTMLDialogElement) {
-    dialog.showModal()
-    // because the modal was hidden, the color picker component can't place handlers 
+    dialog.showModal();
+    // because the modal was hidden, the color picker component can't place handlers
     // in correct positions until a new value is set
-    this.form.setValue(this.form.value)
+    this.form.setValue(this.form.value);
   }
 
   public get positionDialog() {
@@ -69,7 +67,7 @@ export class AttributeColorPickerComponent implements OnInit {
       margin: 0,
       marginLeft: `${label.offsetLeft + label.clientWidth / 2}px`,
       marginTop: `${label.offsetTop + label.clientHeight}px`,
-      transform: 'translate(-50%, 10px)'
+      transform: 'translate(-50%, 10px)',
     };
   }
 }

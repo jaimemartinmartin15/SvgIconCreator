@@ -3,7 +3,7 @@ import { Component } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { CollapsibleModule, InputNumberDirective } from '@jaimemartinmartin15/jei-devkit-angular-shared';
 import { RectHost } from '../../../shapes/rect-host';
-import { ShapeInvokerComponent } from "../shape-invoker/shape-invoker.component";
+import { ShapeInvokerComponent } from '../shape-invoker/shape-invoker.component';
 import { ShapeFormComponent } from '../shape/shape-form.component';
 
 @Component({
