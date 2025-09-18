@@ -1,4 +1,3 @@
-import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { CollapsibleModule, ElementsRefService } from '@jaimemartinmartin15/jei-devkit-angular-shared';
 import { FormsService } from '../../../services/forms.service';
@@ -14,7 +13,7 @@ import { IconsSvgModule } from '../../../svg-output/icons-svg.module';
   selector: 'app-import-svg',
   templateUrl: './import-svg.component.html',
   styleUrls: ['./import-svg.component.scss'],
-  imports: [CommonModule, CollapsibleModule, IconsSvgModule],
+  imports: [CollapsibleModule, IconsSvgModule],
 })
 export class ImportSvgComponent {
   public loadedFile?: File;

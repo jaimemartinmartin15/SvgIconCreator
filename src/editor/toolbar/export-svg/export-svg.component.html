@@ -29,24 +29,25 @@
           </label>
         </div>
 
-        <p class="info-message" *ngIf="exportSvgForm.controls.format.value === ExportTypes.SvgOptimized">
-          Descarga un fichero .svg con las figuras optimizadas, es decir, con las figuras visibles y con los atributos mínimos.
-        </p>
+        @if (exportSvgForm.controls.format.value === ExportTypes.SvgOptimized) {
+          <p class="info-message">Descarga un fichero .svg con las figuras optimizadas, es decir, con las figuras visibles y con los atributos mínimos.</p>
+        }
 
-        <p class="info-message" *ngIf="exportSvgForm.controls.format.value === ExportTypes.Svg">
-          Descarga un fichero .svg con las figuras tal y como están en el DOM. Mantiene todos los atributos y permite importalo más adelante para continuar.
-        </p>
+        @if (exportSvgForm.controls.format.value === ExportTypes.Svg) {
+          <p class="info-message">
+            Descarga un fichero .svg con las figuras tal y como están en el DOM. Mantiene todos los atributos y permite importalo más adelante para continuar.
+          </p>
+        }
 
-        <ng-container *ngIf="exportSvgForm.controls.format.value === ExportTypes.Png">
+        @if (exportSvgForm.controls.format.value === ExportTypes.Png) {
           <p class="info-message">Descarga un fichero .png con el tamaño indicado.</p>
-
           <div class="png-inputs" formGroupName="pngSize">
             <input type="text" jeiInputNumber [min]="0" [shiftStep]="20" [maxDecimalDigits]="0" formControlName="width" />
             <span> x </span>
             <input type="text" jeiInputNumber [min]="0" [shiftStep]="20" [maxDecimalDigits]="0" formControlName="height" />
             <span> px</span>
           </div>
-        </ng-container>
+        }
       </div>
 
       <div class="form-element file-name">

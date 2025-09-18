@@ -1,4 +1,3 @@
-import { CommonModule } from '@angular/common';
 import { Component, ElementRef, HostBinding, Input, ViewChild } from '@angular/core';
 import { AbstractControl, FormControl, ReactiveFormsModule } from '@angular/forms';
 import { adaptWidthOfInputToWidthOfText, CollapsibleModule } from '@jaimemartinmartin15/jei-devkit-angular-shared';
@@ -9,7 +8,7 @@ import { ShapeHost } from '../../../shapes/shape-host';
   selector: 'app-shape-invoker',
   templateUrl: './shape-invoker.component.html',
   styleUrls: ['./shape-invoker.component.scss'],
-  imports: [CommonModule, CollapsibleModule, ReactiveFormsModule],
+  imports: [CollapsibleModule, ReactiveFormsModule],
 })
 export class ShapeInvokerComponent {
   @ViewChild('shapeName')

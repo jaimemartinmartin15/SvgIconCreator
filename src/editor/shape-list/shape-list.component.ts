@@ -1,5 +1,4 @@
 import { CdkDrag, CdkDragDrop, CdkDragPlaceholder, CdkDropList, moveItemInArray } from '@angular/cdk/drag-drop';
-import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { Shape } from '../../models/shape';
 import { ShapeListService } from '../../services/shape-list.service';
@@ -14,7 +13,7 @@ import { TextFormComponent } from './text/text-form.component';
   selector: 'app-shape-list',
   templateUrl: './shape-list.component.html',
   styleUrls: ['./shape-list.component.scss'],
-  imports: [CommonModule, CdkDrag, CdkDragPlaceholder, CdkDropList, RectFormComponent, LineFormComponent, PathFormComponent, CircleFormComponent, TextFormComponent],
+  imports: [CdkDrag, CdkDragPlaceholder, CdkDropList, RectFormComponent, LineFormComponent, PathFormComponent, CircleFormComponent, TextFormComponent],
 })
 export class ShapeListComponent {
   public readonly Shape = Shape;

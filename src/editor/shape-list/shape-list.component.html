@@ -1,23 +1,29 @@
 <ul cdkDropList (cdkDropListDropped)="onReorderingShapes($event)">
-  <ng-container *ngFor="let shape of shapes">
-    <app-rect-form cdkDrag cdkDragPreviewContainer="parent" [host]="shape" *ngIf="shape.type === Shape.RECT">
-      <div *cdkDragPlaceholder></div>
-    </app-rect-form>
-
-    <app-line-form cdkDrag cdkDragPreviewContainer="parent" [host]="shape" *ngIf="shape.type === Shape.LINE">
-      <div *cdkDragPlaceholder></div>
-    </app-line-form>
-
-    <app-path-form cdkDrag cdkDragPreviewContainer="parent" [host]="shape" *ngIf="shape.type === Shape.PATH">
-      <div *cdkDragPlaceholder></div>
-    </app-path-form>
-
-    <app-circle-form cdkDrag cdkDragPreviewContainer="parent" [host]="shape" *ngIf="shape.type === Shape.CIRCLE">
-      <div *cdkDragPlaceholder></div>
-    </app-circle-form>
-
-    <app-text-form cdkDrag cdkDragPreviewContainer="parent" [host]="shape" *ngIf="shape.type === Shape.TEXT">
-      <div *cdkDragPlaceholder></div>
-    </app-text-form>
-  </ng-container>
+  @for (shape of shapes; track shape) {
+    @if (shape.type === Shape.RECT) {
+      <app-rect-form cdkDrag cdkDragPreviewContainer="parent" [host]="shape">
+        <div *cdkDragPlaceholder></div>
+      </app-rect-form>
+    }
+    @if (shape.type === Shape.LINE) {
+      <app-line-form cdkDrag cdkDragPreviewContainer="parent" [host]="shape">
+        <div *cdkDragPlaceholder></div>
+      </app-line-form>
+    }
+    @if (shape.type === Shape.PATH) {
+      <app-path-form cdkDrag cdkDragPreviewContainer="parent" [host]="shape">
+        <div *cdkDragPlaceholder></div>
+      </app-path-form>
+    }
+    @if (shape.type === Shape.CIRCLE) {
+      <app-circle-form cdkDrag cdkDragPreviewContainer="parent" [host]="shape">
+        <div *cdkDragPlaceholder></div>
+      </app-circle-form>
+    }
+    @if (shape.type === Shape.TEXT) {
+      <app-text-form cdkDrag cdkDragPreviewContainer="parent" [host]="shape">
+        <div *cdkDragPlaceholder></div>
+      </app-text-form>
+    }
+  }
 </ul>

@@ -1,4 +1,3 @@
-import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { CollapsibleModule, ElementsRefService, InputNumberDirective } from '@jaimemartinmartin15/jei-devkit-angular-shared';
@@ -15,7 +14,7 @@ enum ExportTypes {
   selector: 'app-export-svg',
   templateUrl: './export-svg.component.html',
   styleUrls: ['./export-svg.component.scss'],
-  imports: [CommonModule, ReactiveFormsModule, CollapsibleModule, IconsSvgModule, InputNumberDirective],
+  imports: [ReactiveFormsModule, CollapsibleModule, IconsSvgModule, InputNumberDirective],
 })
 export class ExportSvgComponent {
   public ExportTypes = ExportTypes;

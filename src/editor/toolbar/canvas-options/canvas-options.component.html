@@ -38,7 +38,9 @@
             <div class="mock-input-file">{{ backgroundImageFile?.name ?? 'Selecciona un fondo' }}</div>
           </label>
 
-          <span class="delete-icon" (click)="deleteBackground()" *ngIf="backgroundImageFile">❌</span>
+          @if (backgroundImageFile) {
+            <span class="delete-icon" (click)="deleteBackground()">❌</span>
+          }
         </div>
       </div>
 

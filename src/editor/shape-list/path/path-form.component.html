@@ -3,25 +3,26 @@
 
   <div jeiCollapsibleContent>
     <form formArrayName="commands" (click)="selectShape($event)">
-      <label
-        *ngFor="let commandControl of pathHost.form.controls['commands'].controls; let i = index"
-        formGroupName="{{ i }}"
-        class="command"
-        (mouseenter)="mouseHoverIndex = i"
-        (mouseleave)="mouseHoverIndex = -i"
-      >
-        <div class="command-type">
-          <span *ngIf="mouseHoverIndex !== i || mouseHoverIndex === 0">{{ commandControl.value.instruction }}</span>
-          <span *ngIf="mouseHoverIndex === i && mouseHoverIndex !== 0" (click)="deleteCommand(i, $event)">🗑️</span>
-        </div>
-
-        <div formArrayName="coords" class="coords-list">
-          <div class="point-coords-input" *ngFor="let p of commandControl.controls.coords.controls; let i = index" formGroupName="{{ i }}">
-            <input type="text" jeiInputNumber formControlName="x" />
-            <input type="text" jeiInputNumber formControlName="y" />
+      @for (commandControl of pathHost.form.controls['commands'].controls; track commandControl; let i = $index) {
+        <label formGroupName="{{ i }}" class="command" (mouseenter)="mouseHoverIndex = i" (mouseleave)="mouseHoverIndex = -i">
+          <div class="command-type">
+            @if (mouseHoverIndex !== i || mouseHoverIndex === 0) {
+              <span>{{ commandControl.value.instruction }}</span>
+            }
+            @if (mouseHoverIndex === i && mouseHoverIndex !== 0) {
+              <span (click)="deleteCommand(i, $event)">🗑️</span>
+            }
           </div>
-        </div>
-      </label>
+          <div formArrayName="coords" class="coords-list">
+            @for (p of commandControl.controls.coords.controls; track p; let i = $index) {
+              <div class="point-coords-input" formGroupName="{{ i }}">
+                <input type="text" jeiInputNumber formControlName="x" />
+                <input type="text" jeiInputNumber formControlName="y" />
+              </div>
+            }
+          </div>
+        </label>
+      }
     </form>
   </div>
 </jei-collapsible>

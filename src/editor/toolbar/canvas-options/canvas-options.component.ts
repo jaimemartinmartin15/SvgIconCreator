@@ -1,4 +1,3 @@
-import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { ElementRefDirective, ElementsRefService, InputNumberDirective } from '@jaimemartinmartin15/jei-devkit-angular-shared';
@@ -11,7 +10,7 @@ import { IconsSvgModule } from '../../../svg-output/icons-svg.module';
   selector: 'app-canvas-options',
   templateUrl: './canvas-options.component.html',
   styleUrls: ['./canvas-options.component.scss'],
-  imports: [CommonModule, ReactiveFormsModule, ElementRefDirective, IconsSvgModule, InputNumberDirective],
+  imports: [ReactiveFormsModule, ElementRefDirective, IconsSvgModule, InputNumberDirective],
 })
 export class CanvasOptionsComponent implements OnInit {
   private svgImageEl: SVGImageElement = document.createElementNS('http://www.w3.org/2000/svg', 'image');
