@@ -1,15 +1,13 @@
 import { FormControl, FormGroup } from '@angular/forms';
+import { Coord, CoordWithDelta, ToFormType } from '@jaimemartinmartin15/jei-devkit-angular-shared';
 import { CircleModel } from '../models/circle.model';
-import { Coord } from '../models/coord';
-import { CoordWithDelta } from '../models/coord-with-delta';
 import { Shape } from '../models/shape';
-import { ConvertToForm } from '../utils/convert-to-form';
 import { ShapeHost } from './shape-host';
 
 export class CircleHost extends ShapeHost {
   public override readonly type = Shape.CIRCLE;
   public override svg: SVGCircleElement = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
-  public override readonly form: ConvertToForm<CircleModel> = new FormGroup({
+  public override readonly form: ToFormType<CircleModel> = new FormGroup({
     name: new FormControl('circle', { nonNullable: true }),
     stroke: new FormControl('#000000ff', { nonNullable: true }),
     strokeWidth: new FormControl(1, { nonNullable: true }),

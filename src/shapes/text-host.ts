@@ -1,15 +1,13 @@
 import { FormControl, FormGroup } from '@angular/forms';
-import { Coord } from '../models/coord';
-import { CoordWithDelta } from '../models/coord-with-delta';
+import { Coord, CoordWithDelta, ToFormType } from '@jaimemartinmartin15/jei-devkit-angular-shared';
 import { Shape } from '../models/shape';
 import { TextModel } from '../models/text.model';
-import { ConvertToForm } from '../utils/convert-to-form';
 import { ShapeHost } from './shape-host';
 
 export class TextHost extends ShapeHost {
   public override readonly type = Shape.TEXT;
   public override svg: SVGTextElement = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-  public override readonly form: ConvertToForm<TextModel> = new FormGroup({
+  public override readonly form: ToFormType<TextModel> = new FormGroup({
     name: new FormControl('text', { nonNullable: true }),
     stroke: new FormControl('#000000ff', { nonNullable: true }),
     strokeWidth: new FormControl(0.4, { nonNullable: true }),

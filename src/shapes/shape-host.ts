@@ -1,7 +1,5 @@
 import { FormGroup } from '@angular/forms';
-import { ElementsRefService } from '@jaimemartinmartin15/jei-devkit-angular-shared';
-import { Coord } from '../models/coord';
-import { CoordWithDelta } from '../models/coord-with-delta';
+import { Coord, CoordWithDelta, ElementsRefService } from '@jaimemartinmartin15/jei-devkit-angular-shared';
 import { Shape } from '../models/shape';
 import { ShapeModel } from '../models/shape.model';
 import { ShapeListService } from '../services/shape-list.service';

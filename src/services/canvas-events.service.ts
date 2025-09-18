@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
+import { Coord, CoordWithDelta } from '@jaimemartinmartin15/jei-devkit-angular-shared';
 import { Subject } from 'rxjs';
-import { Coord } from '../models/coord';
-import { CoordWithDelta } from '../models/coord-with-delta';
 
 @Injectable({
   providedIn: 'root',

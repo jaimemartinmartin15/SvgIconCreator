@@ -1,15 +1,13 @@
 import { FormControl, FormGroup } from '@angular/forms';
-import { Coord } from '../models/coord';
-import { CoordWithDelta } from '../models/coord-with-delta';
+import { Coord, CoordWithDelta, ToFormType } from '@jaimemartinmartin15/jei-devkit-angular-shared';
 import { LineModel } from '../models/line.model';
 import { Shape } from '../models/shape';
-import { ConvertToForm } from '../utils/convert-to-form';
 import { ShapeHost } from './shape-host';
 
 export class LineHost extends ShapeHost {
   public override readonly type = Shape.LINE;
   public override svg: SVGLineElement = document.createElementNS('http://www.w3.org/2000/svg', 'line');
-  public override readonly form: ConvertToForm<LineModel> = new FormGroup({
+  public override readonly form: ToFormType<LineModel> = new FormGroup({
     name: new FormControl('line', { nonNullable: true }),
     stroke: new FormControl('#000000ff', { nonNullable: true }),
     strokeWidth: new FormControl(1, { nonNullable: true }),

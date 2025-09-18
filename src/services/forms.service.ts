@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { FormControl, NonNullableFormBuilder } from '@angular/forms';
-import { ConvertToForm } from '../utils/convert-to-form';
+import { ToFormType } from '@jaimemartinmartin15/jei-devkit-angular-shared';
 import { Shape } from '../models/shape';
 import { ViewBoxModel } from '../models/view-box.model';
 
@@ -12,7 +12,7 @@ export class FormsService {
   public readonly strokePickerForm: FormControl<string>;
   public readonly fillPickerForm: FormControl<string>;
   public readonly strokeWidthSelectorForm: FormControl<number>;
-  public readonly canvasOptionsViewBoxForm: ConvertToForm<ViewBoxModel>;
+  public readonly canvasOptionsViewBoxForm: ToFormType<ViewBoxModel>;
 
   public constructor(readonly nonNullableFormBuilder: NonNullableFormBuilder) {
     this.shapeSelectorForm = nonNullableFormBuilder.control<Shape>(Shape.RECT);

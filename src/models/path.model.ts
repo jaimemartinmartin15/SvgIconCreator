@@ -1,4 +1,4 @@
-import { Coord } from './coord';
+import { Coord } from '@jaimemartinmartin15/jei-devkit-angular-shared';
 import { ShapeModel } from './shape.model';
 
 export type PathInstruction = 'M' | 'L' | 'C' | 'Z';

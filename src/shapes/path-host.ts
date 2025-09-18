@@ -1,9 +1,7 @@
 import { FormArray, FormControl, FormGroup } from '@angular/forms';
-import { Coord } from '../models/coord';
-import { CoordWithDelta } from '../models/coord-with-delta';
+import { Coord, CoordWithDelta, ToFormType } from '@jaimemartinmartin15/jei-devkit-angular-shared';
 import { Command, PathInstruction, PathModel } from '../models/path.model';
 import { Shape } from '../models/shape';
-import { ConvertToForm } from '../utils/convert-to-form';
 import { ShapeHost } from './shape-host';
 
 export function isPathInstruction(key: string): key is PathInstruction {
@@ -39,12 +37,12 @@ export class PathHost extends ShapeHost {
 
   public override readonly type = Shape.PATH;
   public override svg: SVGPathElement = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-  public override readonly form: ConvertToForm<PathModel> = new FormGroup({
+  public override readonly form: ToFormType<PathModel> = new FormGroup({
     name: new FormControl('path', { nonNullable: true }),
     stroke: new FormControl('#000000ff', { nonNullable: true }),
     strokeWidth: new FormControl(1, { nonNullable: true }),
     fill: new FormControl('#ffffffff', { nonNullable: true }),
-    commands: new FormArray([] as ConvertToForm<Command>[]),
+    commands: new FormArray([] as ToFormType<Command>[]),
   });
 
   //#region svg attributes
@@ -161,13 +159,13 @@ export class PathHost extends ShapeHost {
     }
   }
 
-  private onMouseMoveLineTo(coord: Coord, currentCommandControl: ConvertToForm<Command>) {
+  private onMouseMoveLineTo(coord: Coord, currentCommandControl: ToFormType<Command>) {
     const coordsFormArrayControls = currentCommandControl.controls['coords'].controls;
     const pointsLength = coordsFormArrayControls.length;
     coordsFormArrayControls[pointsLength - 1].patchValue({ x: coord.x, y: coord.y });
   }
 
-  private onMouseDragCubicBezier(coord: Coord, currentCommandControl: ConvertToForm<Command>) {
+  private onMouseDragCubicBezier(coord: Coord, currentCommandControl: ToFormType<Command>) {
     const coordsFormArrayControls = currentCommandControl.controls['coords'].controls;
 
     if (this.stateCubicBezier === 0) {
@@ -270,17 +268,17 @@ export class PathHost extends ShapeHost {
     this.currentCommand = COMMANDS.CLOSE_PATH;
     this.form.controls['commands'].push(
       new FormGroup({
-        instruction: new FormControl(COMMANDS.CLOSE_PATH, { nonNullable: true }) as ConvertToForm<PathInstruction>,
-        coords: new FormArray([] as ConvertToForm<Coord>[]),
+        instruction: new FormControl(COMMANDS.CLOSE_PATH, { nonNullable: true }) as ToFormType<PathInstruction>,
+        coords: new FormArray([] as ToFormType<Coord>[]),
       }),
     );
     this.isShapeFinished = true;
     this.createEditPoints();
   }
 
-  private createCommandFormWithCoords(instruction: PathInstruction, coords: Coord[]): ConvertToForm<Command> {
+  private createCommandFormWithCoords(instruction: PathInstruction, coords: Coord[]): ToFormType<Command> {
     return new FormGroup({
-      instruction: new FormControl(instruction, { nonNullable: true }) as ConvertToForm<PathInstruction>,
+      instruction: new FormControl(instruction, { nonNullable: true }) as ToFormType<PathInstruction>,
       coords: new FormArray(
         coords.map(
           (coord) =>
