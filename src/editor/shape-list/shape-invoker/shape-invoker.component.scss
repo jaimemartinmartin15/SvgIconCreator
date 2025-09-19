@@ -1,0 +1,43 @@
+:host {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px;
+  cursor: row-resize !important; // override collapsible styles
+
+  &.expanded {
+    border-bottom: var(--border);
+  }
+}
+
+.handler {
+  cursor: grab;
+}
+
+.visibility {
+  cursor: pointer;
+}
+
+.shape-name {
+  border: none;
+  outline: none;
+  font-size: 1rem;
+  margin: 0px 15px 0 0;
+  transition: background-color 0.5s;
+
+  :host-context(.expanded) .shape-name {
+    background-color: #f0f1f2;
+  }
+
+  &:focus {
+    border-bottom: 2px solid black;
+  }
+}
+
+.remaining-space {
+  flex-grow: 1;
+}
+
+.trash-can {
+  cursor: pointer;
+}

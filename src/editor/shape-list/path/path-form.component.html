@@ -1,0 +1,28 @@
+<jei-collapsible [formGroup]="pathHost.form" [isOpen]="true" #collapsible>
+  <app-shape-invoker jeiCollapsibleToggleAction [host]="pathHost" [isExpanded]="collapsible.isOpen"></app-shape-invoker>
+
+  <div jeiCollapsibleContent>
+    <form formArrayName="commands" (click)="selectShape($event)">
+      @for (commandControl of pathHost.form.controls['commands'].controls; track commandControl; let i = $index) {
+        <label formGroupName="{{ i }}" class="command" (mouseenter)="mouseHoverIndex = i" (mouseleave)="mouseHoverIndex = -i">
+          <div class="command-type">
+            @if (mouseHoverIndex !== i || mouseHoverIndex === 0) {
+              <span>{{ commandControl.value.instruction }}</span>
+            }
+            @if (mouseHoverIndex === i && mouseHoverIndex !== 0) {
+              <span (click)="deleteCommand(i, $event)">🗑️</span>
+            }
+          </div>
+          <div formArrayName="coords" class="coords-list">
+            @for (p of commandControl.controls.coords.controls; track p; let i = $index) {
+              <div class="point-coords-input" formGroupName="{{ i }}">
+                <input type="text" jeiInputNumber formControlName="x" />
+                <input type="text" jeiInputNumber formControlName="y" />
+              </div>
+            }
+          </div>
+        </label>
+      }
+    </form>
+  </div>
+</jei-collapsible>

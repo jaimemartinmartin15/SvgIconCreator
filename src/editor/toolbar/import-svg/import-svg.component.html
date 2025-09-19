@@ -1,0 +1,30 @@
+<button class="open-dialog-button" (click)="importSvgDialog.showModal()">
+  <svg appImportSvg></svg>
+</button>
+
+<span class="app-control-label">IMPORTAR</span>
+
+<dialog class="dialog" #importSvgDialog>
+  <div class="content">
+    <button class="close-dialog-button" (click)="importSvgDialog.close()"></button>
+
+    <form>
+      <div class="app-label-and-input texto-svg">
+        <span class="app-control-label">TEXTO SVG</span>
+
+        <textarea #textArea></textarea>
+
+        <button type="button" class="load-button" (click)="loadSvgText(textArea.value)">Cargar</button>
+      </div>
+
+      <div class="app-label-and-input file-svg">
+        <span class="app-control-label">FICHERO SVG</span>
+
+        <label>
+          <input type="file" accept=".svg,.txt" (change)="loadFile($event)" />
+          <div class="mock-input-file">{{ loadedFile ? loadedFile.name : 'Cargar un fichero' }}</div>
+        </label>
+      </div>
+    </form>
+  </div>
+</dialog>
