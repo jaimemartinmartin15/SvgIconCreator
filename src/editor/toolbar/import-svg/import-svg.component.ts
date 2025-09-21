@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ElementRef, ViewChild } from '@angular/core';
 import { CollapsibleModule, ElementsRefService } from '@jaimemartinmartin15/jei-devkit-angular-shared';
 import { FormsService } from '../../../services/forms.service';
 import { ShapeListService } from '../../../services/shape-list.service';
@@ -16,11 +16,10 @@ import { IconsSvgModule } from '../../../svg-output/icons-svg.module';
   imports: [CollapsibleModule, IconsSvgModule],
 })
 export class ImportSvgComponent {
-  public loadedFile?: File;
+  @ViewChild('importSvgDialog')
+  public importSvgDialogElRef: ElementRef<HTMLDialogElement>;
 
-  private get canvas(): SVGSVGElement {
-    return this.elementsRefService.getNativeElement('canvas');
-  }
+  public loadedFile?: File;
 
   public constructor(
     private readonly elementsRefService: ElementsRefService,
@@ -29,7 +28,11 @@ export class ImportSvgComponent {
   ) {}
 
   public loadSvgText(svgText: string) {
-    if (!svgText.includes('svg')) return;
+    if (!svgText.includes('<svg')) {
+      alert('No es posible cargar el svg. Asegúrate que es válido.');
+      this.loadedFile = undefined;
+      return;
+    }
 
     const mockDiv = document.createElement('div');
     mockDiv.innerHTML = svgText;
@@ -68,6 +71,9 @@ export class ImportSvgComponent {
           break;
       }
     });
+
+    // close dialog after importing the svg file or text
+    this.importSvgDialogElRef.nativeElement.close();
   }
 
   public loadFile(e: Event) {
