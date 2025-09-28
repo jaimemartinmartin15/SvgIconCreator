@@ -65,6 +65,24 @@ export class TextHost extends ShapeHost {
   }
   //#endregion
 
+  //#region move shape
+  public override moveShapeUp(amount: number): void {
+    this.form.controls.y.setValue(this.toFixed(this.form.controls.y.value - amount));
+  }
+
+  public override moveShapeRight(amount: number): void {
+    this.form.controls.x.setValue(this.toFixed(this.form.controls.x.value + amount));
+  }
+
+  public override moveShapeDown(amount: number): void {
+    this.form.controls.y.setValue(this.toFixed(this.form.controls.y.value + amount));
+  }
+
+  public override moveShapeLeft(amount: number): void {
+    this.form.controls.x.setValue(this.toFixed(this.form.controls.x.value - amount));
+  }
+  //#endregion
+
   //#region import
   public override loadFromElement(svg: SVGTextElement) {
     this.svg = svg;

@@ -15,6 +15,10 @@ import { CanvasComponent } from './canvas/canvas.component';
 import { ShapeListComponent } from './shape-list/shape-list.component';
 import { ToolbarComponent } from './toolbar/toolbar.component';
 
+function isArrowKey(key: string) {
+  return ['ARROWUP', 'ARROWRIGHT', 'ARROWDOWN', 'ARROWLEFT'].includes(key);
+}
+
 @Component({
   selector: 'app-editor',
   templateUrl: './editor.component.html',
@@ -65,14 +69,17 @@ export class EditorComponent {
     });
 
     fromEvent<KeyboardEvent>(window, 'keydown').subscribe((event) => {
-      const key = event.key.toUpperCase();
-
       // allow to change path command using the keyboard
-      this.handleKeyboardEventsForPath(key);
+      this.handleKeyboardEventsForPath(event);
+
+      // allow to move all points of the selected shape using the arrows
+      this.handleKeyboardEventsToMoveSelectedShape(event);
     });
   }
 
-  private handleKeyboardEventsForPath(key: string) {
+  private handleKeyboardEventsForPath(event: KeyboardEvent) {
+    const key = event.key.toUpperCase();
+
     if (!(this.shapeListService.selectedShape instanceof PathHost)) return;
 
     if (key === 'F') {
@@ -83,6 +90,15 @@ export class EditorComponent {
     } else if (isPathInstruction(key)) {
       this.shapeListService.selectedShape.currentCommand = key;
     }
+  }
+
+  private handleKeyboardEventsToMoveSelectedShape(event: KeyboardEvent) {
+    const key = event.key.toUpperCase();
+
+    // if the arrow is pressed when editing the input form, avoid moving the shape
+    if (!isArrowKey(key) || event.target instanceof HTMLInputElement) return;
+
+    this.shapeListService.selectedShape?.moveShape(event);
   }
 
   private instantiateNewShapeHost(): ShapeHost {

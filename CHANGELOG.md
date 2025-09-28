@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## Unreleased
+
+- Allow to move selected shape using the keyboad arrows.
+- Show error if not possible to load svg, and close dialog automatically.
+
 ## 2.0.0
 
 - Refactor all application.

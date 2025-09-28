@@ -135,6 +135,34 @@ export abstract class ShapeHost {
   }
   //#endregion
 
+  //#region move shape
+  public moveShape(event: KeyboardEvent): void {
+    let amountToMove = 1;
+    if (event.shiftKey) amountToMove = 10;
+    else if (event.altKey) amountToMove = 0.1;
+
+    switch (event.key.toUpperCase()) {
+      case 'ARROWUP':
+        this.moveShapeUp(amountToMove);
+        break;
+      case 'ARROWRIGHT':
+        this.moveShapeRight(amountToMove);
+        break;
+      case 'ARROWDOWN':
+        this.moveShapeDown(amountToMove);
+        break;
+      case 'ARROWLEFT':
+        this.moveShapeLeft(amountToMove);
+        break;
+    }
+  }
+
+  public abstract moveShapeUp(amount: number): void;
+  public abstract moveShapeRight(amount: number): void;
+  public abstract moveShapeDown(amount: number): void;
+  public abstract moveShapeLeft(amount: number): void;
+  //#endregion
+
   //#region import
   public loadFromElement(_: SVGElement) {
     // ... previous code is executed for each shape

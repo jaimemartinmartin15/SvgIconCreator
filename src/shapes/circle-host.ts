@@ -85,6 +85,24 @@ export class CircleHost extends ShapeHost {
   }
   //#endregion
 
+  //#region move shape
+  public override moveShapeUp(amount: number): void {
+    this.form.controls.cy.setValue(this.toFixed(this.form.controls.cy.value - amount));
+  }
+
+  public override moveShapeRight(amount: number): void {
+    this.form.controls.cx.setValue(this.toFixed(this.form.controls.cx.value + amount));
+  }
+
+  public override moveShapeDown(amount: number): void {
+    this.form.controls.cy.setValue(this.toFixed(this.form.controls.cy.value + amount));
+  }
+
+  public override moveShapeLeft(amount: number): void {
+    this.form.controls.cx.setValue(this.toFixed(this.form.controls.cx.value - amount));
+  }
+  //#endregion
+
   //#region import
   public override loadFromElement(svg: SVGCircleElement) {
     this.svg = svg;

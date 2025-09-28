@@ -89,6 +89,28 @@ export class LineHost extends ShapeHost {
   }
   //#endregion
 
+  //#region move shape
+  public override moveShapeUp(amount: number): void {
+    const coords = this.getEditPointsCoordsFromForm().map((c) => ({ ...c, y: this.toFixed(c.y - amount) }));
+    this.updateFormWithCoords(coords);
+  }
+
+  public override moveShapeRight(amount: number): void {
+    const coords = this.getEditPointsCoordsFromForm().map((c) => ({ ...c, x: this.toFixed(c.x + amount) }));
+    this.updateFormWithCoords(coords);
+  }
+
+  public override moveShapeDown(amount: number): void {
+    const coords = this.getEditPointsCoordsFromForm().map((c) => ({ ...c, y: this.toFixed(c.y + amount) }));
+    this.updateFormWithCoords(coords);
+  }
+
+  public override moveShapeLeft(amount: number): void {
+    const coords = this.getEditPointsCoordsFromForm().map((c) => ({ ...c, x: this.toFixed(c.x - amount) }));
+    this.updateFormWithCoords(coords);
+  }
+  //#endregion
+
   //#region import
   public override loadFromElement(svg: SVGLineElement) {
     this.svg = svg;

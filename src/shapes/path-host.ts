@@ -218,6 +218,32 @@ export class PathHost extends ShapeHost {
   }
   //#endregion
 
+  //#region move shape
+  public override moveShapeUp(amount: number): void {
+    this.form.controls.commands.controls.forEach((command) =>
+      command.controls.coords.controls.forEach((coord) => coord.patchValue({ y: this.toFixed(coord.controls.y.value - amount) })),
+    );
+  }
+
+  public override moveShapeRight(amount: number): void {
+    this.form.controls.commands.controls.forEach((command) =>
+      command.controls.coords.controls.forEach((coord) => coord.patchValue({ x: this.toFixed(coord.controls.x.value + amount) })),
+    );
+  }
+
+  public override moveShapeDown(amount: number): void {
+    this.form.controls.commands.controls.forEach((command) =>
+      command.controls.coords.controls.forEach((coord) => coord.patchValue({ y: this.toFixed(coord.controls.y.value + amount) })),
+    );
+  }
+
+  public override moveShapeLeft(amount: number): void {
+    this.form.controls.commands.controls.forEach((command) =>
+      command.controls.coords.controls.forEach((coord) => coord.patchValue({ x: this.toFixed(coord.controls.x.value - amount) })),
+    );
+  }
+  //#endregion
+
   //#region import
   public override loadFromElement(svg: SVGPathElement) {
     this.svg = svg;
