@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- Allow to move all shapes using the keyboad arrows.
 - Allow to move selected shape using the keyboad arrows.
 - Show error if not possible to load svg, and close dialog automatically.
 

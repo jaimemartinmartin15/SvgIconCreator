@@ -73,7 +73,7 @@ export class EditorComponent {
       this.handleKeyboardEventsForPath(event);
 
       // allow to move all points of the selected shape using the arrows
-      this.handleKeyboardEventsToMoveSelectedShape(event);
+      this.handleKeyboardEventsToMoveShapes(event);
     });
   }
 
@@ -92,13 +92,19 @@ export class EditorComponent {
     }
   }
 
-  private handleKeyboardEventsToMoveSelectedShape(event: KeyboardEvent) {
+  private handleKeyboardEventsToMoveShapes(event: KeyboardEvent) {
     const key = event.key.toUpperCase();
 
     // if the arrow is pressed when editing the input form, avoid moving the shape
     if (!isArrowKey(key) || event.target instanceof HTMLInputElement) return;
 
-    this.shapeListService.selectedShape?.moveShape(event);
+    if (this.shapeListService.selectedShape) {
+      // move only selected shape
+      this.shapeListService.selectedShape?.moveShape(event);
+    } else {
+      // move all shapes
+      this.shapeListService.shapeList.forEach((shapeHost) => shapeHost.moveShape(event));
+    }
   }
 
   private instantiateNewShapeHost(): ShapeHost {
