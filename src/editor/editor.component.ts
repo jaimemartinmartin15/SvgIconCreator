@@ -11,6 +11,7 @@ import { isPathInstruction, PathHost } from '../shapes/path-host';
 import { RectHost } from '../shapes/rect-host';
 import { ShapeHost } from '../shapes/shape-host';
 import { TextHost } from '../shapes/text-host';
+import { AttributesComponent } from './attributes/attributes.component';
 import { CanvasComponent } from './canvas/canvas.component';
 import { ShapeListComponent } from './shape-list/shape-list.component';
 import { ToolbarComponent } from './toolbar/toolbar.component';
@@ -23,7 +24,7 @@ function isArrowKey(key: string) {
   selector: 'app-editor',
   templateUrl: './editor.component.html',
   styleUrls: ['./editor.component.scss'],
-  imports: [ToolbarComponent, CanvasComponent, ShapeListComponent],
+  imports: [ToolbarComponent, CanvasComponent, ShapeListComponent, AttributesComponent],
 })
 export class EditorComponent {
   public constructor(

@@ -7,18 +7,21 @@
   gap: 40px;
 }
 
-.canvas-and-list {
+.editor-layout {
   flex-grow: 1;
   display: flex;
   gap: 20px;
   padding: 0 50px 25px 50px;
   overflow: hidden;
 
-  app-canvas {
+  .left-layout {
     flex-grow: 1;
   }
 
-  app-shape-list {
+  .right-layout {
+    display: flex;
+    flex-direction: column;
+    gap: 50px;
     width: 500px;
     min-width: 500px;
   }

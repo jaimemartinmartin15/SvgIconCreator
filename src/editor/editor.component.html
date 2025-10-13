@@ -1,7 +1,11 @@
 <app-toolbar></app-toolbar>
 
-<div class="canvas-and-list">
-  <app-canvas></app-canvas>
+<div class="editor-layout">
+  <app-canvas class="left-layout"></app-canvas>
 
-  <app-shape-list></app-shape-list>
+  <div class="right-layout">
+    <app-attributes></app-attributes>
+
+    <app-shape-list></app-shape-list>
+  </div>
 </div>
