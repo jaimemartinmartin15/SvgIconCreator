@@ -1,0 +1,37 @@
+<div class="attribute-group">
+  <!-- stroke -->
+  <div class="label-and-control">
+    <span class="label">STROKE</span>
+    <button class="color-picker-invoker" [style]="{ backgroundColor: strokeForm.value }" (click)="showColorPickerDialog(colorPickerDialog, 'stroke')"></button>
+  </div>
+
+  <!-- fill -->
+  @if (!isDrawingLine) {
+    <div class="label-and-control">
+      <span class="label">FILL</span>
+      <button class="color-picker-invoker" [style]="{ backgroundColor: fillForm.value }" (click)="showColorPickerDialog(colorPickerDialog, 'fill')"></button>
+    </div>
+  }
+
+  <!-- color picker dialog (stroke and fill) -->
+  <dialog class="color-picker-dialog" #colorPickerDialog>
+    <div class="content">
+      <button class="close-dialog-button" (click)="colorPickerDialog.close()"></button>
+
+      <jei-color-picker [formControl]="colorPickerForm"></jei-color-picker>
+    </div>
+  </dialog>
+
+  <!-- stroke-width -->
+  <div class="label-and-control">
+    <span class="label">STROKE-WIDTH</span>
+
+    <div class="stroke-width-control">
+      <svg viewBox="0 0 60 35">
+        <line x1="15" y1="17" x2="45" y2="17" stroke="black" [attr.stroke-width]="strokeWidthForm.value" stroke-linecap="round"></line>
+      </svg>
+
+      <input type="text" [formControl]="strokeWidthForm" jeiInputNumber [maxDecimalDigits]="3" [min]="0" />
+    </div>
+  </div>
+</div>
