@@ -19,7 +19,7 @@
     "@angular/forms": "^20.1.4",
     "@angular/platform-browser": "^20.1.4",
     "@angular/router": "^20.1.4",
-    "@jaimemartinmartin15/jei-devkit-angular-shared": "^4.0.0",
+    "@jaimemartinmartin15/jei-devkit-angular-shared": "^4.1.0",
     "@jaimemartinmartin15/svg-icons": "^1.3.0",
     "rxjs": "~7.8.0",
     "tslib": "^2.3.0",
