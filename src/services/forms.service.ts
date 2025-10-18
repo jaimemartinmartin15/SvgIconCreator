@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
-import { FormControl, NonNullableFormBuilder } from '@angular/forms';
-import { ToFormType } from '@jaimemartinmartin15/jei-devkit-angular-shared';
+import { FormControl, FormGroup } from '@angular/forms';
+import { ExtractFormGroupControls, ToFormType } from '@jaimemartinmartin15/jei-devkit-angular-shared';
 import { Shape } from '../models/shape';
 import { ViewBoxModel } from '../models/view-box.model';
 
@@ -8,17 +8,53 @@ import { ViewBoxModel } from '../models/view-box.model';
   providedIn: 'root',
 })
 export class FormsService {
-  public readonly shapeSelectorForm: FormControl<Shape>;
-  public readonly strokePickerForm: FormControl<string>;
-  public readonly fillPickerForm: FormControl<string>;
-  public readonly strokeWidthSelectorForm: FormControl<number>;
-  public readonly canvasOptionsViewBoxForm: ToFormType<ViewBoxModel>;
+  //#region toolbar
+  public readonly shapeSelectorForm = new FormControl(Shape.RECT, { nonNullable: true });
+  public readonly canvasOptionsViewBoxForm = new FormGroup<ExtractFormGroupControls<ToFormType<ViewBoxModel>>>({
+    x: new FormControl(0, { nonNullable: true }),
+    y: new FormControl(0, { nonNullable: true }),
+    width: new FormControl(0, { nonNullable: true }),
+    height: new FormControl(0, { nonNullable: true }),
+  });
+  //#endregion
 
-  public constructor(readonly nonNullableFormBuilder: NonNullableFormBuilder) {
-    this.shapeSelectorForm = nonNullableFormBuilder.control<Shape>(Shape.RECT);
-    this.strokePickerForm = nonNullableFormBuilder.control<string>('#ff0000');
-    this.fillPickerForm = nonNullableFormBuilder.control<string>('#FF000000');
-    this.strokeWidthSelectorForm = nonNullableFormBuilder.control<number>(1);
-    this.canvasOptionsViewBoxForm = nonNullableFormBuilder.group<ViewBoxModel>({ x: 0, y: 0, width: 100, height: 100 });
-  }
+  //#region svg attributes forms
+  //#region shared
+  public strokeForm = new FormControl<string>('#000000ff', { nonNullable: true });
+  public fillForm = new FormControl<string>('#ffffffff', { nonNullable: true });
+  public strokeWidthForm = new FormControl<number>(1, { nonNullable: true });
+  //#endregion
+
+  //#region rect
+  public xForm = new FormControl<number>(0, { nonNullable: true });
+  public yForm = new FormControl<number>(0, { nonNullable: true });
+  public widthForm = new FormControl<number>(0, { nonNullable: true });
+  public heightForm = new FormControl<number>(0, { nonNullable: true });
+  public rxForm = new FormControl<number>(0, { nonNullable: true });
+  public ryForm = new FormControl<number>(0, { nonNullable: true });
+  //#endregion
+
+  //#region line
+  public x1Form = new FormControl<number>(0, { nonNullable: true });
+  public y1Form = new FormControl<number>(0, { nonNullable: true });
+  public x2Form = new FormControl<number>(0, { nonNullable: true });
+  public y2Form = new FormControl<number>(0, { nonNullable: true });
+  //#endregion
+
+  //#region path
+  // TODO
+  // public dForm = new FormGroup<ToFormType<PathModel>>();
+  //#endregion
+
+  //#region circle
+  public cxForm = new FormControl<number>(0, { nonNullable: true });
+  public cyForm = new FormControl<number>(0, { nonNullable: true });
+  public rForm = new FormControl<number>(0, { nonNullable: true });
+  //#endregion
+
+  //#region text
+  public textForm = new FormControl<string>('text', { nonNullable: true });
+  public fontSizeForm = new FormControl<number>(0.4, { nonNullable: true });
+  //#endregion
+  //#endregion
 }
