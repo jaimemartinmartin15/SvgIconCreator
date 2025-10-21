@@ -111,15 +111,15 @@ export class EditorComponent {
   private instantiateNewShapeHost(): ShapeHost {
     switch (this.formsService.shapeSelectorForm.value) {
       case Shape.RECT:
-        return new RectHost(this.elementsRefService, this.shapeListService);
+        return new RectHost(this.elementsRefService, this.formsService, this.shapeListService);
       case Shape.LINE:
-        return new LineHost(this.elementsRefService, this.shapeListService);
+        return new LineHost(this.elementsRefService, this.formsService, this.shapeListService);
       case Shape.PATH:
-        return new PathHost(this.elementsRefService, this.shapeListService);
+        return new PathHost(this.elementsRefService, this.formsService, this.shapeListService);
       case Shape.CIRCLE:
-        return new CircleHost(this.elementsRefService, this.shapeListService);
+        return new CircleHost(this.elementsRefService, this.formsService, this.shapeListService);
       case Shape.TEXT:
-        return new TextHost(this.elementsRefService, this.shapeListService);
+        return new TextHost(this.elementsRefService, this.formsService, this.shapeListService);
     }
   }
 }

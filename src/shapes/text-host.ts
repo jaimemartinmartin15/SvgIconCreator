@@ -1,40 +1,18 @@
-import { FormControl, FormGroup } from '@angular/forms';
-import { Coord, CoordWithDelta, ToFormType } from '@jaimemartinmartin15/jei-devkit-angular-shared';
+import { Coord, CoordWithDelta, ElementsRefService } from '@jaimemartinmartin15/jei-devkit-angular-shared';
 import { Shape } from '../models/shape';
-import { TextModel } from '../models/text.model';
+import { FormsService } from '../services/forms.service';
+import { ShapeListService } from '../services/shape-list.service';
 import { ShapeHost } from './shape-host';
 
 export class TextHost extends ShapeHost {
-  public override readonly type = Shape.TEXT;
-  public override svg: SVGTextElement = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-  public override readonly form: ToFormType<TextModel> = new FormGroup({
-    name: new FormControl('text', { nonNullable: true }),
-    stroke: new FormControl('#000000ff', { nonNullable: true }),
-    strokeWidth: new FormControl(0.4, { nonNullable: true }),
-    fill: new FormControl('#ffffffff', { nonNullable: true }),
-    x: new FormControl(0, { nonNullable: true }),
-    y: new FormControl(0, { nonNullable: true }),
-    text: new FormControl('text', { nonNullable: true }),
-    fontSize: new FormControl(8, { nonNullable: true }),
-  });
+  public override readonly tag = Shape.TEXT;
+  public override svg: SVGTextElement = document.createElementNS('http://www.w3.org/2000/svg', Shape.TEXT);
 
-  //#region svg attributes
-  public override updateSvgAttributes(model: TextModel) {
-    super.updateSvgAttributes(model);
+  public constructor(elementsRefService: ElementsRefService, formsService: FormsService, shapeListService: ShapeListService) {
+    super(elementsRefService, formsService, shapeListService);
 
-    this.setSvgAttribute('x', model.x);
-    this.setSvgAttribute('y', model.y);
-    this.setSvgAttribute('font-size', model.fontSize);
-    this.svg.innerHTML = model.text;
+    this.name = `text_${ShapeHost.shapeCounter++}`;
   }
-
-  public override updatePositionSvgEditPoints(model: TextModel) {
-    if (this.svgEditPoints.length !== 1) return; // TODO improvement allow second point to scalate font size
-
-    this.setSvgAttribute('cx', model.x, this.svgEditPoints[0]);
-    this.setSvgAttribute('cy', model.y, this.svgEditPoints[0]);
-  }
-  //#endregion
 
   //#region mouse
   public override mouseDown(coord: Coord): void {
@@ -43,7 +21,8 @@ export class TextHost extends ShapeHost {
   }
 
   public override mouseDrag(coord: CoordWithDelta): void {
-    this.form.patchValue({ x: coord.x, y: coord.y });
+    this.formsService.xForm.setValue(coord.x);
+    this.formsService.yForm.setValue(coord.y);
   }
 
   public override mouseUp(coord: CoordWithDelta): void {
@@ -56,73 +35,97 @@ export class TextHost extends ShapeHost {
   //#region mouse drag edit
   public override mouseDragEdit(coord: CoordWithDelta): void {
     this.mouseDrag(coord);
+    this.updatePositionSvgEditPoints();
   }
   //#endregion
 
   //#region edit point
-  protected override getEditPointsCoordsFromForm(): Coord[] {
-    return [{ x: this.form.controls.x.value, y: this.form.controls.y.value }];
+  protected override getEditPointCoordsFromSvgShapeAttributes(): Coord[] {
+    return [{ x: this.x, y: this.y }];
+  }
+
+  public override updatePositionSvgEditPoints() {
+    if (this.svgEditPoints.length !== 1) return; // TODO improvement allow second point to scalate font size
+
+    this.setSvgAttribute('cx', this.x, this.svgEditPoints[0]);
+    this.setSvgAttribute('cy', this.y, this.svgEditPoints[0]);
   }
   //#endregion
 
   //#region move shape
   public override moveShapeUp(amount: number): void {
-    this.form.controls.y.setValue(this.toFixed(this.form.controls.y.value - amount));
+    this.y -= amount;
+    if (this.shapeListService.selectedShape === this) {
+      this.formsService.yForm.setValue(this.y);
+      this.updatePositionSvgEditPoints();
+    }
   }
 
   public override moveShapeRight(amount: number): void {
-    this.form.controls.x.setValue(this.toFixed(this.form.controls.x.value + amount));
+    this.x += amount;
+    if (this.shapeListService.selectedShape === this) {
+      this.formsService.xForm.setValue(this.x);
+      this.updatePositionSvgEditPoints();
+    }
   }
 
   public override moveShapeDown(amount: number): void {
-    this.form.controls.y.setValue(this.toFixed(this.form.controls.y.value + amount));
+    this.y += amount;
+    if (this.shapeListService.selectedShape === this) {
+      this.formsService.yForm.setValue(this.y);
+      this.updatePositionSvgEditPoints();
+    }
   }
 
   public override moveShapeLeft(amount: number): void {
-    this.form.controls.x.setValue(this.toFixed(this.form.controls.x.value - amount));
+    this.x -= amount;
+    if (this.shapeListService.selectedShape === this) {
+      this.formsService.xForm.setValue(this.x);
+      this.updatePositionSvgEditPoints();
+    }
   }
   //#endregion
 
-  //#region import
-  public override loadFromElement(svg: SVGTextElement) {
-    this.svg = svg;
-    this.form.setValue({
-      name: this.svg.getAttribute('name') || 'text',
-      stroke: this.svg.getAttribute('stroke') || '#000000ff',
-      strokeWidth: this.getSvgAttribute('stroke-width'),
-      fill: this.svg.getAttribute('fill') || '#ffffffff',
-      x: this.getSvgAttribute('x'),
-      y: this.getSvgAttribute('y'),
-      text: this.svg.textContent || '',
-      fontSize: this.getSvgAttribute('font-size'),
-    });
+  //#region svg form binding
+  public override setSvgAttributesWithSvgAttributeForms(): void {
+    this.stroke = this.formsService.strokeForm.value;
+    this.fill = this.formsService.fillForm.value;
+    this.strokeWidth = this.formsService.strokeWidthForm.value;
+    this.x = this.formsService.xForm.value;
+    this.y = this.formsService.yForm.value;
+    this.text = this.formsService.textForm.value;
+    this.fontSize = this.formsService.fontSizeForm.value;
+  }
 
-    super.loadFromElement(svg);
+  public override setSvgAttributeFormsWithSvgAttributes(): void {
+    this.formsService.strokeForm.setValue(this.stroke);
+    this.formsService.fillForm.setValue(this.fill);
+    this.formsService.strokeWidthForm.setValue(this.strokeWidth);
+    this.formsService.xForm.setValue(this.x);
+    this.formsService.yForm.setValue(this.y);
+    this.formsService.textForm.setValue(this.text);
+    this.formsService.fontSizeForm.setValue(this.fontSize);
   }
   //#endregion
 
   //#region export
   protected override isShapeVisible(): boolean {
-    const { text, fontSize } = this.form.controls;
-
     const isVisible = super.isShapeVisible();
-    const hasSize = text.value.trim() !== '' && fontSize.value > 0;
+    const hasSize = this.text.trim() !== '' && this.fontSize > 0;
 
     return isVisible && hasSize;
   }
 
   public override parseCustomOptimizedStringAndCloseShape(): string {
-    const { x, y, text, fontSize } = this.form.controls;
-
     let textAttr = '';
 
     // add if they are not the default value
-    if (x.value !== 0) textAttr += ` x="${x.value}"`;
-    if (y.value !== 0) textAttr += ` y="${y.value}"`;
+    if (this.x !== 0) textAttr += ` x="${this.x}"`;
+    if (this.y !== 0) textAttr += ` y="${this.y}"`;
 
     // always present, otherwise not visible
-    textAttr += ` font-size="${fontSize.value}"`;
-    return `${textAttr} >${text.value}</text>`;
+    textAttr += ` font-size="${this.fontSize}"`;
+    return `${textAttr} >${this.text}</text>`;
   }
   //#endregion
 }

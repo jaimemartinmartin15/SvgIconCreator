@@ -132,6 +132,7 @@ export class AttributesComponent implements OnInit {
       if (selectedShape && selectedShape.isShapeFinished) {
         // it is editing an existing shape
         selectedShape.setSvgAttributeFormsWithSvgAttributes();
+        return;
       }
     });
   }

@@ -50,23 +50,23 @@ export class ImportSvgComponent {
     Array.from(svg.children).forEach((svgShape) => {
       switch (svgShape.tagName) {
         case 'rect':
-          const rectHost = new RectHost(this.elementsRefService, this.shapeListService);
+          const rectHost = new RectHost(this.elementsRefService, this.formsService, this.shapeListService);
           rectHost.loadFromElement(svgShape as SVGRectElement);
           break;
         case 'line':
-          const lineHost = new LineHost(this.elementsRefService, this.shapeListService);
+          const lineHost = new LineHost(this.elementsRefService, this.formsService, this.shapeListService);
           lineHost.loadFromElement(svgShape as SVGLineElement);
           break;
         case 'path':
-          const pathHost = new PathHost(this.elementsRefService, this.shapeListService);
+          const pathHost = new PathHost(this.elementsRefService, this.formsService, this.shapeListService);
           pathHost.loadFromElement(svgShape as SVGPathElement);
           break;
         case 'circle':
-          const circleHost = new CircleHost(this.elementsRefService, this.shapeListService);
+          const circleHost = new CircleHost(this.elementsRefService, this.formsService, this.shapeListService);
           circleHost.loadFromElement(svgShape as SVGCircleElement);
           break;
         case 'text':
-          const textHost = new TextHost(this.elementsRefService, this.shapeListService);
+          const textHost = new TextHost(this.elementsRefService, this.formsService, this.shapeListService);
           textHost.loadFromElement(svgShape as SVGTextElement);
           break;
       }

@@ -24,3 +24,8 @@ ul {
 .cdk-drag-placeholder {
   min-height: 44px;
 }
+
+.cdk-drag-preview {
+  box-sizing: border-box;
+  background-color: #becfc3;
+}

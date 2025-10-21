@@ -45,6 +45,20 @@ export class PathHost extends ShapeHost {
     commands: new FormArray([] as ToFormType<Command>[]),
   });
 
+  public override setSvgAttributesWithSvgAttributeForms(): void {
+    this.stroke = this.formsService.strokeForm.value;
+    this.fill = this.formsService.fillForm.value;
+    this.strokeWidth = this.formsService.strokeWidthForm.value;
+    // TODO d attribute
+  }
+
+  public override setSvgAttributeFormsWithSvgAttributes(): void {
+    this.formsService.strokeForm.setValue(this.stroke);
+    this.formsService.fillForm.setValue(this.fill);
+    this.formsService.strokeWidthForm.setValue(this.strokeWidth);
+    // TODO d attribute
+  }
+
   //#region svg attributes
   public override updateSvgAttributes(model: PathModel) {
     super.updateSvgAttributes(model);
@@ -256,7 +270,7 @@ export class PathHost extends ShapeHost {
     this.form.setValue({
       name: this.svg.getAttribute('name') || 'path',
       stroke: this.svg.getAttribute('stroke') || '#000000ff',
-      strokeWidth: this.getSvgAttribute('stroke-width'),
+      strokeWidth: this.getSvgAttributeAsNumber('stroke-width'),
       fill: this.svg.getAttribute('fill') || '#ffffffff',
       commands: commandsFromPath, // actually this is redundant because it is already set when the array is populated with controls
     });

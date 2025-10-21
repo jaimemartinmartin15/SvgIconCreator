@@ -1,30 +1,21 @@
-import { FormGroup } from '@angular/forms';
 import { Coord, CoordWithDelta, ElementsRefService } from '@jaimemartinmartin15/jei-devkit-angular-shared';
 import { Shape } from '../models/shape';
-import { ShapeModel } from '../models/shape.model';
+import { FormsService } from '../services/forms.service';
 import { ShapeListService } from '../services/shape-list.service';
 
 export abstract class ShapeHost {
   public constructor(
     protected readonly elementsRefService: ElementsRefService,
+    protected readonly formsService: FormsService,
     protected readonly shapeListService: ShapeListService,
   ) {}
 
-  public abstract readonly type: Shape;
-  public abstract readonly form: FormGroup;
+  public abstract readonly tag: Shape;
   public abstract svg: SVGElement;
+  /** Just an index to set different names to shapes when they are created */
+  protected static shapeCounter: number = 1;
 
   public isShapeFinished: boolean = false;
-
-  //#region svg attributes
-  public updateSvgAttributes(model: ShapeModel): void {
-    this.svg.setAttribute('name', model.name);
-    this.setSvgAttribute('stroke-width', model.strokeWidth);
-    this.svg.setAttribute('stroke', model.stroke);
-    this.svg.setAttribute('fill', model.fill);
-  }
-  public abstract updatePositionSvgEditPoints(model: ShapeModel): void;
-  //#endregion
 
   //#region mouse
   public abstract mouseDown(coord: Coord): void;
@@ -53,13 +44,11 @@ export abstract class ShapeHost {
   public svgEditPoints: SVGCircleElement[] = [];
   protected selectedEditPointIndex: number = -1;
 
-  protected abstract getEditPointsCoordsFromForm(): Coord[];
-  protected getEditPointsCoordsFromSvg(): Coord[] {
-    return this.svgEditPoints.map((p) => ({ x: this.getSvgAttribute('cx', p), y: this.getSvgAttribute('cy', p) }));
-  }
+  protected abstract getEditPointCoordsFromSvgShapeAttributes(): Coord[];
+  public abstract updatePositionSvgEditPoints(): void;
 
   public createEditPoints(): void {
-    const editPointsCoords = this.getEditPointsCoordsFromForm();
+    const editPointsCoords = this.getEditPointCoordsFromSvgShapeAttributes();
     editPointsCoords.forEach((epc) => {
       const editPointEl = this.createEditPoint(epc);
       this.svgEditPoints.push(editPointEl);
@@ -88,7 +77,9 @@ export abstract class ShapeHost {
   }
 
   protected getEditPointIndexUnderCoord(coord: Coord): number {
-    return this.getEditPointsCoordsFromForm().findIndex((c) => Math.abs(c.x - coord.x) < this.getEditPointWidth() && Math.abs(c.y - coord.y) < this.getEditPointWidth());
+    return this.getEditPointCoordsFromSvgShapeAttributes().findIndex(
+      (c) => Math.abs(c.x - coord.x) < this.getEditPointWidth() && Math.abs(c.y - coord.y) < this.getEditPointWidth(),
+    );
   }
 
   public getEditPointUnderMousePoint(mousePoint: Coord): SVGCircleElement | undefined {
@@ -164,9 +155,8 @@ export abstract class ShapeHost {
   //#endregion
 
   //#region import
-  public loadFromElement(_: SVGElement) {
-    // ... previous code is executed for each shape
-
+  public loadFromElement(svg: SVGElement) {
+    this.svg = svg;
     this.shapeListService.shapeList.push(this);
     this.addToCanvas();
     this.isShapeFinished = true;
@@ -179,26 +169,28 @@ export abstract class ShapeHost {
   public parseOptimizedString(): string {
     if (!this.isShapeVisible()) return '';
 
-    const { strokeWidth, stroke, fill } = this.form.controls;
+    const strokeWidth = this.strokeWidth;
+    const stroke = this.stroke;
+    const fill = this.fill;
 
-    let parsedShape = `<${this.type} `;
+    let parsedShape = `<${this.tag} `;
 
     // if stroke-width is 1, do not add it (it is the default)
     // if the stroke is transparent, do not add it neither
-    if (strokeWidth.value !== 1 && !stroke.value.endsWith('00')) {
-      parsedShape += ` stroke-width="${strokeWidth.value}"`;
+    if (strokeWidth !== 1 && !stroke.endsWith('00')) {
+      parsedShape += ` stroke-width="${strokeWidth}"`;
     }
 
     // if stroke-width is 0, do not add it
     // if the stroke is transparent, do not add it neither
-    if (strokeWidth.value !== 0 && !stroke.value.endsWith('00')) {
-      parsedShape += ` stroke="${stroke.value}"`;
+    if (strokeWidth !== 0 && !stroke.endsWith('00')) {
+      parsedShape += ` stroke="${stroke}"`;
     }
 
     // if the shape is a line, do not add it
     // if the fill is black, do not add it (it is the default)
-    if (!(this.type === Shape.LINE) && !(fill.value.toLowerCase() === '#000000ff')) {
-      parsedShape += ` fill="${fill.value}"`;
+    if (!(this.tag === Shape.LINE) && !(fill.toLowerCase() === '#000000ff')) {
+      parsedShape += ` fill="${fill}"`;
     }
 
     parsedShape += this.parseCustomOptimizedStringAndCloseShape();
@@ -211,8 +203,7 @@ export abstract class ShapeHost {
   }
 
   protected isShapeVisible(): boolean {
-    const { strokeWidth, stroke, fill } = this.form.controls;
-    return !fill.value.endsWith('00') || (!stroke.value.endsWith('00') && strokeWidth.value !== 0);
+    return !this.fill.endsWith('00') || (!this.stroke.endsWith('00') && this.strokeWidth !== 0);
   }
   //#endregion
 
@@ -226,12 +217,175 @@ export abstract class ShapeHost {
     return +(n ?? def).toFixed(1);
   }
 
-  protected getSvgAttribute(name: string, element: SVGElement = this.svg): number {
+  protected getSvgAttributeAsNumber(name: string, element: SVGElement = this.svg): number {
     return +element.getAttribute(name)!;
   }
 
-  protected setSvgAttribute(name: string, value: number = 0, element: SVGElement = this.svg): void {
+  protected getSvgAttributeAsString(name: string, element: SVGElement = this.svg): string {
+    return element.getAttribute(name)!;
+  }
+
+  protected setSvgAttribute(name: string, value: number | string = 0, element: SVGElement = this.svg): void {
     element.setAttribute(name, `${value}`);
+  }
+  //#endregion
+
+  //#region svg form binding
+  public abstract setSvgAttributeFormsWithSvgAttributes(): void;
+  public abstract setSvgAttributesWithSvgAttributeForms(): void;
+  //#endregion
+
+  //#region attributes
+  public get name(): string {
+    return this.getSvgAttributeAsString('name');
+  }
+
+  public set name(value: string) {
+    this.setSvgAttribute('name', value);
+  }
+
+  public get stroke(): string {
+    return this.getSvgAttributeAsString('stroke');
+  }
+
+  public set stroke(value: string) {
+    this.setSvgAttribute('stroke', value);
+  }
+
+  public get fill(): string {
+    return this.getSvgAttributeAsString('fill');
+  }
+
+  public set fill(value: string) {
+    this.setSvgAttribute('fill', value);
+  }
+
+  public get strokeWidth(): number {
+    return this.getSvgAttributeAsNumber('stroke-width');
+  }
+
+  public set strokeWidth(value: number) {
+    this.setSvgAttribute('stroke-width', value);
+  }
+
+  public get x(): number {
+    return this.getSvgAttributeAsNumber('x');
+  }
+
+  public set x(value: number) {
+    this.setSvgAttribute('x', value);
+  }
+
+  public get y(): number {
+    return this.getSvgAttributeAsNumber('y');
+  }
+
+  public set y(value: number) {
+    this.setSvgAttribute('y', value);
+  }
+
+  public get width(): number {
+    return this.getSvgAttributeAsNumber('width');
+  }
+
+  public set width(value: number) {
+    this.setSvgAttribute('width', value);
+  }
+
+  public get height(): number {
+    return this.getSvgAttributeAsNumber('height');
+  }
+
+  public set height(value: number) {
+    this.setSvgAttribute('height', value);
+  }
+
+  public get rx(): number {
+    return this.getSvgAttributeAsNumber('rx');
+  }
+
+  public set rx(value: number) {
+    this.setSvgAttribute('rx', value);
+  }
+
+  public get ry(): number {
+    return this.getSvgAttributeAsNumber('ry');
+  }
+
+  public set ry(value: number) {
+    this.setSvgAttribute('ry', value);
+  }
+
+  public get x1(): number {
+    return this.getSvgAttributeAsNumber('x1');
+  }
+
+  public set x1(value: number) {
+    this.setSvgAttribute('x1', value);
+  }
+
+  public get y1(): number {
+    return this.getSvgAttributeAsNumber('y1');
+  }
+
+  public set y1(value: number) {
+    this.setSvgAttribute('y1', value);
+  }
+
+  public get x2(): number {
+    return this.getSvgAttributeAsNumber('x2');
+  }
+
+  public set x2(value: number) {
+    this.setSvgAttribute('x2', value);
+  }
+
+  public get y2(): number {
+    return this.getSvgAttributeAsNumber('y2');
+  }
+
+  public set y2(value: number) {
+    this.setSvgAttribute('y2', value);
+  }
+
+  public get cx(): number {
+    return this.getSvgAttributeAsNumber('cx');
+  }
+
+  public set cx(value: number) {
+    this.setSvgAttribute('cx', value);
+  }
+
+  public get cy(): number {
+    return this.getSvgAttributeAsNumber('cy');
+  }
+
+  public set cy(value: number) {
+    this.setSvgAttribute('cy', value);
+  }
+
+  public get r(): number {
+    return this.getSvgAttributeAsNumber('r');
+  }
+
+  public set r(value: number) {
+    this.setSvgAttribute('r', value);
+  }
+
+  public get text(): string {
+    return this.svg.innerHTML;
+  }
+
+  public set text(value: string) {
+    this.svg.innerHTML = value;
+  }
+
+  public get fontSize(): number {
+    return this.getSvgAttributeAsNumber('font-size');
+  }
+
+  public set fontSize(value: number) {
+    this.setSvgAttribute('font-size', value);
   }
   //#endregion
 }
