@@ -46,21 +46,25 @@ export class AttributesComponent implements OnInit {
     this.formsService.xForm.valueChanges.subscribe((value) => {
       if (this.shapeListService.selectedShape) {
         this.shapeListService.selectedShape.x = value;
+        this.shapeListService.selectedShape.updatePositionSvgEditPoints();
       }
     });
     this.formsService.yForm.valueChanges.subscribe((value) => {
       if (this.shapeListService.selectedShape) {
         this.shapeListService.selectedShape.y = value;
+        this.shapeListService.selectedShape.updatePositionSvgEditPoints();
       }
     });
     this.formsService.widthForm.valueChanges.subscribe((value) => {
       if (this.shapeListService.selectedShape) {
         this.shapeListService.selectedShape.width = value;
+        this.shapeListService.selectedShape.updatePositionSvgEditPoints();
       }
     });
     this.formsService.heightForm.valueChanges.subscribe((value) => {
       if (this.shapeListService.selectedShape) {
         this.shapeListService.selectedShape.height = value;
+        this.shapeListService.selectedShape.updatePositionSvgEditPoints();
       }
     });
     this.formsService.rxForm.valueChanges.subscribe((value) => {
@@ -76,21 +80,25 @@ export class AttributesComponent implements OnInit {
     this.formsService.x1Form.valueChanges.subscribe((value) => {
       if (this.shapeListService.selectedShape) {
         this.shapeListService.selectedShape.x1 = value;
+        this.shapeListService.selectedShape.updatePositionSvgEditPoints();
       }
     });
     this.formsService.y1Form.valueChanges.subscribe((value) => {
       if (this.shapeListService.selectedShape) {
         this.shapeListService.selectedShape.y1 = value;
+        this.shapeListService.selectedShape.updatePositionSvgEditPoints();
       }
     });
     this.formsService.x2Form.valueChanges.subscribe((value) => {
       if (this.shapeListService.selectedShape) {
         this.shapeListService.selectedShape.x2 = value;
+        this.shapeListService.selectedShape.updatePositionSvgEditPoints();
       }
     });
     this.formsService.y2Form.valueChanges.subscribe((value) => {
       if (this.shapeListService.selectedShape) {
         this.shapeListService.selectedShape.y2 = value;
+        this.shapeListService.selectedShape.updatePositionSvgEditPoints();
       }
     });
     // TODO subscribe path form
@@ -98,16 +106,19 @@ export class AttributesComponent implements OnInit {
     this.formsService.cxForm.valueChanges.subscribe((value) => {
       if (this.shapeListService.selectedShape) {
         this.shapeListService.selectedShape.cx = value;
+        this.shapeListService.selectedShape.updatePositionSvgEditPoints();
       }
     });
     this.formsService.cyForm.valueChanges.subscribe((value) => {
       if (this.shapeListService.selectedShape) {
         this.shapeListService.selectedShape.cy = value;
+        this.shapeListService.selectedShape.updatePositionSvgEditPoints();
       }
     });
     this.formsService.rForm.valueChanges.subscribe((value) => {
       if (this.shapeListService.selectedShape) {
         this.shapeListService.selectedShape.r = value;
+        this.shapeListService.selectedShape.updatePositionSvgEditPoints();
       }
     });
     this.formsService.textForm.valueChanges.subscribe((value) => {

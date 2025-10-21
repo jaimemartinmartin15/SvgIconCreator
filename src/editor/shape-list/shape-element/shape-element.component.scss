@@ -3,10 +3,12 @@
   align-items: center;
   gap: 10px;
   padding: 10px;
-  cursor: row-resize !important; // override collapsible styles
+  border: var(--border);
+  border-radius: 5px;
+  background-color: #f0f1f2;
 
-  &.expanded {
-    border-bottom: var(--border);
+  &.selected {
+    background-color: #bec7cf;
   }
 }
 
@@ -23,15 +25,19 @@
   outline: none;
   font-size: 1rem;
   margin: 0px 15px 0 0;
-  transition: background-color 0.5s;
-
-  :host-context(.expanded) .shape-name {
-    background-color: #f0f1f2;
-  }
-
+  background-color: #f0f1f2;
+  
   &:focus {
     border-bottom: 2px solid black;
   }
+}
+
+:host-context(.selected) .shape-name {
+  background-color: #bec7cf;
+}
+
+:host-context(.cdk-drag-preview) .shape-name {
+  background-color: #becfc3;
 }
 
 .remaining-space {
