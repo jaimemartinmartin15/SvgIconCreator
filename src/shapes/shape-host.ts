@@ -348,6 +348,14 @@ export abstract class ShapeHost {
     this.setSvgAttribute('y2', value);
   }
 
+  public get d(): string {
+    return this.getSvgAttributeAsString('d');
+  }
+
+  public set d(value: string) {
+    this.setSvgAttribute('d', value);
+  }
+
   public get cx(): number {
     return this.getSvgAttributeAsNumber('cx');
   }

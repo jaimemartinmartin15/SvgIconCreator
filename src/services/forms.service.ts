@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
-import { FormControl, FormGroup } from '@angular/forms';
+import { FormArray, FormControl, FormGroup } from '@angular/forms';
 import { ExtractFormGroupControls, ToFormType } from '@jaimemartinmartin15/jei-devkit-angular-shared';
+import { Command } from '../models/path.model';
 import { Shape } from '../models/shape';
 import { ViewBoxModel } from '../models/view-box.model';
 
@@ -42,8 +43,7 @@ export class FormsService {
   //#endregion
 
   //#region path
-  // TODO
-  // public dForm = new FormGroup<ToFormType<PathModel>>();
+  public dForm = new FormArray<ToFormType<Command>>([]);
   //#endregion
 
   //#region circle

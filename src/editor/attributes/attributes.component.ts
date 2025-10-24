@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { ColorPickerComponent, InputNumberDirective } from '@jaimemartinmartin15/jei-devkit-angular-shared';
+import { Command } from '../../models/path.model';
 import { Shape } from '../../models/shape';
 import { FormsService } from '../../services/forms.service';
 import { ShapeListService } from '../../services/shape-list.service';
@@ -101,8 +102,12 @@ export class AttributesComponent implements OnInit {
         this.shapeListService.selectedShape.updatePositionSvgEditPoints();
       }
     });
-    // TODO subscribe path form
-    // this.formsService.dForm.valueChanges.subscribe((value) => { ...TODO... })
+    this.formsService.dForm.valueChanges.subscribe((value) => {
+      if (this.shapeListService.selectedShape && this.shapeListService.selectedShape instanceof PathHost) {
+        this.shapeListService.selectedShape.d = this.shapeListService.selectedShape.getPathFromCommands(value as Command[]);
+        this.shapeListService.selectedShape.updatePositionSvgEditPoints();
+      }
+    });
     this.formsService.cxForm.valueChanges.subscribe((value) => {
       if (this.shapeListService.selectedShape) {
         this.shapeListService.selectedShape.cx = value;
@@ -147,6 +152,15 @@ export class AttributesComponent implements OnInit {
       }
     });
   }
+
+  //#region path helpers
+  public mouseHoverIndex = -1;
+
+  public deleteCommand(i: number, e: MouseEvent) {
+    e.stopPropagation();
+    this.formsService.dForm.removeAt(i);
+  }
+  //#endregion
 
   public showColorPickerDialog(dialog: HTMLDialogElement, attribute: 'stroke' | 'fill') {
     this.colorPickerForm = attribute === 'stroke' ? this.formsService.strokeForm : this.formsService.fillForm;
