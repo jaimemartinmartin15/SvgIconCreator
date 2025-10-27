@@ -163,7 +163,7 @@ export class AttributesComponent implements OnInit {
   }
 
   public get shapeSelectorIsLine(): boolean {
-    return this.formsService.shapeSelectorForm.value === Shape.LINE;
+    return this.formsService.shapeSelectorForm.value === Shape.LINE && !this.shapeListService.selectedShape;
   }
   //#endregion
 

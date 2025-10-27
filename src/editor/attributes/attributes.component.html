@@ -4,7 +4,7 @@
     <div class="color-picker-invoker" [style]="{ backgroundColor: formsService.strokeForm.value }"></div>
   </label>
 
-  @if (!shapeSelectorIsLine) {
+  @if (!(shapeSelectorIsLine || selectedShapeIsLine)) {
     <label class="label-and-control" (click)="showColorPickerDialog(colorPickerDialog, 'fill')">
       <span class="label">FILL</span>
       <div class="color-picker-invoker" [style]="{ backgroundColor: formsService.fillForm.value }"></div>
