@@ -170,28 +170,24 @@ export abstract class ShapeHost {
   public parseOptimizedString(): string {
     if (!this.isShapeVisible()) return '';
 
-    const strokeWidth = this.strokeWidth;
-    const stroke = this.stroke;
-    const fill = this.fill;
-
     let parsedShape = `<${this.tag} `;
 
     // if stroke-width is 1, do not add it (it is the default)
     // if the stroke is transparent, do not add it neither
-    if (strokeWidth !== 1 && !stroke.endsWith('00')) {
-      parsedShape += ` stroke-width="${strokeWidth}"`;
+    if (this.strokeWidth !== 1 && !this.stroke.endsWith('00')) {
+      parsedShape += ` stroke-width="${this.strokeWidth}"`;
     }
 
     // if stroke-width is 0, do not add it
     // if the stroke is transparent, do not add it neither
-    if (strokeWidth !== 0 && !stroke.endsWith('00')) {
-      parsedShape += ` stroke="${stroke}"`;
+    if (this.strokeWidth !== 0 && !this.stroke.endsWith('00')) {
+      parsedShape += ` stroke="${this.stroke}"`;
     }
 
     // if the shape is a line, do not add it
     // if the fill is black, do not add it (it is the default)
-    if (!(this.tag === Shape.LINE) && !(fill.toLowerCase() === '#000000ff')) {
-      parsedShape += ` fill="${fill}"`;
+    if (!(this.tag === Shape.LINE) && !(this.fill.toLowerCase() === '#000000ff')) {
+      parsedShape += ` fill="${this.fill}"`;
     }
 
     parsedShape += this.parseCustomOptimizedStringAndCloseShape();
