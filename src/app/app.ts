@@ -1,5 +1,6 @@
-import { Component } from '@angular/core';
+import { Component, HostListener } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
+import { ShapeListService } from '../services/shape-list.service';
 
 @Component({
   selector: 'app-root',
@@ -15,4 +16,15 @@ import { RouterOutlet } from '@angular/router';
     `,
   ],
 })
-export class App {}
+export class App {
+  constructor(private readonly shapeListService: ShapeListService) {}
+
+  @HostListener('window:beforeunload', ['$event'])
+  onBeforeunload(event: BeforeUnloadEvent) {
+    if (this.shapeListService.shapeList.length > 0) {
+      // Message of the pop up cannot be edited
+      event.preventDefault();
+      event.returnValue = ''; // For legacy browsers
+    }
+  }
+}
