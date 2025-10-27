@@ -274,7 +274,7 @@ export class PathHost extends ShapeHost {
   }
 
   protected override parseCustomOptimizedStringAndCloseShape(): string {
-    return ` d="${this.d}" />`;
+    return ` d="${this.d.map((command) => `${command.instruction}${command.coords.map((c) => `${c.x},${c.y}`).join(' ')}`)}" />`;
   }
   //#endregion
 

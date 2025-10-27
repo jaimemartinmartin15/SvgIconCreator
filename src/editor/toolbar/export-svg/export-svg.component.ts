@@ -69,6 +69,7 @@ export class ExportSvgComponent {
     // convert the svg element to string (remove the background image)
     let svgString = new XMLSerializer().serializeToString(this.canvas);
     if (svgString.includes('<image ')) {
+      // the first closing (/>) is always the image
       svgString = svgString.slice(0, svgString.indexOf('<image ')) + svgString.slice(svgString.indexOf('/>') + 2);
     }
 
