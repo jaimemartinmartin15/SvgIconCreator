@@ -1,4 +1,5 @@
 import { Coord, CoordWithDelta, ElementsRefService } from '@jaimemartinmartin15/jei-devkit-angular-shared';
+import { Command, isPathInstruction } from '../models/path.model';
 import { Shape } from '../models/shape';
 import { FormsService } from '../services/forms.service';
 import { ShapeListService } from '../services/shape-list.service';
@@ -231,8 +232,8 @@ export abstract class ShapeHost {
   //#endregion
 
   //#region svg form binding
-  public abstract setSvgAttributeFormsWithSvgAttributes(): void;
-  public abstract setSvgAttributesWithSvgAttributeForms(): void;
+  public abstract onEditingExistingShape(): void;
+  public abstract onCreatingNewShape(): void;
   //#endregion
 
   //#region attributes
@@ -348,12 +349,37 @@ export abstract class ShapeHost {
     this.setSvgAttribute('y2', value);
   }
 
-  public get d(): string {
-    return this.getSvgAttributeAsString('d');
+  public get d(): Command[] {
+    const commands: Command[] = [];
+    const d = this.getSvgAttributeAsString('d');
+    for (let i = 0; i < d.length; i++) {
+      const c = d.charAt(i);
+      if (isPathInstruction(c)) {
+        // find the start and the end indexes of the command "M1,3" - "C1,3 4,5 6,7" - "L1,3"
+        const init = i;
+        let end = i + 1;
+        for (let j = i + 1; !['M', 'L', 'C', 'Z'].includes(d.charAt(j)) && j < d.length; j++) {
+          end = j + 1;
+        }
+
+        commands.push({
+          instruction: c,
+          coords: d
+            .substring(init + 1, end)
+            .split(' ') // split coords
+            .filter((c) => c !== '')
+            .map((coords) => coords.split(',')) // split x and y
+            .map(([x, y]) => ({ x: +x, y: +y })),
+        });
+      }
+    }
+
+    return commands;
   }
 
-  public set d(value: string) {
-    this.setSvgAttribute('d', value);
+  public set d(value: Command[]) {
+    const d = value.map((c) => `${c.instruction}${c.coords.map((c) => `${c.x},${c.y}`).join(' ')}`).join(' ');
+    this.setSvgAttribute('d', d);
   }
 
   public get cx(): number {

@@ -103,8 +103,8 @@ export class AttributesComponent implements OnInit {
       }
     });
     this.formsService.dForm.valueChanges.subscribe((value) => {
-      if (this.shapeListService.selectedShape && this.shapeListService.selectedShape instanceof PathHost) {
-        this.shapeListService.selectedShape.d = this.shapeListService.selectedShape.getPathFromCommands(value as Command[]);
+      if (this.shapeListService.selectedShape) {
+        this.shapeListService.selectedShape.d = value as Command[];
         this.shapeListService.selectedShape.updatePositionSvgEditPoints();
       }
     });
@@ -140,28 +140,20 @@ export class AttributesComponent implements OnInit {
 
     this.shapeListService.selectedShape$.subscribe((selectedShape) => {
       if (selectedShape && !selectedShape.isShapeFinished) {
-        // it is creating a new shape
-        selectedShape.setSvgAttributesWithSvgAttributeForms();
+        // it is creating a new shape, set the current form values to the svg attributes to imitate last used shape
+        selectedShape.onCreatingNewShape();
         return;
       }
 
       if (selectedShape && selectedShape.isShapeFinished) {
-        // it is editing an existing shape
-        selectedShape.setSvgAttributeFormsWithSvgAttributes();
+        // it is editing an existing shape, set the values of the svg attributes in the form
+        selectedShape.onEditingExistingShape();
         return;
       }
     });
   }
 
-  //#region path helpers
-  public mouseHoverIndex = -1;
-
-  public deleteCommand(i: number, e: MouseEvent) {
-    e.stopPropagation();
-    this.formsService.dForm.removeAt(i);
-  }
-  //#endregion
-
+  //#region color helpers
   public showColorPickerDialog(dialog: HTMLDialogElement, attribute: 'stroke' | 'fill') {
     this.colorPickerForm = attribute === 'stroke' ? this.formsService.strokeForm : this.formsService.fillForm;
     dialog.showModal();
@@ -173,6 +165,16 @@ export class AttributesComponent implements OnInit {
   public get shapeSelectorIsLine(): boolean {
     return this.formsService.shapeSelectorForm.value === Shape.LINE;
   }
+  //#endregion
+
+  //#region path helpers
+  public mouseHoverIndex = -1;
+
+  public deleteCommand(i: number, e: MouseEvent) {
+    e.stopPropagation();
+    this.formsService.dForm.removeAt(i);
+  }
+  //#endregion
 
   //#region type of shape
   get selectedShapeIsRect(): boolean {

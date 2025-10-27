@@ -1,21 +1,10 @@
 import { FormArray, FormControl, FormGroup } from '@angular/forms';
 import { Coord, CoordWithDelta, ElementsRefService, ToFormType } from '@jaimemartinmartin15/jei-devkit-angular-shared';
-import { Command, PathInstruction } from '../models/path.model';
+import { Command, COMMANDS, PathInstruction } from '../models/path.model';
 import { Shape } from '../models/shape';
 import { FormsService } from '../services/forms.service';
 import { ShapeListService } from '../services/shape-list.service';
 import { ShapeHost } from './shape-host';
-
-export function isPathInstruction(key: string): key is PathInstruction {
-  return ['M', 'L', 'C', 'Z'].includes(key);
-}
-
-export const COMMANDS = {
-  MOVE_TO: 'M',
-  LINE_TO: 'L',
-  CUBIC_BEZIER: 'C',
-  CLOSE_PATH: 'Z',
-} as const satisfies Record<string, PathInstruction>;
 
 export class PathHost extends ShapeHost {
   //#region path host vars
@@ -191,7 +180,7 @@ export class PathHost extends ShapeHost {
 
   //#region edit point
   protected override getEditPointCoordsFromSvgShapeAttributes(): Coord[] {
-    return this.getCommandsFromPath(this.d).flatMap((c) => c.coords);
+    return this.d.flatMap((c) => c.coords);
   }
 
   public override updatePositionSvgEditPoints() {
@@ -206,71 +195,73 @@ export class PathHost extends ShapeHost {
 
   //#region move shape
   public override moveShapeUp(amount: number): void {
-    const commands = this.getCommandsFromPath(this.d);
-    commands.forEach((command) => command.coords.forEach((coord) => (coord.y -= amount)));
-    this.d = this.getPathFromCommands(commands);
+    this.d = this.d.map((command) => {
+      command.coords.forEach((coord) => (coord.y -= amount));
+      return command;
+    });
 
     if (this.shapeListService.selectedShape === this) {
-      this.formsService.dForm.setValue(this.getCommandsFromPath(this.d));
+      this.formsService.dForm.setValue(this.d);
       this.updatePositionSvgEditPoints();
     }
   }
 
   public override moveShapeRight(amount: number): void {
-    const commands = this.getCommandsFromPath(this.d);
-    commands.forEach((command) => command.coords.forEach((coord) => (coord.x += amount)));
-    this.d = this.getPathFromCommands(commands);
+    this.d = this.d.map((command) => {
+      command.coords.forEach((coord) => (coord.x += amount));
+      return command;
+    });
 
     if (this.shapeListService.selectedShape === this) {
-      this.formsService.dForm.setValue(this.getCommandsFromPath(this.d));
+      this.formsService.dForm.setValue(this.d);
       this.updatePositionSvgEditPoints();
     }
   }
 
   public override moveShapeDown(amount: number): void {
-    const commands = this.getCommandsFromPath(this.d);
-    commands.forEach((command) => command.coords.forEach((coord) => (coord.y += amount)));
-    this.d = this.getPathFromCommands(commands);
+    this.d = this.d.map((command) => {
+      command.coords.forEach((coord) => (coord.y += amount));
+      return command;
+    });
 
     if (this.shapeListService.selectedShape === this) {
-      this.formsService.dForm.setValue(this.getCommandsFromPath(this.d));
+      this.formsService.dForm.setValue(this.d);
       this.updatePositionSvgEditPoints();
     }
   }
 
   public override moveShapeLeft(amount: number): void {
-    const commands = this.getCommandsFromPath(this.d);
-    commands.forEach((command) => command.coords.forEach((coord) => (coord.x -= amount)));
-    this.d = this.getPathFromCommands(commands);
+    this.d = this.d.map((command) => {
+      command.coords.forEach((coord) => (coord.x -= amount));
+      return command;
+    });
 
     if (this.shapeListService.selectedShape === this) {
-      this.formsService.dForm.setValue(this.getCommandsFromPath(this.d));
+      this.formsService.dForm.setValue(this.d);
       this.updatePositionSvgEditPoints();
     }
   }
   //#endregion
 
   //#region svg form binding
-  public override setSvgAttributesWithSvgAttributeForms(): void {
+  public override onCreatingNewShape(): void {
     this.stroke = this.formsService.strokeForm.value;
     this.fill = this.formsService.fillForm.value;
     this.strokeWidth = this.formsService.strokeWidthForm.value;
     // This method is called when the shape is being created after another one
     // do not copy coordinates
     this.formsService.dForm.clear();
-    this.d = '';
+    this.d = [];
   }
 
-  public override setSvgAttributeFormsWithSvgAttributes(): void {
+  public override onEditingExistingShape(): void {
     this.formsService.strokeForm.setValue(this.stroke);
     this.formsService.fillForm.setValue(this.fill);
     this.formsService.strokeWidthForm.setValue(this.strokeWidth);
     // this method is called when an existing shape is selected
     // reset the dForm to show the coords of the selected path
     this.formsService.dForm.clear({ emitEvent: false });
-    this.getCommandsFromPath(this.d)
-      .map((c) => this.createCommandFormWithCoords(c.instruction, c.coords))
-      .forEach((c) => this.formsService.dForm.push(c));
+    this.d.map((c) => this.createCommandFormWithCoords(c.instruction, c.coords)).forEach((c) => this.formsService.dForm.push(c));
   }
   //#endregion
 
@@ -315,37 +306,6 @@ export class PathHost extends ShapeHost {
         ),
       ),
     });
-  }
-
-  private getCommandsFromPath(d: string): Command[] {
-    const commands: Command[] = [];
-    for (let i = 0; i < d.length; i++) {
-      const c = d.charAt(i);
-      if (isPathInstruction(c)) {
-        // find the start and the end indexes of the command "M1,3" - "C1,3 4,5 6,7" - "L1,3"
-        const init = i;
-        let end = i + 1;
-        for (let j = i + 1; !['M', 'L', 'C', 'Z'].includes(d.charAt(j)) && j < d.length; j++) {
-          end = j + 1;
-        }
-
-        commands.push({
-          instruction: c,
-          coords: d
-            .substring(init + 1, end)
-            .split(' ') // split coords
-            .filter((c) => c !== '')
-            .map((coords) => coords.split(',')) // split x and y
-            .map(([x, y]) => ({ x: +x, y: +y })),
-        });
-      }
-    }
-
-    return commands;
-  }
-
-  public getPathFromCommands(commands: Command[]): string {
-    return commands.map((c) => `${c.instruction}${c.coords.map((c) => `${c.x},${c.y}`).join(' ')}`).join(' ');
   }
   //#endregion
 }

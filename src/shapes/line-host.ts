@@ -114,7 +114,7 @@ export class LineHost extends ShapeHost {
   //#endregion
 
   //#region svg form binding
-  public override setSvgAttributesWithSvgAttributeForms(): void {
+  public override onCreatingNewShape(): void {
     this.stroke = this.formsService.strokeForm.value;
     this.fill = this.formsService.fillForm.value;
     this.strokeWidth = this.formsService.strokeWidthForm.value;
@@ -124,7 +124,7 @@ export class LineHost extends ShapeHost {
     this.y2 = this.formsService.y2Form.value;
   }
 
-  public override setSvgAttributeFormsWithSvgAttributes(): void {
+  public override onEditingExistingShape(): void {
     this.formsService.strokeForm.setValue(this.stroke);
     this.formsService.fillForm.setValue(this.fill);
     this.formsService.strokeWidthForm.setValue(this.strokeWidth);

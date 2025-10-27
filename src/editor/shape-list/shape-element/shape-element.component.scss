@@ -36,6 +36,10 @@
   background-color: #bec7cf;
 }
 
+:host-context(.selected.cdk-drag-preview) .shape-name {
+  background-color: #bec7cf;
+}
+
 :host-context(.cdk-drag-preview) .shape-name {
   background-color: #becfc3;
 }

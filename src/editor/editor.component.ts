@@ -1,13 +1,14 @@
 import { Component } from '@angular/core';
 import { ElementsRefService } from '@jaimemartinmartin15/jei-devkit-angular-shared';
 import { fromEvent } from 'rxjs';
+import { isPathInstruction } from '../models/path.model';
 import { Shape } from '../models/shape';
 import { CanvasEventsService } from '../services/canvas-events.service';
 import { FormsService } from '../services/forms.service';
 import { ShapeListService } from '../services/shape-list.service';
 import { CircleHost } from '../shapes/circle-host';
 import { LineHost } from '../shapes/line-host';
-import { isPathInstruction, PathHost } from '../shapes/path-host';
+import { PathHost } from '../shapes/path-host';
 import { RectHost } from '../shapes/rect-host';
 import { ShapeHost } from '../shapes/shape-host';
 import { TextHost } from '../shapes/text-host';
