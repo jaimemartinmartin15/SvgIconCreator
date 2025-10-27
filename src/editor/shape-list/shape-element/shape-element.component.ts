@@ -32,8 +32,8 @@ export class ShapeElementComponent implements OnInit, AfterViewInit {
   public constructor(private readonly shapeListService: ShapeListService) {}
 
   public ngOnInit(): void {
-    this.nameForm.setValue(this.shapeHost.name);
     this.nameForm.valueChanges.subscribe((v) => (this.shapeHost.name = v));
+    this.nameForm.setValue(this.shapeHost.name);
   }
 
   public ngAfterViewInit(): void {
