@@ -41,11 +41,15 @@ export class LineHost extends ShapeHost {
   //#region mouse drag edit
   public override mouseDragEdit(coord: CoordWithDelta): void {
     if (this.selectedEditPointIndex === 0) {
-      this.x1 = coord.x;
-      this.y1 = coord.y;
+      this.updateFormWithCoords([
+        { x: coord.x, y: coord.y },
+        { x: this.x2, y: this.y2 },
+      ]);
     } else {
-      this.x2 = coord.x;
-      this.y2 = coord.y;
+      this.updateFormWithCoords([
+        { x: this.x1, y: this.y1 },
+        { x: coord.x, y: coord.y },
+      ]);
     }
     this.updatePositionSvgEditPoints();
   }
