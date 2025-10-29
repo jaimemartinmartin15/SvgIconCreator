@@ -29,37 +29,50 @@
       <input type="text" [formControl]="formsService.strokeWidthForm" jeiInputNumber [maxDecimalDigits]="3" [min]="0" />
     </div>
   </label>
+
+  @if (shapeSelectorIsLine || shapeSelectorIsPath || shapeSelectorIsText || selectedShapeIsLine || selectedShapeIsPath || selectedShapeIsText) {
+    <label class="label-and-control">
+      <span class="label">STROKE-LINECAP</span>
+      <div class="stroke-linecap-control">
+        <select [formControl]="formsService.strokeLinecapForm">
+          <option value="butt">butt</option>
+          <option value="round">round</option>
+          <option value="square">square</option>
+        </select>
+      </div>
+    </label>
+  }
 </form>
 
 @if (selectedShapeIsRect) {
   <form class="attribute-group" (submit)="$event.preventDefault()">
     <label class="label-and-control">
-      <span class="app-control-label">X</span>
+      <span class="label">X</span>
       <input type="text" jeiInputNumber [formControl]="formsService.xForm" />
     </label>
 
     <label class="label-and-control">
-      <span class="app-control-label">Y</span>
+      <span class="label">Y</span>
       <input type="text" jeiInputNumber [formControl]="formsService.yForm" />
     </label>
 
     <label class="label-and-control">
-      <span class="app-control-label">WIDTH</span>
+      <span class="label">WIDTH</span>
       <input type="text" jeiInputNumber [min]="0" [formControl]="formsService.widthForm" />
     </label>
 
     <label class="label-and-control">
-      <span class="app-control-label">HEIGHT</span>
+      <span class="label">HEIGHT</span>
       <input type="text" jeiInputNumber [min]="0" [formControl]="formsService.heightForm" />
     </label>
 
     <label class="label-and-control">
-      <span class="app-control-label">RX</span>
+      <span class="label">RX</span>
       <input type="text" jeiInputNumber [min]="0" [formControl]="formsService.rxForm" />
     </label>
 
     <label class="label-and-control">
-      <span class="app-control-label">RY</span>
+      <span class="label">RY</span>
       <input type="text" jeiInputNumber [min]="0" [formControl]="formsService.ryForm" />
     </label>
   </form>
@@ -68,22 +81,22 @@
 @if (selectedShapeIsLine) {
   <form class="attribute-group" (submit)="$event.preventDefault()">
     <label class="label-and-control">
-      <span class="app-control-label">X1</span>
+      <span class="label">X1</span>
       <input type="text" jeiInputNumber [formControl]="formsService.x1Form" />
     </label>
 
     <label class="label-and-control">
-      <span class="app-control-label">Y1</span>
+      <span class="label">Y1</span>
       <input type="text" jeiInputNumber [formControl]="formsService.y1Form" />
     </label>
 
     <label class="label-and-control">
-      <span class="app-control-label">X2</span>
+      <span class="label">X2</span>
       <input type="text" jeiInputNumber [formControl]="formsService.x2Form" />
     </label>
 
     <label class="label-and-control">
-      <span class="app-control-label">Y2</span>
+      <span class="label">Y2</span>
       <input type="text" jeiInputNumber [formControl]="formsService.y2Form" />
     </label>
   </form>
@@ -117,17 +130,17 @@
 @if (selectedShapeIsCircle) {
   <form class="attribute-group" (submit)="$event.preventDefault()">
     <label class="label-and-control">
-      <span class="app-control-label">CX</span>
+      <span class="label">CX</span>
       <input type="text" jeiInputNumber [formControl]="formsService.cxForm" />
     </label>
 
     <label class="label-and-control">
-      <span class="app-control-label">CY</span>
+      <span class="label">CY</span>
       <input type="text" jeiInputNumber [formControl]="formsService.cyForm" />
     </label>
 
     <label class="label-and-control">
-      <span class="app-control-label">R</span>
+      <span class="label">R</span>
       <input type="text" jeiInputNumber [min]="0" [formControl]="formsService.rForm" />
     </label>
   </form>
@@ -136,22 +149,22 @@
 @if (selectedShapeIsText) {
   <form class="attribute-group" (submit)="$event.preventDefault()">
     <label class="label-and-control">
-      <span class="app-control-label">X</span>
+      <span class="label">X</span>
       <input type="text" jeiInputNumber [formControl]="formsService.xForm" />
     </label>
 
     <label class="label-and-control">
-      <span class="app-control-label">Y</span>
+      <span class="label">Y</span>
       <input type="text" jeiInputNumber [formControl]="formsService.yForm" />
     </label>
 
     <label class="label-and-control">
-      <span class="app-control-label">TEXT</span>
+      <span class="label">TEXT</span>
       <input type="text" [formControl]="formsService.textForm" />
     </label>
 
     <label class="label-and-control">
-      <span class="app-control-label">FONT SIZE</span>
+      <span class="label">FONT SIZE</span>
       <input type="text" jeiInputNumber [min]="0" [shiftStep]="3" [formControl]="formsService.fontSizeForm" />
     </label>
   </form>

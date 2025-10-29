@@ -24,6 +24,7 @@ export class FormsService {
   public strokeForm = new FormControl<string>('#000000ff', { nonNullable: true });
   public fillForm = new FormControl<string>('#ffffffff', { nonNullable: true });
   public strokeWidthForm = new FormControl<number>(1, { nonNullable: true });
+  public strokeLinecapForm = new FormControl<string>('butt', { nonNullable: true });
   //#endregion
 
   //#region rect

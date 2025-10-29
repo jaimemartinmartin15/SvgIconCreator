@@ -134,3 +134,25 @@
     height: 35px;
   }
 }
+
+.stroke-linecap-control {
+  width: 100%;
+  height: 100%;
+  border: var(--border);
+  border-radius: 5px;
+  padding: 5px;
+
+  &:focus-within {
+    border: 2px solid black;
+  }
+
+  select {
+    width: 100%;
+    height: 100%;
+    border: none;
+    font-size: 0.9rem;
+    font-weight: 700;
+    outline: none;
+    background-color: transparent;
+  }
+}

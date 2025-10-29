@@ -44,6 +44,11 @@ export class AttributesComponent implements OnInit {
         this.shapeListService.selectedShape.strokeWidth = value;
       }
     });
+    this.formsService.strokeLinecapForm.valueChanges.subscribe((value) => {
+      if (this.shapeListService.selectedShape) {
+        this.shapeListService.selectedShape.strokeLinecap = value;
+      }
+    });
     this.formsService.xForm.valueChanges.subscribe((value) => {
       if (this.shapeListService.selectedShape) {
         this.shapeListService.selectedShape.x = value;
@@ -161,10 +166,6 @@ export class AttributesComponent implements OnInit {
     // in correct positions until a new value is set
     this.colorPickerForm.setValue(this.colorPickerForm.value);
   }
-
-  public get shapeSelectorIsLine(): boolean {
-    return this.formsService.shapeSelectorForm.value === Shape.LINE && !this.shapeListService.selectedShape;
-  }
   //#endregion
 
   //#region path helpers
@@ -173,6 +174,28 @@ export class AttributesComponent implements OnInit {
   public deleteCommand(i: number, e: MouseEvent) {
     e.stopPropagation();
     this.formsService.dForm.removeAt(i);
+  }
+  //#endregion
+
+  //#region shape selector helper
+  public get shapeSelectorIsRect(): boolean {
+    return this.formsService.shapeSelectorForm.value === Shape.RECT && !this.shapeListService.selectedShape;
+  }
+
+  public get shapeSelectorIsLine(): boolean {
+    return this.formsService.shapeSelectorForm.value === Shape.LINE && !this.shapeListService.selectedShape;
+  }
+
+  public get shapeSelectorIsPath(): boolean {
+    return this.formsService.shapeSelectorForm.value === Shape.PATH && !this.shapeListService.selectedShape;
+  }
+
+  public get shapeSelectorIsCircle(): boolean {
+    return this.formsService.shapeSelectorForm.value === Shape.CIRCLE && !this.shapeListService.selectedShape;
+  }
+
+  public get shapeSelectorIsText(): boolean {
+    return this.formsService.shapeSelectorForm.value === Shape.TEXT && !this.shapeListService.selectedShape;
   }
   //#endregion
 

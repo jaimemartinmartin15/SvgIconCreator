@@ -265,6 +265,14 @@ export abstract class ShapeHost {
     this.setSvgAttribute('stroke-width', value);
   }
 
+  public get strokeLinecap(): string {
+    return this.getSvgAttributeAsString('stroke-linecap');
+  }
+
+  public set strokeLinecap(value: string) {
+    this.setSvgAttribute('stroke-linecap', value);
+  }
+
   public get x(): number {
     return this.getSvgAttributeAsNumber('x');
   }
