@@ -273,6 +273,14 @@ export abstract class ShapeHost {
     this.setSvgAttribute('stroke-linecap', value);
   }
 
+  public get strokeLinejoin(): string {
+    return this.getSvgAttributeAsString('stroke-linejoin');
+  }
+
+  public set strokeLinejoin(value: string) {
+    this.setSvgAttribute('stroke-linejoin', value);
+  }
+
   public get x(): number {
     return this.getSvgAttributeAsNumber('x');
   }

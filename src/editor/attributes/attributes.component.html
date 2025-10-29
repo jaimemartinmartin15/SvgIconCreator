@@ -42,6 +42,19 @@
       </div>
     </label>
   }
+
+  @if (shapeSelectorIsRect || shapeSelectorIsPath || shapeSelectorIsText || selectedShapeIsRect || selectedShapeIsPath || selectedShapeIsText) {
+    <label class="label-and-control">
+      <span class="label">STROKE-LINEJOIN</span>
+      <div class="stroke-linejoin-control">
+        <select [formControl]="formsService.strokeLinejoinForm">
+          <option value="bevel">bevel</option>
+          <option value="miter">miter</option>
+          <option value="round">round</option>
+        </select>
+      </div>
+    </label>
+  }
 </form>
 
 @if (selectedShapeIsRect) {

@@ -49,6 +49,11 @@ export class AttributesComponent implements OnInit {
         this.shapeListService.selectedShape.strokeLinecap = value;
       }
     });
+    this.formsService.strokeLinejoinForm.valueChanges.subscribe((value) => {
+      if (this.shapeListService.selectedShape) {
+        this.shapeListService.selectedShape.strokeLinejoin = value;
+      }
+    });
     this.formsService.xForm.valueChanges.subscribe((value) => {
       if (this.shapeListService.selectedShape) {
         this.shapeListService.selectedShape.x = value;
