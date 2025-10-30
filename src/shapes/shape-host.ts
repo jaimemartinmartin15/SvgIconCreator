@@ -281,6 +281,19 @@ export abstract class ShapeHost {
     this.setSvgAttribute('stroke-linejoin', value);
   }
 
+  public get strokeDasharray(): number[] {
+    const strokeDasharrayValue = this.getSvgAttributeAsString('stroke-dasharray');
+    return strokeDasharrayValue.split(' ').map((v) => parseFloat(v));
+  }
+
+  public set strokeDasharray(value: number[]) {
+    if (value.length === 0) {
+      this.setSvgAttribute('stroke-dasharray', 'none');
+    } else {
+      this.setSvgAttribute('stroke-dasharray', value.join(' '));
+    }
+  }
+
   public get x(): number {
     return this.getSvgAttributeAsNumber('x');
   }

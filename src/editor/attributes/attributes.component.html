@@ -55,6 +55,19 @@
       </div>
     </label>
   }
+
+  <label class="label-and-control">
+    <span class="label">STROKE-DASHARRAY</span>
+    <div class="stroke-dasharray-control">
+      @for (control of formsService.strokeDasharrayForm.controls; track control; let i = $index) {
+        <div class="input-container">
+          <input type="text" jeiInputNumber [formControl]="control" />
+          <svg appTrashCanSvg class="delete" (click)="deleteStrokeDasharray(i)"></svg>
+        </div>
+      }
+      <button class="add-dasharray-button" (click)="addNewStrokeDasharray()">+</button>
+    </div>
+  </label>
 </form>
 
 @if (selectedShapeIsRect) {

@@ -10,12 +10,13 @@ import { LineHost } from '../../shapes/line-host';
 import { PathHost } from '../../shapes/path-host';
 import { RectHost } from '../../shapes/rect-host';
 import { TextHost } from '../../shapes/text-host';
+import { TrashCanSvgComponent } from '../../svg-output/trash-can.component';
 
 @Component({
   selector: 'app-attributes',
   templateUrl: './attributes.component.html',
   styleUrls: ['./attributes.component.scss'],
-  imports: [ColorPickerComponent, ReactiveFormsModule, InputNumberDirective],
+  imports: [ColorPickerComponent, ReactiveFormsModule, InputNumberDirective, TrashCanSvgComponent],
 })
 export class AttributesComponent implements OnInit {
   public colorPickerForm: FormControl<string>;
@@ -52,6 +53,11 @@ export class AttributesComponent implements OnInit {
     this.formsService.strokeLinejoinForm.valueChanges.subscribe((value) => {
       if (this.shapeListService.selectedShape) {
         this.shapeListService.selectedShape.strokeLinejoin = value;
+      }
+    });
+    this.formsService.strokeDasharrayForm.valueChanges.subscribe((value) => {
+      if (this.shapeListService.selectedShape) {
+        this.shapeListService.selectedShape.strokeDasharray = value;
       }
     });
     this.formsService.xForm.valueChanges.subscribe((value) => {
@@ -170,6 +176,16 @@ export class AttributesComponent implements OnInit {
     // because the modal was hidden, the color picker component cannot place handlers
     // in correct positions until a new value is set
     this.colorPickerForm.setValue(this.colorPickerForm.value);
+  }
+  //#endregion
+
+  //#region stroke dasharray
+  public addNewStrokeDasharray() {
+    this.formsService.strokeDasharrayForm.push(new FormControl<number>(0, { nonNullable: true }));
+  }
+
+  public deleteStrokeDasharray(index: number) {
+    this.formsService.strokeDasharrayForm.removeAt(index);
   }
   //#endregion
 

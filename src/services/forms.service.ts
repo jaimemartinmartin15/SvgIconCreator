@@ -26,6 +26,7 @@ export class FormsService {
   public strokeWidthForm = new FormControl<number>(1, { nonNullable: true });
   public strokeLinecapForm = new FormControl<string>('butt', { nonNullable: true });
   public strokeLinejoinForm = new FormControl<string>('miter', { nonNullable: true });
+  public strokeDasharrayForm = new FormArray<ToFormType<number>>([]);
   //#endregion
 
   //#region rect

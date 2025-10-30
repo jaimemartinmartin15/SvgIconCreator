@@ -157,3 +157,39 @@
     background-color: transparent;
   }
 }
+
+.stroke-dasharray-control {
+  display: flex;
+  gap: 5px;
+
+  .input-container {
+    position: relative;
+
+    input[type="text"][jeiInputNumber] {
+      width: 36px;
+      height: 36px;
+    }
+
+    .delete {
+      display: none;
+      position: absolute;
+      top: -5px;
+      right: -5px;
+      width: 15px;
+      height: 15px;
+      cursor: pointer;
+      stroke: black;
+    }
+
+    &:hover .delete {
+      display: block;
+    }
+  }
+
+  .add-dasharray-button {
+    width: 36px;
+    height: 36px;
+    border-radius: 5px;
+    border: var(--border);
+  }
+}
