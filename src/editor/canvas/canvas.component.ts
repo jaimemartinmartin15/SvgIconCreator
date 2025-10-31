@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, HostListener } from '@angular/core';
 import {
   Coord,
   CoordWithDelta,
@@ -16,30 +16,71 @@ import { CanvasEventsService } from '../../services/canvas-events.service';
   imports: [ElementRefDirective, SvgMouseEventsDirective],
 })
 export class CanvasComponent {
+  //#region utils
+  private get canvasEl(): SVGSVGElement {
+    return this.elementsRefService.getNativeElement<SVGSVGElement>('canvas');
+  }
+
+  private keysDown = new Set<string>();
+  @HostListener('window:keydown', ['$event'])
+  protected onKeyDown(event: KeyboardEvent) {
+    this.keysDown.add(event.key);
+  }
+  @HostListener('window:keyup', ['$event'])
+  protected onKeyUp(event: KeyboardEvent) {
+    this.keysDown.delete(event.key);
+  }
+  private get shiftKey() {
+    return this.keysDown.has('Shift');
+  }
+
+  private isDraggingCanvas = false;
+  //#endregion
+
   public constructor(
     private readonly canvasEventsService: CanvasEventsService,
     private readonly elementsRefService: ElementsRefService,
   ) {}
 
+  //#region events
+  public onMouseDown(coord: Coord) {
+    if (this.shiftKey) {
+      this.isDraggingCanvas = true;
+      return;
+    }
+
+    this.canvasEventsService.canvasPointerDown$.next(coord);
+  }
+
+  public onMouseDrag(coord: CoordWithDelta) {
+    if (this.isDraggingCanvas) {
+      // update the position of the svg
+      const actualViewbox = this.canvasEl.viewBox.baseVal;
+      const newX = actualViewbox.x - coord.dx;
+      const newY = actualViewbox.y - coord.dy;
+      this.canvasEl.setAttribute('viewBox', `${newX} ${newY} ${actualViewbox.width} ${actualViewbox.height}`);
+      return;
+    }
+
+    this.canvasEventsService.canvasPointerDrag$.next(coord);
+  }
+
+  public onMouseUp(coord: CoordWithDelta) {
+    if (this.isDraggingCanvas) {
+      this.isDraggingCanvas = false;
+      return;
+    }
+    this.canvasEventsService.canvasPointerUp$.next(coord);
+  }
+
   public onMouseMove(coord: Coord) {
     this.canvasEventsService.canvasPointerMove$.next(coord);
   }
 
-  public onMouseUp(coord: CoordWithDelta) {
-    this.canvasEventsService.canvasPointerUp$.next(coord);
-  }
-
-  public onMouseDrag(coord: CoordWithDelta) {
-    this.canvasEventsService.canvasPointerDrag$.next(coord);
-  }
-
-  public onMouseDown(coord: Coord) {
-    this.canvasEventsService.canvasPointerDown$.next(coord);
-  }
-
   public onWheel(coord: CoordWithDirection) {
-    const svgCanvas = this.elementsRefService.getNativeElement<SVGSVGElement>('canvas');
-    const { x, y, width, height } = svgCanvas.viewBox.baseVal;
+    // this method handles zoom in and zoom out, just rolling the wheel
+
+    const { x, y, width, height } = this.canvasEl.viewBox.baseVal;
 
     // calculate new size
     const zoomFactor = coord.direction === 'up' ? 0.8 : 1.2;
@@ -54,6 +95,7 @@ export class CanvasComponent {
     const newX = coord.x - dx * newWidth;
     const newY = coord.y - dy * newHeight;
 
-    svgCanvas.setAttribute('viewBox', `${newX} ${newY} ${newWidth} ${newHeight}`);
+    this.canvasEl.setAttribute('viewBox', `${newX} ${newY} ${newWidth} ${newHeight}`);
   }
+  //#endregion
 }

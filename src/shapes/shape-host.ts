@@ -4,6 +4,13 @@ import { Shape } from '../models/shape';
 import { FormsService } from '../services/forms.service';
 import { ShapeListService } from '../services/shape-list.service';
 
+export const EDIT_POINT_COLORS = {
+  FILL_NORMAL: '#FFF5',
+  STROKE_NORMAL: '#00f5',
+  STROKE_HOVER: '#ffa50055',
+  STROKE_DRAGGING: '#f005',
+} as const;
+
 export abstract class ShapeHost {
   public constructor(
     protected readonly elementsRefService: ElementsRefService,
@@ -27,13 +34,13 @@ export abstract class ShapeHost {
   //#region mouse move
   public mouseMove(coord: Coord): void {
     this.selectedEditPointIndex = this.getEditPointIndexUnderCoord(coord);
-    this.highlightSelectedEditPoint('orange');
+    this.highlightSelectedEditPoint(EDIT_POINT_COLORS.STROKE_HOVER);
   }
   //#endregion
 
   //#region mouse edit
   public mouseDownEdit(_: Coord): void {
-    this.highlightSelectedEditPoint('red');
+    this.highlightSelectedEditPoint(EDIT_POINT_COLORS.STROKE_DRAGGING);
   }
   public abstract mouseDragEdit(coord: CoordWithDelta): void;
   public mouseUpEdit(coord: CoordWithDelta): void {
@@ -71,9 +78,9 @@ export abstract class ShapeHost {
     c.setAttribute('cx', `${coord.x}`);
     c.setAttribute('cy', `${coord.y}`);
     c.setAttribute('r', this.getEditPointWidth().toFixed(1));
-    c.setAttribute('stroke', 'blue');
+    c.setAttribute('stroke', EDIT_POINT_COLORS.STROKE_NORMAL);
     c.setAttribute('stroke-width', (this.getEditPointWidth() / 2).toFixed(1));
-    c.setAttribute('fill', 'white');
+    c.setAttribute('fill', EDIT_POINT_COLORS.FILL_NORMAL);
     return c;
   }
 
@@ -87,9 +94,9 @@ export abstract class ShapeHost {
     return this.svgEditPoints[this.getEditPointIndexUnderCoord(mousePoint)];
   }
 
-  protected highlightSelectedEditPoint(color: 'orange' | 'red'): void {
+  protected highlightSelectedEditPoint(color: (typeof EDIT_POINT_COLORS)[keyof typeof EDIT_POINT_COLORS]): void {
     // reset color of all points and highlight only the one under the mouse (if it exists)
-    this.svgEditPoints.forEach((p) => p.setAttribute('stroke', 'blue'));
+    this.svgEditPoints.forEach((p) => p.setAttribute('stroke', EDIT_POINT_COLORS.STROKE_NORMAL));
     this.svgEditPoints[this.selectedEditPointIndex]?.setAttribute('stroke', color);
   }
   //#endregion

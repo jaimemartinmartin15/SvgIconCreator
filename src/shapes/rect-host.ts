@@ -2,7 +2,7 @@ import { Coord, CoordWithDelta, ElementsRefService } from '@jaimemartinmartin15/
 import { Shape } from '../models/shape';
 import { FormsService } from '../services/forms.service';
 import { ShapeListService } from '../services/shape-list.service';
-import { ShapeHost } from './shape-host';
+import { EDIT_POINT_COLORS, ShapeHost } from './shape-host';
 
 export class RectHost extends ShapeHost {
   //#region rect host vars
@@ -73,7 +73,7 @@ export class RectHost extends ShapeHost {
 
     // update the selected edit point index if it crosses the pivot
     this.selectedEditPointIndex = this.getEditPointIndexUnderCoord(coord);
-    this.highlightSelectedEditPoint('red');
+    this.highlightSelectedEditPoint(EDIT_POINT_COLORS.STROKE_DRAGGING);
 
     this.updateFormWithCoords([
       { x, y },
