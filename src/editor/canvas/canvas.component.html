@@ -3,8 +3,9 @@
   viewBox="0 0 100 100"
   jeiElementRef="canvas"
   jeiSvgMouseEvents
-  (mouseDown)="onMouseDown($event)"
-  (mouseDrag)="onMouseDrag($event)"
-  (mouseUp)="onMouseUp($event)"
-  (mouseMove)="onMouseMove($event)"
+  (jeiSvgMouseDown)="onMouseDown($event)"
+  (jeiSvgMouseDrag)="onMouseDrag($event)"
+  (jeiSvgMouseUp)="onMouseUp($event)"
+  (jeiSvgMouseMove)="onMouseMove($event)"
+  (jeiSvgMouseWheel)="onWheel($event)"
 ></svg>

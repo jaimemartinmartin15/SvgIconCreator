@@ -14,8 +14,8 @@ export class FormsService {
   public readonly canvasOptionsViewBoxForm = new FormGroup<ExtractFormGroupControls<ToFormType<ViewBoxModel>>>({
     x: new FormControl(0, { nonNullable: true }),
     y: new FormControl(0, { nonNullable: true }),
-    width: new FormControl(0, { nonNullable: true }),
-    height: new FormControl(0, { nonNullable: true }),
+    width: new FormControl(100, { nonNullable: true }),
+    height: new FormControl(100, { nonNullable: true }),
   });
   //#endregion
 
