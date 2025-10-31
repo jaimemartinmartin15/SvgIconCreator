@@ -7,7 +7,9 @@ import {
   ElementsRefService,
   SvgMouseEventsDirective,
 } from '@jaimemartinmartin15/jei-devkit-angular-shared';
+import { ViewBoxModel } from '../../models/view-box.model';
 import { CanvasEventsService } from '../../services/canvas-events.service';
+import { FormsService } from '../../services/forms.service';
 
 @Component({
   selector: 'app-canvas',
@@ -40,7 +42,61 @@ export class CanvasComponent {
   public constructor(
     private readonly canvasEventsService: CanvasEventsService,
     private readonly elementsRefService: ElementsRefService,
+    private readonly formsService: FormsService,
   ) {}
+
+  //#region zoom utils
+  private updateZoomViewBox(coord: CoordWithDirection) {
+    const { x, y, width, height } = this.canvasEl.viewBox.baseVal;
+
+    // calculate new size
+    const zoomFactor = coord.direction === 'up' ? 0.8 : 1.2;
+    const newWidth = width * zoomFactor;
+    const newHeight = height * zoomFactor;
+
+    // calculate the distance of the wheel event to adjust the position
+    const dx = (coord.x - x) / width;
+    const dy = (coord.y - y) / height;
+
+    // adjust the origin to maintain the view in the wheel event position
+    const newX = coord.x - dx * newWidth;
+    const newY = coord.y - dy * newHeight;
+
+    this.canvasEl.setAttribute('viewBox', `${newX} ${newY} ${newWidth} ${newHeight}`);
+  }
+
+  public currentViewBox: ViewBoxModel;
+
+  public get isZoomModified() {
+    const viewBox = this.formsService.canvasOptionsViewBoxForm.value;
+    this.currentViewBox = this.canvasEl?.viewBox.baseVal;
+
+    // wait the view is initiated
+    if (!this.currentViewBox) return false;
+
+    const isModified = !(
+      viewBox.x === this.currentViewBox.x &&
+      viewBox.y === this.currentViewBox.y &&
+      viewBox.width === this.currentViewBox.width &&
+      viewBox.height === this.currentViewBox.height
+    );
+
+    // update the values to make then nice to see in the screen
+    this.currentViewBox = {
+      x: +this.currentViewBox.x.toFixed(1),
+      y: +this.currentViewBox.y.toFixed(1),
+      width: +this.currentViewBox.width.toFixed(1),
+      height: +this.currentViewBox.height.toFixed(1),
+    };
+
+    return isModified;
+  }
+
+  public resetViewBox() {
+    const { x, y, width, height } = this.formsService.canvasOptionsViewBoxForm.value;
+    this.canvasEl.setAttribute('viewBox', `${x} ${y} ${width} ${height}`);
+  }
+  //#endregion
 
   //#region events
   public onMouseDown(coord: Coord) {
@@ -78,24 +134,7 @@ export class CanvasComponent {
   }
 
   public onWheel(coord: CoordWithDirection) {
-    // this method handles zoom in and zoom out, just rolling the wheel
-
-    const { x, y, width, height } = this.canvasEl.viewBox.baseVal;
-
-    // calculate new size
-    const zoomFactor = coord.direction === 'up' ? 0.8 : 1.2;
-    const newWidth = width * zoomFactor;
-    const newHeight = height * zoomFactor;
-
-    // calculate the distance of the wheel event to adjust the position
-    const dx = (coord.x - x) / width;
-    const dy = (coord.y - y) / height;
-
-    // adjust the origin to maintain the view in the wheel event position
-    const newX = coord.x - dx * newWidth;
-    const newY = coord.y - dy * newHeight;
-
-    this.canvasEl.setAttribute('viewBox', `${newX} ${newY} ${newWidth} ${newHeight}`);
+    this.updateZoomViewBox(coord);
   }
   //#endregion
 }
