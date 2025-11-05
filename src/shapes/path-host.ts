@@ -281,7 +281,17 @@ export class PathHost extends ShapeHost {
   }
 
   protected override parseCustomOptimizedStringAndCloseShape(): string {
-    return ` d="${this.d.map((command) => `${command.instruction}${command.coords.map((c) => `${c.x},${c.y}`).join(' ')}`)}" />`;
+    let pathAttr = ` d="${this.d.map((command) => `${command.instruction}${command.coords.map((c) => `${c.x},${c.y}`).join(' ')}`)}"`;
+
+    if (this.strokeLinecap !== 'butt') {
+      pathAttr += ` stroke-linecap="${this.strokeLinecap}"`;
+    }
+
+    if (this.strokeLinejoin !== 'miter') {
+      pathAttr += ` stroke-linejoin="${this.strokeLinejoin}"`;
+    }
+
+    return `${pathAttr} />`;
   }
   //#endregion
 

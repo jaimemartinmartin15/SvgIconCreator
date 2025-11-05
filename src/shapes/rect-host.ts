@@ -204,6 +204,10 @@ export class RectHost extends ShapeHost {
     if (this.rx === this.ry && this.rx !== 0) rectAttr += ` rx="${this.rx}"`;
     else if (this.rx !== 0 && this.ry !== 0) rectAttr += ` rx="${this.rx}" ry="${this.ry}"`;
 
+    if (this.strokeLinejoin !== 'miter') {
+      rectAttr += ` stroke-linejoin="${this.strokeLinejoin}"`;
+    }
+
     return `${rectAttr} />`;
   }
   //#endregion

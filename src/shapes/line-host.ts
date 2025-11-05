@@ -162,6 +162,10 @@ export class LineHost extends ShapeHost {
     if (this.x2 !== 0) lineAttrs += ` x2="${this.x2}"`;
     if (this.y2 !== 0) lineAttrs += ` y2="${this.y2}"`;
 
+    if (this.strokeLinecap !== 'butt') {
+      lineAttrs += ` stroke-linecap="${this.strokeLinecap}"`;
+    }
+
     return `${lineAttrs} />`;
   }
   //#endregion

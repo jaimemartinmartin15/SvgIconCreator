@@ -133,6 +133,15 @@ export class TextHost extends ShapeHost {
 
     // always present, otherwise not visible
     textAttr += ` font-size="${this.fontSize}"`;
+
+    if (this.strokeLinecap !== 'butt') {
+      textAttr += ` stroke-linecap="${this.strokeLinecap}"`;
+    }
+
+    if (this.strokeLinejoin !== 'miter') {
+      textAttr += ` stroke-linejoin="${this.strokeLinejoin}"`;
+    }
+
     return `${textAttr} >${this.text}</text>`;
   }
   //#endregion

@@ -197,6 +197,11 @@ export abstract class ShapeHost {
       parsedShape += ` fill="${this.fill}"`;
     }
 
+    // if the attribute is not 'none'
+    if (this.strokeDasharray.length > 0) {
+      parsedShape += ` stroke-dasharray="${this.strokeDasharray.join(' ')}"`;
+    }
+
     parsedShape += this.parseCustomOptimizedStringAndCloseShape();
 
     return parsedShape
