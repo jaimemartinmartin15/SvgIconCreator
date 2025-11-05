@@ -2,7 +2,11 @@
 
 <label class="visibility">
   <input type="checkbox" checked (change)="toggleVisibility($event)" />
-  <span>👀</span>
+  @if (shapeHost.svg.style.display === '') {
+    <span>👁️</span>
+  } @else {
+    <span>👻</span>
+  }
 </label>
 
 <input #shapeName class="shape-name" (input)="adaptShapeNameSize($event)" [formControl]="nameForm" (focus)="selectShape($event)" />
