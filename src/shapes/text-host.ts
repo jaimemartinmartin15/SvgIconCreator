@@ -99,6 +99,7 @@ export class TextHost extends ShapeHost {
     this.y = this.formsService.yForm.value;
     this.text = this.formsService.textForm.value;
     this.fontSize = this.formsService.fontSizeForm.value;
+    this.fontFamily = this.formsService.fontFamilyForm.value;
   }
 
   public override onEditingExistingShape(): void {
@@ -113,6 +114,7 @@ export class TextHost extends ShapeHost {
     this.formsService.yForm.setValue(this.y);
     this.formsService.textForm.setValue(this.text);
     this.formsService.fontSizeForm.setValue(this.fontSize);
+    this.formsService.fontFamilyForm.setValue(this.fontFamily);
   }
   //#endregion
 
@@ -141,6 +143,8 @@ export class TextHost extends ShapeHost {
     if (this.strokeLinejoin !== 'miter') {
       textAttr += ` stroke-linejoin="${this.strokeLinejoin}"`;
     }
+
+    textAttr += ` font-family="${this.fontFamily}"`;
 
     return `${textAttr} >${this.text}</text>`;
   }

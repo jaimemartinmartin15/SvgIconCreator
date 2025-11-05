@@ -152,6 +152,11 @@ export class AttributesComponent implements OnInit {
         this.shapeListService.selectedShape.fontSize = value;
       }
     });
+    this.formsService.fontFamilyForm.valueChanges.subscribe((value) => {
+      if (this.shapeListService.selectedShape) {
+        this.shapeListService.selectedShape.fontFamily = value;
+      }
+    });
     //#endregion
 
     this.shapeListService.selectedShape$.subscribe((selectedShape) => {
@@ -196,6 +201,10 @@ export class AttributesComponent implements OnInit {
     e.stopPropagation();
     this.formsService.dForm.removeAt(i);
   }
+  //#endregion
+
+  //#region text helpers
+  public FONTS_LIST = ['Arial', 'Helvetica', 'Times New Roman', 'Georgia', 'Verdana', 'Trebuchet MS', 'Tahoma', 'Courier New', 'Comic Sans MS', 'Lucida Sans Unicode'];
   //#endregion
 
   //#region shape selector helper

@@ -459,5 +459,13 @@ export abstract class ShapeHost {
   public set fontSize(value: number) {
     this.setSvgAttribute('font-size', value);
   }
+
+  public get fontFamily(): string {
+    return this.getSvgAttributeAsString('font-family');
+  }
+
+  public set fontFamily(value: string) {
+    this.setSvgAttribute('font-family', value);
+  }
   //#endregion
 }

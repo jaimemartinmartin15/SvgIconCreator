@@ -193,5 +193,16 @@
       <span class="label">FONT SIZE</span>
       <input type="text" jeiInputNumber [min]="0" [shiftStep]="3" [formControl]="formsService.fontSizeForm" />
     </label>
+
+    <label class="label-and-control">
+      <span class="label">FONT FAMILY</span>
+      <div class="font-family-control">
+        <select [formControl]="formsService.fontFamilyForm">
+          @for (font of FONTS_LIST; track $index) {
+            <option [value]="font">{{ font }}</option>
+          }
+        </select>
+      </div>
+    </label>
   </form>
 }
