@@ -1,3 +1,4 @@
+import { FormControl } from '@angular/forms';
 import { Coord, CoordWithDelta, ElementsRefService } from '@jaimemartinmartin15/jei-devkit-angular-shared';
 import { Shape } from '../models/shape';
 import { FormsService } from '../services/forms.service';
@@ -91,6 +92,9 @@ export class TextHost extends ShapeHost {
     this.stroke = this.formsService.strokeForm.value;
     this.fill = this.formsService.fillForm.value;
     this.strokeWidth = this.formsService.strokeWidthForm.value;
+    this.strokeLinecap = this.formsService.strokeLinecapForm.value;
+    this.strokeLinejoin = this.formsService.strokeLinejoinForm.value;
+    this.strokeDasharray = this.formsService.strokeDasharrayForm.value;
     this.x = this.formsService.xForm.value;
     this.y = this.formsService.yForm.value;
     this.text = this.formsService.textForm.value;
@@ -101,6 +105,10 @@ export class TextHost extends ShapeHost {
     this.formsService.strokeForm.setValue(this.stroke);
     this.formsService.fillForm.setValue(this.fill);
     this.formsService.strokeWidthForm.setValue(this.strokeWidth);
+    this.formsService.strokeLinecapForm.setValue(this.strokeLinecap);
+    this.formsService.strokeLinejoinForm.setValue(this.strokeLinejoin);
+    this.formsService.strokeDasharrayForm.clear({ emitEvent: false });
+    this.strokeDasharray.forEach((d) => this.formsService.strokeDasharrayForm.push(new FormControl<number>(d, { nonNullable: true })));
     this.formsService.xForm.setValue(this.x);
     this.formsService.yForm.setValue(this.y);
     this.formsService.textForm.setValue(this.text);

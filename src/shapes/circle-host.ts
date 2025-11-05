@@ -1,3 +1,4 @@
+import { FormControl } from '@angular/forms';
 import { Coord, CoordWithDelta, ElementsRefService } from '@jaimemartinmartin15/jei-devkit-angular-shared';
 import { Shape } from '../models/shape';
 import { FormsService } from '../services/forms.service';
@@ -107,6 +108,7 @@ export class CircleHost extends ShapeHost {
     this.stroke = this.formsService.strokeForm.value;
     this.fill = this.formsService.fillForm.value;
     this.strokeWidth = this.formsService.strokeWidthForm.value;
+    this.strokeDasharray = this.formsService.strokeDasharrayForm.value;
     this.cx = this.formsService.cxForm.value;
     this.cy = this.formsService.cyForm.value;
     this.r = this.formsService.rForm.value;
@@ -116,6 +118,8 @@ export class CircleHost extends ShapeHost {
     this.formsService.strokeForm.setValue(this.stroke);
     this.formsService.fillForm.setValue(this.fill);
     this.formsService.strokeWidthForm.setValue(this.strokeWidth);
+    this.formsService.strokeDasharrayForm.clear({ emitEvent: false });
+    this.strokeDasharray.forEach((d) => this.formsService.strokeDasharrayForm.push(new FormControl<number>(d, { nonNullable: true })));
     this.formsService.cxForm.setValue(this.cx);
     this.formsService.cyForm.setValue(this.cy);
     this.formsService.rForm.setValue(this.r);

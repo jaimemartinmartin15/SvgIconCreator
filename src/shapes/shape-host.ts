@@ -290,6 +290,7 @@ export abstract class ShapeHost {
 
   public get strokeDasharray(): number[] {
     const strokeDasharrayValue = this.getSvgAttributeAsString('stroke-dasharray');
+    if (strokeDasharrayValue === 'none') return [];
     return strokeDasharrayValue.split(' ').map((v) => parseFloat(v));
   }
 

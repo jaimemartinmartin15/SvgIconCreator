@@ -248,6 +248,9 @@ export class PathHost extends ShapeHost {
     this.stroke = this.formsService.strokeForm.value;
     this.fill = this.formsService.fillForm.value;
     this.strokeWidth = this.formsService.strokeWidthForm.value;
+    this.strokeLinecap = this.formsService.strokeLinecapForm.value;
+    this.strokeLinejoin = this.formsService.strokeLinejoinForm.value;
+    this.strokeDasharray = this.formsService.strokeDasharrayForm.value;
     // This method is called when the shape is being created after another one
     // do not copy coordinates
     this.formsService.dForm.clear();
@@ -258,6 +261,10 @@ export class PathHost extends ShapeHost {
     this.formsService.strokeForm.setValue(this.stroke);
     this.formsService.fillForm.setValue(this.fill);
     this.formsService.strokeWidthForm.setValue(this.strokeWidth);
+    this.formsService.strokeLinecapForm.setValue(this.strokeLinecap);
+    this.formsService.strokeLinejoinForm.setValue(this.strokeLinejoin);
+    this.formsService.strokeDasharrayForm.clear({ emitEvent: false });
+    this.strokeDasharray.forEach((d) => this.formsService.strokeDasharrayForm.push(new FormControl<number>(d, { nonNullable: true })));
     // this method is called when an existing shape is selected
     // reset the dForm to show the coords of the selected path
     this.formsService.dForm.clear({ emitEvent: false });
