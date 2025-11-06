@@ -278,7 +278,7 @@ export abstract class ShapeHost {
   }
 
   public get strokeLinecap(): string {
-    return this.getSvgAttributeAsString('stroke-linecap');
+    return this.getSvgAttributeAsString('stroke-linecap') ?? 'butt';
   }
 
   public set strokeLinecap(value: string) {
@@ -286,7 +286,7 @@ export abstract class ShapeHost {
   }
 
   public get strokeLinejoin(): string {
-    return this.getSvgAttributeAsString('stroke-linejoin');
+    return this.getSvgAttributeAsString('stroke-linejoin') ?? 'miter';
   }
 
   public set strokeLinejoin(value: string) {
@@ -295,7 +295,7 @@ export abstract class ShapeHost {
 
   public get strokeDasharray(): number[] {
     const strokeDasharrayValue = this.getSvgAttributeAsString('stroke-dasharray');
-    if (strokeDasharrayValue === 'none') return [];
+    if (!strokeDasharrayValue || strokeDasharrayValue === 'none') return [];
     return strokeDasharrayValue.split(' ').map((v) => parseFloat(v));
   }
 
