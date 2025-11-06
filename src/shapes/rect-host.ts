@@ -216,8 +216,8 @@ export class RectHost extends ShapeHost {
   private updateFormWithCoords(coords: Coord[]) {
     const x = Math.min(...coords.map((c) => c.x));
     const y = Math.min(...coords.map((c) => c.y));
-    const width = this.toFixed(Math.max(...coords.map((c) => c.x)) - x);
-    const height = this.toFixed(Math.max(...coords.map((c) => c.y)) - y);
+    const width = Math.max(...coords.map((c) => c.x)) - x;
+    const height = Math.max(...coords.map((c) => c.y)) - y;
 
     this.formsService.xForm.setValue(x);
     this.formsService.yForm.setValue(y);
