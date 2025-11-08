@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { ElementsRefService } from '@jaimemartinmartin15/jei-devkit-angular-shared';
 import { fromEvent } from 'rxjs';
 import { isPathInstruction } from '../models/path.model';
@@ -25,9 +26,14 @@ function isArrowKey(key: string) {
   selector: 'app-editor',
   templateUrl: './editor.component.html',
   styleUrls: ['./editor.component.scss'],
-  imports: [ToolbarComponent, CanvasComponent, ShapeListComponent, AttributesComponent],
+  imports: [ReactiveFormsModule, ToolbarComponent, CanvasComponent, ShapeListComponent, AttributesComponent],
 })
 export class EditorComponent {
+  public strokeNameForm = new FormControl<string>('', { nonNullable: true });
+  public fillNameForm = new FormControl<string>('', { nonNullable: true });
+  public strokeWidthNameForm = new FormControl<string>('', { nonNullable: true });
+  public strokeDasharrayNameForm = new FormControl<string>('', { nonNullable: true });
+
   public constructor(
     private readonly shapeListService: ShapeListService,
     private readonly canvasEventsService: CanvasEventsService,
@@ -36,6 +42,21 @@ export class EditorComponent {
   ) {}
 
   public ngOnInit(): void {
+    //#region animations forms
+    this.strokeNameForm.valueChanges.subscribe((value) => {
+      this.shapeListService.selectedShape?.onAnimationChanged({ stroke: value || undefined });
+    });
+    this.fillNameForm.valueChanges.subscribe((value) => {
+      this.shapeListService.selectedShape?.onAnimationChanged({ fill: value || undefined });
+    });
+    this.strokeWidthNameForm.valueChanges.subscribe((value) => {
+      this.shapeListService.selectedShape?.onAnimationChanged({ strokeWidth: value || undefined });
+    });
+    this.strokeDasharrayNameForm.valueChanges.subscribe((value) => {
+      this.shapeListService.selectedShape?.onAnimationChanged({ strokeDasharray: value || undefined });
+    });
+    //#endregion
+
     this.canvasEventsService.canvasPointerDown$.subscribe((coord) => {
       if (this.shapeListService.selectedShape?.getEditPointUnderMousePoint(coord) !== undefined) {
         this.shapeListService.selectedShape.mouseDownEdit(coord);

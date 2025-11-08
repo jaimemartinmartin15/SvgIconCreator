@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, ElementRef, HostBinding, HostListener, Input, OnInit, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, EventEmitter, HostBinding, HostListener, Input, OnInit, Output, ViewChild } from '@angular/core';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { adaptWidthOfInputToWidthOfText } from '@jaimemartinmartin15/jei-devkit-angular-shared';
 import { ShapeListService } from '../../../services/shape-list.service';
@@ -18,6 +18,9 @@ export class ShapeElementComponent implements OnInit, AfterViewInit {
 
   @Input()
   public shapeHost: ShapeHost;
+
+  @Output()
+  public openAnimationsDialog = new EventEmitter<void>();
 
   @HostBinding('class.selected')
   public get isSelected(): boolean {

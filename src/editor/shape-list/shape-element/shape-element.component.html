@@ -9,6 +9,8 @@
   }
 </label>
 
+<span class="animations" (click)="openAnimationsDialog.emit()">✨</span>
+
 <input #shapeName class="shape-name" (input)="adaptShapeNameSize($event)" [formControl]="nameForm" (focus)="selectShape($event)" />
 
 <span class="remaining-space"></span>
