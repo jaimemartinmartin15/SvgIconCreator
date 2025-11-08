@@ -43,6 +43,12 @@ export class EditorComponent {
 
   public ngOnInit(): void {
     //#region animations forms
+    this.shapeListService.selectedShape$.subscribe((newShape) => {
+      this.strokeNameForm.setValue(newShape?.getAnimationProperty('stroke') ?? '');
+      this.fillNameForm.setValue(newShape?.getAnimationProperty('fill') ?? '');
+      this.strokeWidthNameForm.setValue(newShape?.getAnimationProperty('strokeWidth') ?? '');
+      this.strokeDasharrayNameForm.setValue(newShape?.getAnimationProperty('strokeDasharray') ?? '');
+    });
     this.strokeNameForm.valueChanges.subscribe((value) => {
       this.shapeListService.selectedShape?.onAnimationChanged({ stroke: value || undefined });
     });

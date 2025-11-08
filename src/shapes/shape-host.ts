@@ -259,6 +259,10 @@ export abstract class ShapeHost {
       this.svg.dataset['attributes'] = JSON.stringify(attributes);
     }
   }
+
+  public getAnimationProperty(name: string): string {
+    return JSON.parse(this.svg.dataset['attributes'] ?? '{}')[name] ?? '';
+  }
   //#endregion
 
   //#region attributes
