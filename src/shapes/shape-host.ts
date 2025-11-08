@@ -179,6 +179,11 @@ export abstract class ShapeHost {
 
     let parsedShape = `<${this.tag} `;
 
+    if (this.svg.dataset['attributes']) {
+      // sclice 1, -1 removes first and last quotes from: "data-attributes object value"
+      parsedShape += `data-attributes="${JSON.stringify(this.svg.dataset['attributes']).slice(1, -1).replace(/"/g, '&quot;')}"`;
+    }
+
     // if stroke-width is 1, do not add it (it is the default)
     // if the stroke is transparent, do not add it neither
     if (this.strokeWidth !== 1 && !this.stroke.endsWith('00')) {
