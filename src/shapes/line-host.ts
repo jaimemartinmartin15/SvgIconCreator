@@ -1,45 +1,19 @@
-import { FormControl, FormGroup } from '@angular/forms';
-import { Coord, CoordWithDelta, ToFormType } from '@jaimemartinmartin15/jei-devkit-angular-shared';
-import { LineModel } from '../models/line.model';
+import { FormControl } from '@angular/forms';
+import { Coord, CoordWithDelta, ElementsRefService } from '@jaimemartinmartin15/jei-devkit-angular-shared';
 import { Shape } from '../models/shape';
+import { FormsService } from '../services/forms.service';
+import { ShapeListService } from '../services/shape-list.service';
 import { ShapeHost } from './shape-host';
 
 export class LineHost extends ShapeHost {
-  public override readonly type = Shape.LINE;
-  public override svg: SVGLineElement = document.createElementNS('http://www.w3.org/2000/svg', 'line');
-  public override readonly form: ToFormType<LineModel> = new FormGroup({
-    name: new FormControl('line', { nonNullable: true }),
-    stroke: new FormControl('#000000ff', { nonNullable: true }),
-    strokeWidth: new FormControl(1, { nonNullable: true }),
-    fill: new FormControl('#ffffffff', { nonNullable: true }),
-    x1: new FormControl(0, { nonNullable: true }),
-    y1: new FormControl(0, { nonNullable: true }),
-    x2: new FormControl(0, { nonNullable: true }),
-    y2: new FormControl(0, { nonNullable: true }),
-  });
+  public override readonly tag = Shape.LINE;
+  public override svg: SVGLineElement = document.createElementNS('http://www.w3.org/2000/svg', Shape.LINE);
 
-  //#region svg attributes
-  public override updateSvgAttributes(model: LineModel) {
-    super.updateSvgAttributes(model);
+  public constructor(elementsRefService: ElementsRefService, formsService: FormsService, shapeListService: ShapeListService) {
+    super(elementsRefService, formsService, shapeListService);
 
-    this.setSvgAttribute('x1', model.x1);
-    this.setSvgAttribute('y1', model.y1);
-    this.setSvgAttribute('x2', model.x2);
-    this.setSvgAttribute('y2', model.y2);
+    this.name = `line_${ShapeHost.shapeCounter++}`;
   }
-
-  public override updatePositionSvgEditPoints(model: LineModel) {
-    if (this.svgEditPoints.length !== 2) return;
-
-    // start point
-    this.setSvgAttribute('cx', model.x1, this.svgEditPoints[0]);
-    this.setSvgAttribute('cy', model.y1, this.svgEditPoints[0]);
-
-    // end point
-    this.setSvgAttribute('cx', model.x2, this.svgEditPoints[1]);
-    this.setSvgAttribute('cy', model.y2, this.svgEditPoints[1]);
-  }
-  //#endregion
 
   //#region mouse
   public override mouseDown(coord: Coord): void {
@@ -48,8 +22,8 @@ export class LineHost extends ShapeHost {
   }
 
   public override mouseDrag(coord: CoordWithDelta): void {
-    const x1 = this.toFixed(coord.x - coord.dx);
-    const y1 = this.toFixed(coord.y - coord.dy);
+    const x1 = coord.x - coord.dx;
+    const y1 = coord.y - coord.dy;
     const x2 = coord.x;
     const y2 = coord.y;
     this.updateFormWithCoords([
@@ -68,65 +42,129 @@ export class LineHost extends ShapeHost {
   //#region mouse drag edit
   public override mouseDragEdit(coord: CoordWithDelta): void {
     if (this.selectedEditPointIndex === 0) {
-      this.form.patchValue({ x1: coord.x, y1: coord.y });
+      this.updateFormWithCoords([
+        { x: coord.x, y: coord.y },
+        { x: this.x2, y: this.y2 },
+      ]);
     } else {
-      this.form.patchValue({ x2: coord.x, y2: coord.y });
+      this.updateFormWithCoords([
+        { x: this.x1, y: this.y1 },
+        { x: coord.x, y: coord.y },
+      ]);
     }
+    this.updatePositionSvgEditPoints();
   }
   //#endregion
 
   //#region edit point
-  protected override getEditPointsCoordsFromForm(): Coord[] {
-    const x1 = this.form.controls.x1.value;
-    const y1 = this.form.controls.y1.value;
-    const x2 = this.form.controls.x2.value;
-    const y2 = this.form.controls.y2.value;
+  protected override getEditPointCoordsFromSvgShapeAttributes(): Coord[] {
+    const p1: Coord = { x: this.x1, y: this.y1 }; // start point
+    const p2: Coord = { x: this.x2, y: this.y2 }; // end point
+    return [p1, p2];
+  }
 
-    return [
-      { x: x1, y: y1 }, // start point
-      { x: x2, y: y2 }, // end point
-    ];
+  public override updatePositionSvgEditPoints() {
+    if (this.svgEditPoints.length !== 2) return;
+
+    // start point
+    this.setSvgAttribute('cx', this.x1, this.svgEditPoints[0]);
+    this.setSvgAttribute('cy', this.y1, this.svgEditPoints[0]);
+
+    // end point
+    this.setSvgAttribute('cx', this.x2, this.svgEditPoints[1]);
+    this.setSvgAttribute('cy', this.y2, this.svgEditPoints[1]);
   }
   //#endregion
 
-  //#region import
-  public override loadFromElement(svg: SVGLineElement) {
-    this.svg = svg;
-    this.form.setValue({
-      name: this.svg.getAttribute('name') || 'line',
-      stroke: this.svg.getAttribute('stroke') || '#000000ff',
-      strokeWidth: this.getSvgAttribute('stroke-width'),
-      fill: this.svg.getAttribute('fill') || '#ffffffff',
-      x1: this.getSvgAttribute('x1'),
-      y1: this.getSvgAttribute('y1'),
-      x2: this.getSvgAttribute('x2'),
-      y2: this.getSvgAttribute('y2'),
-    });
+  //#region move shape
+  public override moveShapeUp(amount: number): void {
+    this.y1 -= amount;
+    this.y2 -= amount;
+    if (this.shapeListService.selectedShape === this) {
+      this.formsService.y1Form.setValue(this.y1);
+      this.formsService.y2Form.setValue(this.y2);
+      this.updatePositionSvgEditPoints();
+    }
+  }
 
-    super.loadFromElement(svg);
+  public override moveShapeRight(amount: number): void {
+    this.x1 += amount;
+    this.x2 += amount;
+    if (this.shapeListService.selectedShape === this) {
+      this.formsService.x1Form.setValue(this.x1);
+      this.formsService.x2Form.setValue(this.x2);
+      this.updatePositionSvgEditPoints();
+    }
+  }
+
+  public override moveShapeDown(amount: number): void {
+    this.y1 += amount;
+    this.y2 += amount;
+    if (this.shapeListService.selectedShape === this) {
+      this.formsService.y1Form.setValue(this.y1);
+      this.formsService.y2Form.setValue(this.y2);
+      this.updatePositionSvgEditPoints();
+    }
+  }
+
+  public override moveShapeLeft(amount: number): void {
+    this.x1 -= amount;
+    this.x2 -= amount;
+    if (this.shapeListService.selectedShape === this) {
+      this.formsService.x1Form.setValue(this.x1);
+      this.formsService.x2Form.setValue(this.x2);
+      this.updatePositionSvgEditPoints();
+    }
+  }
+  //#endregion
+
+  //#region svg form binding
+  public override onCreatingNewShape(): void {
+    this.stroke = this.formsService.strokeForm.value;
+    this.fill = this.formsService.fillForm.value;
+    this.strokeWidth = this.formsService.strokeWidthForm.value;
+    this.strokeLinecap = this.formsService.strokeLinecapForm.value;
+    this.strokeDasharray = this.formsService.strokeDasharrayForm.value;
+    this.x1 = this.formsService.x1Form.value;
+    this.y1 = this.formsService.y1Form.value;
+    this.x2 = this.formsService.x2Form.value;
+    this.y2 = this.formsService.y2Form.value;
+  }
+
+  public override onEditingExistingShape(): void {
+    this.formsService.strokeForm.setValue(this.stroke);
+    this.formsService.fillForm.setValue(this.fill);
+    this.formsService.strokeWidthForm.setValue(this.strokeWidth);
+    this.formsService.strokeLinecapForm.setValue(this.strokeLinecap);
+    this.formsService.strokeDasharrayForm.clear({ emitEvent: false });
+    this.strokeDasharray.forEach((d) => this.formsService.strokeDasharrayForm.push(new FormControl<number>(d, { nonNullable: true })));
+    this.formsService.x1Form.setValue(this.x1);
+    this.formsService.y1Form.setValue(this.y1);
+    this.formsService.x2Form.setValue(this.x2);
+    this.formsService.y2Form.setValue(this.y2);
   }
   //#endregion
 
   //#region export
   protected override isShapeVisible(): boolean {
-    const { strokeWidth, stroke, x1, y1, x2, y2 } = this.form.controls;
-
-    const isVisible = !stroke.value.endsWith('00') && strokeWidth.value !== 0;
-    const hasSize = x1.value !== x2.value || x2.value !== y1.value || y1.value !== y2.value;
+    const isVisible = !this.stroke.endsWith('00') && this.strokeWidth !== 0;
+    const hasSize = this.x1 !== this.x2 || this.x2 !== this.y1 || this.y1 !== this.y2;
 
     return isVisible && hasSize;
   }
 
   public override parseCustomOptimizedStringAndCloseShape(): string {
-    const { x1, y1, x2, y2 } = this.form.controls;
-
     let lineAttrs = '';
 
     // add if they are not the default value
-    if (x1.value !== 0) lineAttrs += ` x1="${x1.value}"`;
-    if (y1.value !== 0) lineAttrs += ` y1="${y1.value}"`;
-    if (x2.value !== 0) lineAttrs += ` x2="${x2.value}"`;
-    if (y2.value !== 0) lineAttrs += ` y2="${y2.value}"`;
+    if (this.x1 !== 0) lineAttrs += ` x1="${this.x1}"`;
+    if (this.y1 !== 0) lineAttrs += ` y1="${this.y1}"`;
+    if (this.x2 !== 0) lineAttrs += ` x2="${this.x2}"`;
+    if (this.y2 !== 0) lineAttrs += ` y2="${this.y2}"`;
+
+    if (this.strokeLinecap !== 'butt') {
+      lineAttrs += ` stroke-linecap="${this.strokeLinecap}"`;
+    }
 
     return `${lineAttrs} />`;
   }
@@ -134,12 +172,12 @@ export class LineHost extends ShapeHost {
 
   //#region line host
   private updateFormWithCoords(coords: Coord[]) {
-    const x1 = coords[0].x;
-    const y1 = coords[0].y;
-    const x2 = coords[1].x;
-    const y2 = coords[1].y;
+    this.formsService.x1Form.setValue(coords[0].x);
+    this.formsService.y1Form.setValue(coords[0].y);
+    this.formsService.x2Form.setValue(coords[1].x);
+    this.formsService.y2Form.setValue(coords[1].y);
 
-    this.form.setValue({ ...this.form.value, x1, y1, x2, y2 } as LineModel);
+    this.updatePositionSvgEditPoints();
   }
   //#endregion
 }

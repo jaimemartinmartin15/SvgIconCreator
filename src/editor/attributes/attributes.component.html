@@ -1,0 +1,208 @@
+<form class="attribute-group" (submit)="$event.preventDefault()">
+  <label class="label-and-control" (click)="showColorPickerDialog(colorPickerDialog, 'stroke')">
+    <span class="label">STROKE</span>
+    <div class="color-picker-invoker" [style]="{ backgroundColor: formsService.strokeForm.value }"></div>
+  </label>
+
+  @if (!(shapeSelectorIsLine || selectedShapeIsLine)) {
+    <label class="label-and-control" (click)="showColorPickerDialog(colorPickerDialog, 'fill')">
+      <span class="label">FILL</span>
+      <div class="color-picker-invoker" [style]="{ backgroundColor: formsService.fillForm.value }"></div>
+    </label>
+  }
+
+  <dialog class="color-picker-dialog" #colorPickerDialog>
+    <div class="content">
+      <button class="close-dialog-button" (click)="colorPickerDialog.close()"></button>
+
+      <jei-color-picker [formControl]="colorPickerForm"></jei-color-picker>
+    </div>
+  </dialog>
+
+  <label class="label-and-control">
+    <span class="label">STROKE-WIDTH</span>
+    <div class="stroke-width-control">
+      <svg viewBox="0 0 60 35">
+        <line x1="15" y1="17" x2="45" y2="17" stroke="black" [attr.stroke-width]="formsService.strokeWidthForm.value" stroke-linecap="round"></line>
+      </svg>
+
+      <input type="text" [formControl]="formsService.strokeWidthForm" jeiInputNumber [maxDecimalDigits]="3" [min]="0" />
+    </div>
+  </label>
+
+  @if (shapeSelectorIsLine || shapeSelectorIsPath || shapeSelectorIsText || selectedShapeIsLine || selectedShapeIsPath || selectedShapeIsText) {
+    <label class="label-and-control">
+      <span class="label">STROKE-LINECAP</span>
+      <div class="stroke-linecap-control">
+        <select [formControl]="formsService.strokeLinecapForm">
+          <option value="butt">butt</option>
+          <option value="round">round</option>
+          <option value="square">square</option>
+        </select>
+      </div>
+    </label>
+  }
+
+  @if (shapeSelectorIsRect || shapeSelectorIsPath || shapeSelectorIsText || selectedShapeIsRect || selectedShapeIsPath || selectedShapeIsText) {
+    <label class="label-and-control">
+      <span class="label">STROKE-LINEJOIN</span>
+      <div class="stroke-linejoin-control">
+        <select [formControl]="formsService.strokeLinejoinForm">
+          <option value="bevel">bevel</option>
+          <option value="miter">miter</option>
+          <option value="round">round</option>
+        </select>
+      </div>
+    </label>
+  }
+
+  <label class="label-and-control">
+    <span class="label">STROKE-DASHARRAY</span>
+    <div class="stroke-dasharray-control">
+      @for (control of formsService.strokeDasharrayForm.controls; track control; let i = $index) {
+        <div class="input-container">
+          <input type="text" jeiInputNumber [formControl]="control" />
+          <svg appTrashCanSvg class="delete" (click)="deleteStrokeDasharray(i)"></svg>
+        </div>
+      }
+      <button class="add-dasharray-button" (click)="addNewStrokeDasharray()">+</button>
+    </div>
+  </label>
+</form>
+
+@if (selectedShapeIsRect) {
+  <form class="attribute-group" (submit)="$event.preventDefault()">
+    <label class="label-and-control">
+      <span class="label">X</span>
+      <input type="text" jeiInputNumber [formControl]="formsService.xForm" />
+    </label>
+
+    <label class="label-and-control">
+      <span class="label">Y</span>
+      <input type="text" jeiInputNumber [formControl]="formsService.yForm" />
+    </label>
+
+    <label class="label-and-control">
+      <span class="label">WIDTH</span>
+      <input type="text" jeiInputNumber [min]="0" [formControl]="formsService.widthForm" />
+    </label>
+
+    <label class="label-and-control">
+      <span class="label">HEIGHT</span>
+      <input type="text" jeiInputNumber [min]="0" [formControl]="formsService.heightForm" />
+    </label>
+
+    <label class="label-and-control">
+      <span class="label">RX</span>
+      <input type="text" jeiInputNumber [min]="0" [formControl]="formsService.rxForm" />
+    </label>
+
+    <label class="label-and-control">
+      <span class="label">RY</span>
+      <input type="text" jeiInputNumber [min]="0" [formControl]="formsService.ryForm" />
+    </label>
+  </form>
+}
+
+@if (selectedShapeIsLine) {
+  <form class="attribute-group" (submit)="$event.preventDefault()">
+    <label class="label-and-control">
+      <span class="label">X1</span>
+      <input type="text" jeiInputNumber [formControl]="formsService.x1Form" />
+    </label>
+
+    <label class="label-and-control">
+      <span class="label">Y1</span>
+      <input type="text" jeiInputNumber [formControl]="formsService.y1Form" />
+    </label>
+
+    <label class="label-and-control">
+      <span class="label">X2</span>
+      <input type="text" jeiInputNumber [formControl]="formsService.x2Form" />
+    </label>
+
+    <label class="label-and-control">
+      <span class="label">Y2</span>
+      <input type="text" jeiInputNumber [formControl]="formsService.y2Form" />
+    </label>
+  </form>
+}
+
+@if (selectedShapeIsPath) {
+  <form class="attribute-group attribute-group--path" (submit)="$event.preventDefault()">
+    @for (commandControl of formsService.dForm.controls; track commandControl; let i = $index) {
+      <label [formGroup]="commandControl" class="command" (mouseenter)="mouseHoverIndex = i" (mouseleave)="mouseHoverIndex = -i">
+        <div class="command-type">
+          @if (mouseHoverIndex !== i || mouseHoverIndex === 0) {
+            <span>{{ commandControl.value.instruction }}</span>
+          }
+          @if (mouseHoverIndex === i && mouseHoverIndex !== 0) {
+            <span (click)="deleteCommand(i, $event)">🗑️</span>
+          }
+        </div>
+        <div formArrayName="coords" class="coords-list">
+          @for (p of commandControl.controls.coords.controls; track p; let i = $index) {
+            <div class="point-coords-input" formGroupName="{{ i }}">
+              <input type="text" jeiInputNumber formControlName="x" />
+              <input type="text" jeiInputNumber formControlName="y" />
+            </div>
+          }
+        </div>
+      </label>
+    }
+  </form>
+}
+
+@if (selectedShapeIsCircle) {
+  <form class="attribute-group" (submit)="$event.preventDefault()">
+    <label class="label-and-control">
+      <span class="label">CX</span>
+      <input type="text" jeiInputNumber [formControl]="formsService.cxForm" />
+    </label>
+
+    <label class="label-and-control">
+      <span class="label">CY</span>
+      <input type="text" jeiInputNumber [formControl]="formsService.cyForm" />
+    </label>
+
+    <label class="label-and-control">
+      <span class="label">R</span>
+      <input type="text" jeiInputNumber [min]="0" [formControl]="formsService.rForm" />
+    </label>
+  </form>
+}
+
+@if (selectedShapeIsText) {
+  <form class="attribute-group" (submit)="$event.preventDefault()">
+    <label class="label-and-control">
+      <span class="label">X</span>
+      <input type="text" jeiInputNumber [formControl]="formsService.xForm" />
+    </label>
+
+    <label class="label-and-control">
+      <span class="label">Y</span>
+      <input type="text" jeiInputNumber [formControl]="formsService.yForm" />
+    </label>
+
+    <label class="label-and-control">
+      <span class="label">TEXT</span>
+      <input type="text" [formControl]="formsService.textForm" />
+    </label>
+
+    <label class="label-and-control">
+      <span class="label">FONT SIZE</span>
+      <input type="text" jeiInputNumber [min]="0" [shiftStep]="3" [formControl]="formsService.fontSizeForm" />
+    </label>
+
+    <label class="label-and-control">
+      <span class="label">FONT FAMILY</span>
+      <div class="font-family-control">
+        <select [formControl]="formsService.fontFamilyForm">
+          @for (font of FONTS_LIST; track $index) {
+            <option [value]="font">{{ font }}</option>
+          }
+        </select>
+      </div>
+    </label>
+  </form>
+}

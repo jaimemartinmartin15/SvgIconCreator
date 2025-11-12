@@ -1,5 +1,16 @@
 # CHANGELOG
 
+## 3.0.0
+
+- Redesign user interface.
+- Added animations (allow to select angular input name to animate the attribute).
+- Allow zoom and drag the canvas.
+- Added new attributes to edit: linecap, linejoin, dasharray, fontfamily, ...
+- Allow to move all shapes using the keyboad arrows.
+- Allow to move selected shape using the keyboad arrows.
+- Show error if not possible to load svg, and close dialog automatically after success import.
+- Added unit tests.
+
 ## 2.0.0
 
 - Refactor all application.

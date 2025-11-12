@@ -1,7 +1,49 @@
 <app-toolbar></app-toolbar>
 
-<div class="canvas-and-list">
-  <app-canvas></app-canvas>
+<div class="editor-layout">
+  <app-canvas class="left-layout"></app-canvas>
 
-  <app-shape-list></app-shape-list>
+  <div class="right-layout">
+    <app-attributes></app-attributes>
+
+    <app-shape-list (openAnimationsDialog)="animationsDialog.showModal()"></app-shape-list>
+  </div>
+
+  <dialog class="animations-dialog" #animationsDialog>
+    <div class="content">
+      <button class="close-dialog-button" (click)="animationsDialog.close()"></button>
+
+      <p class="info-message">Escribe el nombre de la propiedad de la directiva para editar los atributos:</p>
+
+      <ul>
+        <li>
+          <label>
+            <span>STROKE</span>
+            <input type="text" [formControl]="strokeNameForm" />
+          </label>
+        </li>
+
+        <li>
+          <label>
+            <span>FILL</span>
+            <input type="text" [formControl]="fillNameForm" />
+          </label>
+        </li>
+
+        <li>
+          <label>
+            <span>STROKE-WIDTH</span>
+            <input type="text" [formControl]="strokeWidthNameForm" />
+          </label>
+        </li>
+
+        <li>
+          <label>
+            <span>STROKE-DASHARRAY</span>
+            <input type="text" [formControl]="strokeDasharrayNameForm" />
+          </label>
+        </li>
+      </ul>
+    </div>
+  </dialog>
 </div>

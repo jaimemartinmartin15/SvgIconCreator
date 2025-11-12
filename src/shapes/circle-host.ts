@@ -1,43 +1,19 @@
-import { FormControl, FormGroup } from '@angular/forms';
-import { Coord, CoordWithDelta, ToFormType } from '@jaimemartinmartin15/jei-devkit-angular-shared';
-import { CircleModel } from '../models/circle.model';
+import { FormControl } from '@angular/forms';
+import { Coord, CoordWithDelta, ElementsRefService } from '@jaimemartinmartin15/jei-devkit-angular-shared';
 import { Shape } from '../models/shape';
+import { FormsService } from '../services/forms.service';
+import { ShapeListService } from '../services/shape-list.service';
 import { ShapeHost } from './shape-host';
 
 export class CircleHost extends ShapeHost {
-  public override readonly type = Shape.CIRCLE;
-  public override svg: SVGCircleElement = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
-  public override readonly form: ToFormType<CircleModel> = new FormGroup({
-    name: new FormControl('circle', { nonNullable: true }),
-    stroke: new FormControl('#000000ff', { nonNullable: true }),
-    strokeWidth: new FormControl(1, { nonNullable: true }),
-    fill: new FormControl('#ffffffff', { nonNullable: true }),
-    cx: new FormControl(0, { nonNullable: true }),
-    cy: new FormControl(0, { nonNullable: true }),
-    r: new FormControl(0, { nonNullable: true }),
-  });
+  public override readonly tag = Shape.CIRCLE;
+  public override svg: SVGCircleElement = document.createElementNS('http://www.w3.org/2000/svg', Shape.CIRCLE);
 
-  //#region svg attributes
-  public override updateSvgAttributes(model: CircleModel) {
-    super.updateSvgAttributes(model);
+  public constructor(elementsRefService: ElementsRefService, formsService: FormsService, shapeListService: ShapeListService) {
+    super(elementsRefService, formsService, shapeListService);
 
-    this.setSvgAttribute('cx', model.cx);
-    this.setSvgAttribute('cy', model.cy);
-    this.setSvgAttribute('r', model.r);
+    this.name = `circle_${ShapeHost.shapeCounter++}`;
   }
-
-  public override updatePositionSvgEditPoints(model: CircleModel) {
-    if (this.svgEditPoints.length !== 2) return;
-
-    // center
-    this.setSvgAttribute('cx', model.cx, this.svgEditPoints[0]);
-    this.setSvgAttribute('cy', model.cy, this.svgEditPoints[0]);
-
-    // perimeter
-    this.setSvgAttribute('cx', model.cx + model.r, this.svgEditPoints[1]);
-    this.setSvgAttribute('cy', model.cy, this.svgEditPoints[1]);
-  }
-  //#endregion
 
   //#region mouse
   public override mouseDown(coord: Coord): void {
@@ -46,8 +22,8 @@ export class CircleHost extends ShapeHost {
   }
 
   public override mouseDrag(coord: CoordWithDelta): void {
-    const cx = this.toFixed(coord.x - coord.dx);
-    const cy = this.toFixed(coord.y - coord.dy);
+    const cx = coord.x - coord.dx;
+    const cy = coord.y - coord.dy;
     const radius = this.calculateRadius({ x: cx, y: cy }, coord);
 
     this.updateForm({ x: cx, y: cy }, radius);
@@ -63,66 +39,110 @@ export class CircleHost extends ShapeHost {
   //#region mouse drag edit
   public override mouseDragEdit(coord: CoordWithDelta): void {
     if (this.selectedEditPointIndex === 0) {
-      this.form.patchValue({ cx: coord.x, cy: coord.y });
+      this.updateForm(coord, this.r);
     } else {
-      const center = { x: this.form.controls.cx.value, y: this.form.controls.cy.value };
+      const center = { x: this.cx, y: this.cy };
       const radius = this.calculateRadius(center, coord);
-      this.form.patchValue({ r: radius });
+      this.updateForm(center, radius);
     }
   }
   //#endregion
 
   //#region edit point
-  protected override getEditPointsCoordsFromForm(): Coord[] {
-    const cx = this.form.controls.cx.value;
-    const cy = this.form.controls.cy.value;
-    const r = this.form.controls.r.value;
-
+  protected override getEditPointCoordsFromSvgShapeAttributes(): Coord[] {
     return [
-      { x: cx, y: cy }, // center
-      { x: cx + r, y: cy }, // perimeter
+      { x: this.cx, y: this.cy }, // center
+      { x: this.cx + this.r, y: this.cy }, // perimeter
     ];
+  }
+
+  public override updatePositionSvgEditPoints() {
+    if (this.svgEditPoints.length !== 2) return;
+
+    // center
+    this.setSvgAttribute('cx', this.cx, this.svgEditPoints[0]);
+    this.setSvgAttribute('cy', this.cy, this.svgEditPoints[0]);
+
+    // perimeter
+    this.setSvgAttribute('cx', this.cx + this.r, this.svgEditPoints[1]);
+    this.setSvgAttribute('cy', this.cy, this.svgEditPoints[1]);
   }
   //#endregion
 
-  //#region import
-  public override loadFromElement(svg: SVGCircleElement) {
-    this.svg = svg;
-    this.form.setValue({
-      name: this.svg.getAttribute('name') || 'Circle',
-      stroke: this.svg.getAttribute('stroke') || '#000000ff',
-      strokeWidth: this.getSvgAttribute('stroke-width'), // TODO fix issue when attribute is not present (default is 1, and this returns 0)
-      fill: this.svg.getAttribute('fill') || '#ffffffff',
-      cx: this.getSvgAttribute('cx'),
-      cy: this.getSvgAttribute('cy'),
-      r: this.getSvgAttribute('r'),
-    });
+  //#region move shape
+  public override moveShapeUp(amount: number): void {
+    this.cy -= amount;
+    if (this.shapeListService.selectedShape === this) {
+      this.formsService.cyForm.setValue(this.cy);
+      this.updatePositionSvgEditPoints();
+    }
+  }
 
-    super.loadFromElement(svg);
+  public override moveShapeRight(amount: number): void {
+    this.cx += amount;
+    if (this.shapeListService.selectedShape === this) {
+      this.formsService.cxForm.setValue(this.cx);
+      this.updatePositionSvgEditPoints();
+    }
+  }
+
+  public override moveShapeDown(amount: number): void {
+    this.cy += amount;
+    if (this.shapeListService.selectedShape === this) {
+      this.formsService.cyForm.setValue(this.cy);
+      this.updatePositionSvgEditPoints();
+    }
+  }
+
+  public override moveShapeLeft(amount: number): void {
+    this.cx -= amount;
+    if (this.shapeListService.selectedShape === this) {
+      this.formsService.cxForm.setValue(this.cx);
+      this.updatePositionSvgEditPoints();
+    }
+  }
+  //#endregion
+
+  //#region svg form binding
+  public override onCreatingNewShape(): void {
+    this.stroke = this.formsService.strokeForm.value;
+    this.fill = this.formsService.fillForm.value;
+    this.strokeWidth = this.formsService.strokeWidthForm.value;
+    this.strokeDasharray = this.formsService.strokeDasharrayForm.value;
+    this.cx = this.formsService.cxForm.value;
+    this.cy = this.formsService.cyForm.value;
+    this.r = this.formsService.rForm.value;
+  }
+
+  public override onEditingExistingShape(): void {
+    this.formsService.strokeForm.setValue(this.stroke);
+    this.formsService.fillForm.setValue(this.fill);
+    this.formsService.strokeWidthForm.setValue(this.strokeWidth);
+    this.formsService.strokeDasharrayForm.clear({ emitEvent: false });
+    this.strokeDasharray.forEach((d) => this.formsService.strokeDasharrayForm.push(new FormControl<number>(d, { nonNullable: true })));
+    this.formsService.cxForm.setValue(this.cx);
+    this.formsService.cyForm.setValue(this.cy);
+    this.formsService.rForm.setValue(this.r);
   }
   //#endregion
 
   //#region export
   protected override isShapeVisible(): boolean {
-    const { r } = this.form.controls;
-
     const isVisible = super.isShapeVisible();
-    const hasSize = r.value > 0;
+    const hasSize = this.r > 0;
 
     return isVisible && hasSize;
   }
 
   public override parseCustomOptimizedStringAndCloseShape(): string {
-    const { cx, cy, r } = this.form.controls;
-
     let circleAttr = '';
 
     // add if they are not the default value
-    if (cx.value !== 0) circleAttr += ` cx="${cx.value}"`;
-    if (cy.value !== 0) circleAttr += ` cy="${cy.value}"`;
+    if (this.cx !== 0) circleAttr += ` cx="${this.cx}"`;
+    if (this.cy !== 0) circleAttr += ` cy="${this.cy}"`;
 
     // always present, otherwise not visible
-    circleAttr += ` r="${r.value}"`;
+    circleAttr += ` r="${this.r}"`;
 
     return `${circleAttr} />`;
   }
@@ -137,12 +157,11 @@ export class CircleHost extends ShapeHost {
   }
 
   private updateForm(center: Coord, radius: number) {
-    this.form.setValue({
-      ...this.form.value,
-      cx: center.x,
-      cy: center.y,
-      r: radius,
-    } as CircleModel);
+    this.formsService.cxForm.setValue(center.x);
+    this.formsService.cyForm.setValue(center.y);
+    this.formsService.rForm.setValue(radius);
+
+    this.updatePositionSvgEditPoints();
   }
   //#endregion
 }

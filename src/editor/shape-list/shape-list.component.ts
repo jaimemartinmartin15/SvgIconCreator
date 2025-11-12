@@ -1,22 +1,18 @@
 import { CdkDrag, CdkDragDrop, CdkDragPlaceholder, CdkDropList, moveItemInArray } from '@angular/cdk/drag-drop';
-import { Component } from '@angular/core';
-import { Shape } from '../../models/shape';
+import { Component, EventEmitter, Output } from '@angular/core';
 import { ShapeListService } from '../../services/shape-list.service';
 import { ShapeHost } from '../../shapes/shape-host';
-import { CircleFormComponent } from './circle/circle-form.component';
-import { LineFormComponent } from './line/line-form.component';
-import { PathFormComponent } from './path/path-form.component';
-import { RectFormComponent } from './rect/rect-form.component';
-import { TextFormComponent } from './text/text-form.component';
+import { ShapeElementComponent } from './shape-element/shape-element.component';
 
 @Component({
   selector: 'app-shape-list',
   templateUrl: './shape-list.component.html',
   styleUrls: ['./shape-list.component.scss'],
-  imports: [CdkDrag, CdkDragPlaceholder, CdkDropList, RectFormComponent, LineFormComponent, PathFormComponent, CircleFormComponent, TextFormComponent],
+  imports: [CdkDrag, CdkDragPlaceholder, CdkDropList, ShapeElementComponent],
 })
 export class ShapeListComponent {
-  public readonly Shape = Shape;
+  @Output()
+  public openAnimationsDialog = new EventEmitter<void>();
 
   public constructor(private readonly shapeListService: ShapeListService) {}
 

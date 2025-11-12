@@ -1,0 +1,54 @@
+:host {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px;
+  border: var(--border);
+  border-radius: 5px;
+  background-color: #f0f1f2;
+
+  &.selected {
+    background-color: #bec7cf;
+  }
+}
+
+.handler {
+  cursor: grab;
+}
+
+.visibility,
+.animations {
+  cursor: pointer;
+}
+
+.shape-name {
+  border: none;
+  outline: none;
+  font-size: 1rem;
+  margin: 0px 15px 0 0;
+  background-color: #f0f1f2;
+
+  &:focus {
+    border-bottom: 2px solid black;
+  }
+}
+
+:host-context(.selected) .shape-name {
+  background-color: #bec7cf;
+}
+
+:host-context(.selected.cdk-drag-preview) .shape-name {
+  background-color: #bec7cf;
+}
+
+:host-context(.cdk-drag-preview) .shape-name {
+  background-color: #becfc3;
+}
+
+.remaining-space {
+  flex-grow: 1;
+}
+
+.trash-can {
+  cursor: pointer;
+}
