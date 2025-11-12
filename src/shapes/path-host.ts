@@ -299,15 +299,13 @@ export class PathHost extends ShapeHost {
   public closePath() {
     if (this.formsService.dForm.controls.length === 0) return;
     this.stateCubicBezier = 0;
-    this.currentCommand = COMMANDS.CLOSE_PATH;
+    this.currentCommand = COMMANDS.MOVE_TO;
     this.formsService.dForm.push(
       new FormGroup({
         instruction: new FormControl(COMMANDS.CLOSE_PATH, { nonNullable: true }) as ToFormType<PathInstruction>,
         coords: new FormArray([] as ToFormType<Coord>[]),
       }),
     );
-    this.isShapeFinished = true;
-    this.createEditPoints();
   }
 
   private createCommandFormWithCoords(instruction: PathInstruction, coords: Coord[]): ToFormType<Command> {
