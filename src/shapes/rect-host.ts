@@ -180,11 +180,8 @@ export class RectHost extends ShapeHost {
 
   //#region export
   protected override isShapeVisible(): boolean {
-    const width = this.formsService.widthForm.value;
-    const height = this.formsService.heightForm.value;
-
     const isVisible = super.isShapeVisible();
-    const hasSize = width > 0 && height > 0;
+    const hasSize = this.width > 0 && this.height > 0;
 
     return isVisible && hasSize;
   }
