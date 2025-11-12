@@ -437,7 +437,7 @@ export abstract class ShapeHost {
   }
 
   public set d(value: Command[]) {
-    const d = value.map((c) => `${c.instruction}${c.coords.map((c) => `${c.x},${c.y}`).join(' ')}`).join(' ');
+    const d = value.map((c) => `${c.instruction}${c.coords.map((c) => `${c.x},${c.y}`).join(' ')}`).join('');
     this.setSvgAttribute('d', d);
   }
 

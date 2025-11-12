@@ -275,13 +275,13 @@ export class PathHost extends ShapeHost {
   //#region export
   protected override isShapeVisible(): boolean {
     const isVisible = super.isShapeVisible();
-    const hasSize = this.formsService.dForm.controls.length > 1;
+    const hasSize = this.d.length > 1;
 
     return isVisible && hasSize;
   }
 
   protected override parseCustomOptimizedStringAndCloseShape(): string {
-    let pathAttr = ` d="${this.d.map((command) => `${command.instruction}${command.coords.map((c) => `${c.x},${c.y}`).join(' ')}`)}"`;
+    let pathAttr = ` d="${this.d.map((command) => `${command.instruction}${command.coords.map((c) => `${c.x},${c.y}`).join(' ')}`).join('')}"`;
 
     if (this.strokeLinecap !== 'butt') {
       pathAttr += ` stroke-linecap="${this.strokeLinecap}"`;
