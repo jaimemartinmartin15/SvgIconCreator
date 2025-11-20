@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## 3.1.0
+
+- Rename animations dialog to bindings dialog.
+- Export data-attributes individually as data-attribute-binding.
+
 ## 3.0.0
 
 - Redesign user interface.

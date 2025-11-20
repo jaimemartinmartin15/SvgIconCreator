@@ -177,11 +177,22 @@ export abstract class ShapeHost {
   public parseOptimizedString(): string {
     if (!this.isShapeVisible()) return '';
 
-    let parsedShape = `<${this.tag} `;
+    let parsedShape = `<${this.tag}`;
 
-    if (this.svg.dataset['attributes']) {
-      // sclice 1, -1 removes first and last quotes from: "data-attributes object value"
-      parsedShape += `data-attributes="${JSON.stringify(this.svg.dataset['attributes']).slice(1, -1).replace(/"/g, '&quot;')}"`;
+    if (this.svg.dataset['strokeBinding']) {
+      parsedShape += ` data-stroke-binding="${this.svg.dataset['strokeBinding']}"`;
+    }
+
+    if (this.svg.dataset['fillBinding']) {
+      parsedShape += ` data-fill-binding="${this.svg.dataset['fillBinding']}"`;
+    }
+
+    if (this.svg.dataset['strokeWidthBinding']) {
+      parsedShape += ` data-stroke-width-binding="${this.svg.dataset['strokeWidthBinding']}"`;
+    }
+
+    if (this.svg.dataset['strokeDasharrayBinding']) {
+      parsedShape += ` data-stroke-dasharray-binding="${this.svg.dataset['strokeDasharrayBinding']}"`;
     }
 
     // if stroke-width is 1, do not add it (it is the default)
@@ -250,18 +261,16 @@ export abstract class ShapeHost {
   //#endregion
 
   //#region animation
-  public onAnimationChanged(properties: { [key: string]: string | undefined }): void {
-    let attributes = JSON.parse(this.svg.dataset['attributes'] ?? '{}');
-    attributes = { ...attributes, ...properties };
-    if (Object.values(attributes).filter((v) => v !== undefined).length === 0) {
-      this.svg.removeAttribute('data-attributes');
+  public onBindingChanged(attribute: string, bindingName: string): void {
+    if (!bindingName?.trim()) {
+      delete this.svg.dataset[attribute];
     } else {
-      this.svg.dataset['attributes'] = JSON.stringify(attributes);
+      this.svg.dataset[attribute] = bindingName;
     }
   }
 
-  public getAnimationProperty(name: string): string {
-    return JSON.parse(this.svg.dataset['attributes'] ?? '{}')[name] ?? '';
+  public getBindingProperty(attribute: string): string {
+    return this.svg.dataset[attribute] ?? '';
   }
   //#endregion
 

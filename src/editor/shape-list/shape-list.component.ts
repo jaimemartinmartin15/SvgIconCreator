@@ -12,7 +12,7 @@ import { ShapeElementComponent } from './shape-element/shape-element.component';
 })
 export class ShapeListComponent {
   @Output()
-  public openAnimationsDialog = new EventEmitter<void>();
+  public openBindingsDialog = new EventEmitter<void>();
 
   public constructor(private readonly shapeListService: ShapeListService) {}
 

@@ -20,7 +20,7 @@ export class ShapeElementComponent implements OnInit, AfterViewInit {
   public shapeHost: ShapeHost;
 
   @Output()
-  public openAnimationsDialog = new EventEmitter<void>();
+  public openBindingsDialog = new EventEmitter<void>();
 
   @HostBinding('class.selected')
   public get isSelected(): boolean {

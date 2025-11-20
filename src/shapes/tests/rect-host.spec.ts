@@ -137,11 +137,14 @@ describe('RectHost', () => {
       expect(service.parseOptimizedString()).toEqual('');
     });
 
-    it('should parse data-attributes', () => {
-      service.svg.dataset['attributes'] = JSON.stringify({ stroke: 'strokeInput' });
+    it('should parse data-attributes-bindings', () => {
+      service.svg.dataset['strokeBinding'] = 'strokeProp';
+      service.svg.dataset['fillBinding'] = 'fillProp';
+      service.svg.dataset['strokeWidthBinding'] = 'strokeWidthProp';
+      service.svg.dataset['strokeDasharrayBinding'] = 'strokeDasharrayProp';
 
       expect(service.parseOptimizedString()).toEqual(
-        '<rect data-attributes="{\\&quot;stroke\\&quot;:\\&quot;strokeInput\\&quot;}" stroke-width="3" stroke="#00ff00ee" fill="#ff0000ee" stroke-dasharray="1 3" x="5" y="5" width="23.8" height="89" rx="5" ry="8" stroke-linejoin="bevel" />',
+        '<rect data-stroke-binding="strokeProp" data-fill-binding="fillProp" data-stroke-width-binding="strokeWidthProp" data-stroke-dasharray-binding="strokeDasharrayProp" stroke-width="3" stroke="#00ff00ee" fill="#ff0000ee" stroke-dasharray="1 3" x="5" y="5" width="23.8" height="89" rx="5" ry="8" stroke-linejoin="bevel" />',
       );
     });
   });
