@@ -29,10 +29,10 @@ function isArrowKey(key: string) {
   imports: [ReactiveFormsModule, ToolbarComponent, CanvasComponent, ShapeListComponent, AttributesComponent],
 })
 export class EditorComponent {
-  public strokeNameForm = new FormControl<string>('', { nonNullable: true });
-  public fillNameForm = new FormControl<string>('', { nonNullable: true });
-  public strokeWidthNameForm = new FormControl<string>('', { nonNullable: true });
-  public strokeDasharrayNameForm = new FormControl<string>('', { nonNullable: true });
+  public strokeBindingForm = new FormControl<string>('', { nonNullable: true });
+  public fillBindingForm = new FormControl<string>('', { nonNullable: true });
+  public strokeWidthBindingForm = new FormControl<string>('', { nonNullable: true });
+  public strokeDasharrayBindingForm = new FormControl<string>('', { nonNullable: true });
 
   public constructor(
     private readonly shapeListService: ShapeListService,
@@ -42,24 +42,24 @@ export class EditorComponent {
   ) {}
 
   public ngOnInit(): void {
-    //#region animations forms
+    //#region bindings forms
     this.shapeListService.selectedShape$.subscribe((newShape) => {
-      this.strokeNameForm.setValue(newShape?.getAnimationProperty('stroke') ?? '');
-      this.fillNameForm.setValue(newShape?.getAnimationProperty('fill') ?? '');
-      this.strokeWidthNameForm.setValue(newShape?.getAnimationProperty('strokeWidth') ?? '');
-      this.strokeDasharrayNameForm.setValue(newShape?.getAnimationProperty('strokeDasharray') ?? '');
+      this.strokeBindingForm.setValue(newShape?.getBindingProperty('strokeBinding') ?? '');
+      this.fillBindingForm.setValue(newShape?.getBindingProperty('fillBinding') ?? '');
+      this.strokeWidthBindingForm.setValue(newShape?.getBindingProperty('strokeWidthBinding') ?? '');
+      this.strokeDasharrayBindingForm.setValue(newShape?.getBindingProperty('strokeDasharrayBinding') ?? '');
     });
-    this.strokeNameForm.valueChanges.subscribe((value) => {
-      this.shapeListService.selectedShape?.onAnimationChanged({ stroke: value || undefined });
+    this.strokeBindingForm.valueChanges.subscribe((value) => {
+      this.shapeListService.selectedShape?.onBindingChanged('strokeBinding', value);
     });
-    this.fillNameForm.valueChanges.subscribe((value) => {
-      this.shapeListService.selectedShape?.onAnimationChanged({ fill: value || undefined });
+    this.fillBindingForm.valueChanges.subscribe((value) => {
+      this.shapeListService.selectedShape?.onBindingChanged('fillBinding', value);
     });
-    this.strokeWidthNameForm.valueChanges.subscribe((value) => {
-      this.shapeListService.selectedShape?.onAnimationChanged({ strokeWidth: value || undefined });
+    this.strokeWidthBindingForm.valueChanges.subscribe((value) => {
+      this.shapeListService.selectedShape?.onBindingChanged('strokeWidthBinding', value);
     });
-    this.strokeDasharrayNameForm.valueChanges.subscribe((value) => {
-      this.shapeListService.selectedShape?.onAnimationChanged({ strokeDasharray: value || undefined });
+    this.strokeDasharrayBindingForm.valueChanges.subscribe((value) => {
+      this.shapeListService.selectedShape?.onBindingChanged('strokeDasharrayBinding', value);
     });
     //#endregion
 

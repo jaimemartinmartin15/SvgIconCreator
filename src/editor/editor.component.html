@@ -6,12 +6,12 @@
   <div class="right-layout">
     <app-attributes></app-attributes>
 
-    <app-shape-list (openAnimationsDialog)="animationsDialog.showModal()"></app-shape-list>
+    <app-shape-list (openBindingsDialog)="bindingsDialog.showModal()"></app-shape-list>
   </div>
 
-  <dialog class="animations-dialog" #animationsDialog>
+  <dialog class="bindings-dialog" #bindingsDialog>
     <div class="content">
-      <button class="close-dialog-button" (click)="animationsDialog.close()"></button>
+      <button class="close-dialog-button" (click)="bindingsDialog.close()"></button>
 
       <p class="info-message">Escribe el nombre de la propiedad de la directiva para editar los atributos:</p>
 
@@ -19,28 +19,28 @@
         <li>
           <label>
             <span>STROKE</span>
-            <input type="text" [formControl]="strokeNameForm" />
+            <input type="text" [formControl]="strokeBindingForm" />
           </label>
         </li>
 
         <li>
           <label>
             <span>FILL</span>
-            <input type="text" [formControl]="fillNameForm" />
+            <input type="text" [formControl]="fillBindingForm" />
           </label>
         </li>
 
         <li>
           <label>
             <span>STROKE-WIDTH</span>
-            <input type="text" [formControl]="strokeWidthNameForm" />
+            <input type="text" [formControl]="strokeWidthBindingForm" />
           </label>
         </li>
 
         <li>
           <label>
             <span>STROKE-DASHARRAY</span>
-            <input type="text" [formControl]="strokeDasharrayNameForm" />
+            <input type="text" [formControl]="strokeDasharrayBindingForm" />
           </label>
         </li>
       </ul>

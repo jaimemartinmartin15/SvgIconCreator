@@ -1,6 +1,6 @@
 <ul cdkDropList (cdkDropListDropped)="onReorderingShapes($event)">
   @for (shape of shapes; track shape) {
-    <app-shape-element cdkDrag cdkDragPreviewContainer="parent" [shapeHost]="shape" (openAnimationsDialog)="openAnimationsDialog.emit()">
+    <app-shape-element cdkDrag cdkDragPreviewContainer="parent" [shapeHost]="shape" (openBindingsDialog)="openBindingsDialog.emit()">
       <div *cdkDragPlaceholder></div>
     </app-shape-element>
   }
