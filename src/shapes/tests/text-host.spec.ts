@@ -125,11 +125,14 @@ describe('TextHost', () => {
       expect(service.parseOptimizedString()).toEqual('');
     });
 
-    it('should parse data-attributes', () => {
-      service.svg.dataset['attributes'] = JSON.stringify({ stroke: 'strokeInput' });
+    it('should parse data-attributes-bindings', () => {
+      service.svg.dataset['strokeBinding'] = 'strokeProp';
+      service.svg.dataset['fillBinding'] = 'fillProp';
+      service.svg.dataset['strokeWidthBinding'] = 'strokeWidthProp';
+      service.svg.dataset['strokeDasharrayBinding'] = 'strokeDasharrayProp';
 
       expect(service.parseOptimizedString()).toEqual(
-        '<text data-attributes="{\\&quot;stroke\\&quot;:\\&quot;strokeInput\\&quot;}" stroke-width="3" stroke="#00ff00ee" fill="#ff0000ee" stroke-dasharray="1 3" x="5" y="8" font-size="5" stroke-linecap="round" stroke-linejoin="bevel" font-family="Helvetica" >jaime</text>',
+        '<text data-stroke-binding="strokeProp" data-fill-binding="fillProp" data-stroke-width-binding="strokeWidthProp" data-stroke-dasharray-binding="strokeDasharrayProp" stroke-width="3" stroke="#00ff00ee" fill="#ff0000ee" stroke-dasharray="1 3" x="5" y="8" font-size="5" stroke-linecap="round" stroke-linejoin="bevel" font-family="Helvetica" >jaime</text>',
       );
     });
   });

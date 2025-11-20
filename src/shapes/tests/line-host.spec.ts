@@ -97,11 +97,13 @@ describe('LineHost', () => {
       expect(service.parseOptimizedString()).toEqual('');
     });
 
-    it('should parse data-attributes', () => {
-      service.svg.dataset['attributes'] = JSON.stringify({ stroke: 'strokeInput' });
+    it('should parse data-attributes-bindings', () => {
+      service.svg.dataset['strokeBinding'] = 'strokeProp';
+      service.svg.dataset['strokeWidthBinding'] = 'strokeWidthProp';
+      service.svg.dataset['strokeDasharrayBinding'] = 'strokeDasharrayProp';
 
       expect(service.parseOptimizedString()).toEqual(
-        '<line data-attributes="{\\&quot;stroke\\&quot;:\\&quot;strokeInput\\&quot;}" stroke-width="3" stroke="#00ff00ee" stroke-dasharray="1 3" x1="6" y1="9" x2="12" y2="18" stroke-linecap="round" />',
+        '<line data-stroke-binding="strokeProp" data-stroke-width-binding="strokeWidthProp" data-stroke-dasharray-binding="strokeDasharrayProp" stroke-width="3" stroke="#00ff00ee" stroke-dasharray="1 3" x1="6" y1="9" x2="12" y2="18" stroke-linecap="round" />',
       );
     });
   });

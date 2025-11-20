@@ -131,11 +131,14 @@ describe('PathHost', () => {
       expect(service.parseOptimizedString()).toEqual('');
     });
 
-    it('should parse data-attributes', () => {
-      service.svg.dataset['attributes'] = JSON.stringify({ stroke: 'strokeInput' });
+    it('should parse data-attributes-bindings', () => {
+      service.svg.dataset['strokeBinding'] = 'strokeProp';
+      service.svg.dataset['fillBinding'] = 'fillProp';
+      service.svg.dataset['strokeWidthBinding'] = 'strokeWidthProp';
+      service.svg.dataset['strokeDasharrayBinding'] = 'strokeDasharrayProp';
 
       expect(service.parseOptimizedString()).toEqual(
-        '<path data-attributes="{\\&quot;stroke\\&quot;:\\&quot;strokeInput\\&quot;}" stroke-width="3" stroke="#00ff00ee" fill="#ff0000ee" stroke-dasharray="1 3" d="M1,4L5.8,5.6 20.7,80.9C9.8,4.8 43.5,49.04 73.1,94.3Z" stroke-linecap="round" stroke-linejoin="bevel" />',
+        '<path data-stroke-binding="strokeProp" data-fill-binding="fillProp" data-stroke-width-binding="strokeWidthProp" data-stroke-dasharray-binding="strokeDasharrayProp" stroke-width="3" stroke="#00ff00ee" fill="#ff0000ee" stroke-dasharray="1 3" d="M1,4L5.8,5.6 20.7,80.9C9.8,4.8 43.5,49.04 73.1,94.3Z" stroke-linecap="round" stroke-linejoin="bevel" />',
       );
     });
   });
