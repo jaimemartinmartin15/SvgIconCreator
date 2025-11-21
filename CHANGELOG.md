@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## 3.1.1
+
+- Update icons and angular-shared dependencies.
+- Use svg icons with data-bindings.
+
 ## 3.1.0
 
 - Rename animations dialog to bindings dialog.

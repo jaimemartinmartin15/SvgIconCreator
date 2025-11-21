@@ -62,7 +62,7 @@
       @for (control of formsService.strokeDasharrayForm.controls; track control; let i = $index) {
         <div class="input-container">
           <input type="text" jeiInputNumber [formControl]="control" />
-          <svg appTrashCanSvg class="delete" (click)="deleteStrokeDasharray(i)"></svg>
+          <svg appTrashCanSvg color="black" class="delete" (click)="deleteStrokeDasharray(i)"></svg>
         </div>
       }
       <button class="add-dasharray-button" (click)="addNewStrokeDasharray()">+</button>
