@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ElementRef, ViewChild } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { CollapsibleModule, ElementsRefService, InputNumberDirective } from '@jaimemartinmartin15/jei-devkit-angular-shared';
 import { ShapeListService } from '../../../services/shape-list.service';
@@ -17,6 +17,9 @@ enum ExportTypes {
   imports: [ReactiveFormsModule, CollapsibleModule, IconsSvgModule, InputNumberDirective],
 })
 export class ExportSvgComponent {
+  @ViewChild('exportSvgDialog')
+  public exportSvgDialogElRef: ElementRef<HTMLDialogElement>;
+
   public ExportTypes = ExportTypes;
   public DEFAULT_DOWNLOAD_FILE_NAME = 'mi_svg';
   public exportSvgForm = new FormGroup({
@@ -36,6 +39,14 @@ export class ExportSvgComponent {
     private readonly elementsRefService: ElementsRefService,
     private readonly shapeListService: ShapeListService,
   ) {}
+
+  public showDialog() {
+    this.exportSvgDialogElRef.nativeElement.showModal();
+    if (this.shapeListService.selectedShape) {
+      this.shapeListService.selectedShape.isShapeFinished = true;
+      this.shapeListService.selectedShape.createEditPoints();
+    }
+  }
 
   public downloadDrawing(): void {
     const format = this.exportSvgForm.controls.format.value;
