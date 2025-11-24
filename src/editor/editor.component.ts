@@ -127,6 +127,9 @@ export class EditorComponent {
     // if the arrow is pressed when editing the input form, avoid moving the shape
     if (!isArrowKey(key) || event.target instanceof HTMLInputElement) return;
 
+    // avoid navigating back when it is alt + left/right arrow, navigator tries to navigate previous/next page
+    event.preventDefault();
+
     if (this.shapeListService.selectedShape) {
       // move only selected shape
       this.shapeListService.selectedShape?.moveShape(event);

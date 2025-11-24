@@ -2,6 +2,7 @@
 
 ## unreleased
 
+- Avoid navigating back and forward when moving a shape left or right using alt key.
 - Add scrolling to attributes and shape list components. Limit the max height of the attributes component when path contains a lot of commands.
 
 ## 3.1.1
