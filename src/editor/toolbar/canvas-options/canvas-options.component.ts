@@ -1,9 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { ElementRefDirective, ElementsRefService, InputNumberDirective } from '@jaimemartinmartin15/jei-devkit-angular-shared';
 import { debounceTime } from 'rxjs';
 import { ViewBoxModel } from '../../../models/view-box.model';
 import { FormsService } from '../../../services/forms.service';
+import { ShapeListService } from '../../../services/shape-list.service';
 import { IconsSvgModule } from '../../../svg-output/icons-svg.module';
 
 @Component({
@@ -13,13 +14,25 @@ import { IconsSvgModule } from '../../../svg-output/icons-svg.module';
   imports: [ReactiveFormsModule, ElementRefDirective, IconsSvgModule, InputNumberDirective],
 })
 export class CanvasOptionsComponent implements OnInit {
+  @ViewChild('canvasOptionsDialog')
+  public canvasOptionsDialogElRef: ElementRef<HTMLDialogElement>;
+
   private svgImageEl: SVGImageElement = document.createElementNS('http://www.w3.org/2000/svg', 'image');
   private isImageVisible = true;
 
   public constructor(
     private readonly elementsRefService: ElementsRefService,
+    private readonly shapeListService: ShapeListService,
     private readonly formsService: FormsService,
   ) {}
+
+  public showDialog() {
+    this.canvasOptionsDialogElRef.nativeElement.showModal();
+    if (this.shapeListService.selectedShape) {
+      this.shapeListService.selectedShape.isShapeFinished = true;
+      this.shapeListService.selectedShape.createEditPoints();
+    }
+  }
 
   public ngOnInit(): void {
     this.canvasOptionsViewBoxForm.valueChanges.pipe(debounceTime(200)).subscribe((v) => this.updateCanvasSize(v));

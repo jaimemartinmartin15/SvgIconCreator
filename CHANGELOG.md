@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## unreleased
+
+- Avoid adding path commands (mainly Z) when typing in other inputs of the app and the shape is already finished.
+- Avoid navigating back and forward when moving a shape left or right using alt key.
+- Add scrolling to attributes and shape list components. Limit the max height of the attributes component when path contains a lot of commands.
+
 ## 3.1.1
 
 - Update icons and angular-shared dependencies.

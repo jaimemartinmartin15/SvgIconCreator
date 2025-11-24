@@ -111,6 +111,9 @@ export class EditorComponent {
 
     if (!(this.shapeListService.selectedShape instanceof PathHost)) return;
 
+    // avoid adding the command when typing in other inputs of the app, and the shape is already completed
+    if (this.shapeListService.selectedShape.isShapeFinished) return;
+
     if (key === 'F') {
       this.shapeListService.selectedShape.isShapeFinished = true;
       this.shapeListService.selectedShape.createEditPoints();
@@ -126,6 +129,9 @@ export class EditorComponent {
 
     // if the arrow is pressed when editing the input form, avoid moving the shape
     if (!isArrowKey(key) || event.target instanceof HTMLInputElement) return;
+
+    // avoid navigating back when it is alt + left/right arrow, navigator tries to navigate previous/next page
+    event.preventDefault();
 
     if (this.shapeListService.selectedShape) {
       // move only selected shape

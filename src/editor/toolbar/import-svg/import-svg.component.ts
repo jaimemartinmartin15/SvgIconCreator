@@ -27,6 +27,14 @@ export class ImportSvgComponent {
     private readonly formsService: FormsService,
   ) {}
 
+  public showDialog() {
+    this.importSvgDialogElRef.nativeElement.showModal();
+    if (this.shapeListService.selectedShape) {
+      this.shapeListService.selectedShape.isShapeFinished = true;
+      this.shapeListService.selectedShape.createEditPoints();
+    }
+  }
+
   public loadSvgText(svgText: string) {
     if (!svgText.includes('<svg')) {
       alert('No es posible cargar el svg. Asegúrate que es válido.');
