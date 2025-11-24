@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## unreleased
+
+- Add scrolling to attributes and shape list components. Limit the max height of the attributes component when path contains a lot of commands.
+
 ## 3.1.1
 
 - Update icons and angular-shared dependencies.
