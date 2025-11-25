@@ -2,9 +2,10 @@ import { FormArray, FormControl, FormGroup } from '@angular/forms';
 import { Coord, CoordWithDelta, ElementsRefService, ToFormType } from '@jaimemartinmartin15/jei-devkit-angular-shared';
 import { Command, COMMANDS, PathInstruction } from '../models/path.model';
 import { Shape } from '../models/shape';
+import { AppEventsService } from '../services/app-events.service';
 import { FormsService } from '../services/forms.service';
 import { ShapeListService } from '../services/shape-list.service';
-import { ShapeHost } from './shape-host';
+import { EDIT_POINT_COLORS, ShapeHost } from './shape-host';
 
 export class PathHost extends ShapeHost {
   //#region path host vars
@@ -168,6 +169,14 @@ export class PathHost extends ShapeHost {
   }
   //#endregion
 
+  //#region mouse move
+  public override mouseMove(coord: Coord): void {
+    super.mouseMove(coord);
+
+    AppEventsService.mouseOverSvgEditPoint$.next(this.selectedEditPointIndex);
+  }
+  //#endregion
+
   //#region mouse drag edit
   public override mouseDragEdit(coord: CoordWithDelta): void {
     const coordControls = this.formsService.dForm.controls.flatMap((c) => c.controls.coords.controls);
@@ -321,6 +330,26 @@ export class PathHost extends ShapeHost {
         ),
       ),
     });
+  }
+
+  public calculateGlobalIndexForCoordInCommand(cmdi: number, crdi: number): number {
+    if (!(this.shapeListService.selectedShape instanceof PathHost)) return -1;
+    const commands = this.shapeListService.selectedShape.d;
+
+    let globalCoordIndex = 0;
+    let i = 0;
+    while (i < cmdi) {
+      globalCoordIndex += commands[i].coords.length;
+      i++;
+    }
+    globalCoordIndex += crdi;
+    return globalCoordIndex;
+  }
+
+  public highlightSvgEditPointAtIndex(index: number): void {
+    // reset color of all points and highlight only the one for the control
+    this.svgEditPoints.forEach((p) => p.setAttribute('stroke', EDIT_POINT_COLORS.STROKE_NORMAL));
+    this.svgEditPoints[index]?.setAttribute('stroke', EDIT_POINT_COLORS.STROKE_HOVER_FORM);
   }
   //#endregion
 }

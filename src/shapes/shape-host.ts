@@ -8,6 +8,7 @@ export const EDIT_POINT_COLORS = {
   FILL_NORMAL: '#FFF5',
   STROKE_NORMAL: '#00f5',
   STROKE_HOVER: '#ffa50055',
+  STROKE_HOVER_FORM: '#0f0',
   STROKE_DRAGGING: '#f005',
 } as const;
 

@@ -3,6 +3,7 @@ import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { ColorPickerComponent, InputNumberDirective } from '@jaimemartinmartin15/jei-devkit-angular-shared';
 import { Command } from '../../models/path.model';
 import { Shape } from '../../models/shape';
+import { AppEventsService } from '../../services/app-events.service';
 import { FormsService } from '../../services/forms.service';
 import { ShapeListService } from '../../services/shape-list.service';
 import { CircleHost } from '../../shapes/circle-host';
@@ -19,6 +20,7 @@ import { TrashCanSvgComponent } from '../../svg-output/trash-can.component';
   imports: [ColorPickerComponent, ReactiveFormsModule, InputNumberDirective, TrashCanSvgComponent],
 })
 export class AttributesComponent implements OnInit {
+  private svgEditPointIndexMouseHover: number = -1;
   public colorPickerForm: FormControl<string>;
 
   constructor(
@@ -172,6 +174,10 @@ export class AttributesComponent implements OnInit {
         return;
       }
     });
+
+    AppEventsService.mouseOverSvgEditPoint$.subscribe((index) => {
+      this.svgEditPointIndexMouseHover = index;
+    });
   }
 
   //#region color helpers
@@ -200,6 +206,23 @@ export class AttributesComponent implements OnInit {
   public deleteCommand(i: number, e: MouseEvent) {
     e.stopPropagation();
     this.formsService.dForm.removeAt(i);
+  }
+
+  public highlightSvgEditPointControl(cmdi: number, crdi: number) {
+    if (!(this.shapeListService.selectedShape instanceof PathHost)) return;
+    const index = this.shapeListService.selectedShape.calculateGlobalIndexForCoordInCommand(cmdi, crdi);
+    this.shapeListService.selectedShape.highlightSvgEditPointAtIndex(index);
+  }
+
+  public removeHighlightSvgEditPointControl() {
+    if (!(this.shapeListService.selectedShape instanceof PathHost)) return;
+    // this methods resets all svg edit points before highligting the selected one
+    this.shapeListService.selectedShape.highlightSvgEditPointAtIndex(-1);
+  }
+
+  public mouseIsOverSvgEditPoint(cmdi: number, crdi: number) {
+    if (!(this.shapeListService.selectedShape instanceof PathHost)) return;
+    return this.svgEditPointIndexMouseHover === this.shapeListService.selectedShape.calculateGlobalIndexForCoordInCommand(cmdi, crdi);
   }
   //#endregion
 
