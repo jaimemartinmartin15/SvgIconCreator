@@ -4,9 +4,13 @@
 
 <span class="app-control-label">LIENZO</span>
 
-<dialog class="dialog" #canvasOptionsDialog>
+<dialog class="dialog" #canvasOptionsDialog cdkDrag>
   <div class="content">
-    <button class="close-dialog-button" (click)="canvasOptionsDialog.close()"></button>
+    <div class="header">
+      <svg appBurgerSvg color="black" class="drag-dialog-handler" cdkDragHandle></svg>
+      <span class="title">LIENZO</span>
+      <svg appPlusSvg class="close-dialog-button" (click)="canvasOptionsDialog.close()"></svg>
+    </div>
 
     <form>
       <!-- size -->

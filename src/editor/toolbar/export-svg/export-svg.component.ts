@@ -1,8 +1,11 @@
+import { CdkDrag, CdkDragHandle } from '@angular/cdk/drag-drop';
 import { Component, ElementRef, ViewChild } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { CollapsibleModule, ElementsRefService, InputNumberDirective } from '@jaimemartinmartin15/jei-devkit-angular-shared';
 import { ShapeListService } from '../../../services/shape-list.service';
+import { BurgerSvgComponent } from '../../../svg-output/burger.component';
 import { IconsSvgModule } from '../../../svg-output/icons-svg.module';
+import { PlusSvgComponent } from '../../../svg-output/plus.component';
 
 enum ExportTypes {
   SvgOptimized,
@@ -14,7 +17,7 @@ enum ExportTypes {
   selector: 'app-export-svg',
   templateUrl: './export-svg.component.html',
   styleUrls: ['./export-svg.component.scss'],
-  imports: [ReactiveFormsModule, CollapsibleModule, IconsSvgModule, InputNumberDirective],
+  imports: [ReactiveFormsModule, CollapsibleModule, IconsSvgModule, InputNumberDirective, CdkDrag, CdkDragHandle, PlusSvgComponent, BurgerSvgComponent],
 })
 export class ExportSvgComponent {
   @ViewChild('exportSvgDialog')

@@ -4,6 +4,8 @@
 
 Features:
 
+- Allow to move dialogs around the screen.
+- Update experience of color picker.
 - Allow to add any number of data-attribute-binding.
 - Highlight svg edit point control and form point when mouse over them for path shapes.
 

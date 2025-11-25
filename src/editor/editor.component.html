@@ -30,6 +30,7 @@
           <li>
             <label [formGroup]="bindingControl" class="two-columns">
               <input type="text" class="column-1 column-1--input" formControlName="attribute" />
+              <!-- TODO remember to create the binding in the SvgIcons repository -->
               <svg appPlusSvg color="red" class="delete-binding" (click)="deleteBinding($index)"></svg>
               <input type="text" class="column-2 column-2--input" formControlName="binding" />
             </label>

@@ -1,3 +1,4 @@
+import { CdkDrag, CdkDragHandle } from '@angular/cdk/drag-drop';
 import { Component, ElementRef, ViewChild } from '@angular/core';
 import { CollapsibleModule, ElementsRefService } from '@jaimemartinmartin15/jei-devkit-angular-shared';
 import { FormsService } from '../../../services/forms.service';
@@ -7,13 +8,15 @@ import { LineHost } from '../../../shapes/line-host';
 import { PathHost } from '../../../shapes/path-host';
 import { RectHost } from '../../../shapes/rect-host';
 import { TextHost } from '../../../shapes/text-host';
+import { BurgerSvgComponent } from '../../../svg-output/burger.component';
 import { IconsSvgModule } from '../../../svg-output/icons-svg.module';
+import { PlusSvgComponent } from '../../../svg-output/plus.component';
 
 @Component({
   selector: 'app-import-svg',
   templateUrl: './import-svg.component.html',
   styleUrls: ['./import-svg.component.scss'],
-  imports: [CollapsibleModule, IconsSvgModule],
+  imports: [CollapsibleModule, IconsSvgModule, PlusSvgComponent, BurgerSvgComponent, CdkDrag, CdkDragHandle],
 })
 export class ImportSvgComponent {
   @ViewChild('importSvgDialog')

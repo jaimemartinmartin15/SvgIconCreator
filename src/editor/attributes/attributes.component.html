@@ -11,11 +11,18 @@
     </label>
   }
 
-  <dialog class="color-picker-dialog" #colorPickerDialog>
+  <dialog class="color-picker-dialog" [class.backdrop-transparent]="isUsingEyeDropper" #colorPickerDialog cdkDrag>
     <div class="content">
-      <button class="close-dialog-button" (click)="colorPickerDialog.close()"></button>
+      <div class="header">
+        <svg appBurgerSvg color="black" class="drag-dialog-handler" cdkDragHandle></svg>
+        <div class="title">
+          <button [class.selected]="colorPickerForm === this.formsService.strokeForm" (click)="showColorPickerDialog(colorPickerDialog, 'stroke')">STROKE</button>
+          <button [class.selected]="colorPickerForm === this.formsService.fillForm" (click)="showColorPickerDialog(colorPickerDialog, 'fill')">FILL</button>
+        </div>
+        <svg appPlusSvg class="close-dialog-button" (click)="colorPickerDialog.close()"></svg>
+      </div>
 
-      <jei-color-picker [formControl]="colorPickerForm"></jei-color-picker>
+      <jei-color-picker [formControl]="colorPickerForm" (eyeDropperStart)="isUsingEyeDropper = true" (eyeDropperEnd)="isUsingEyeDropper = false"></jei-color-picker>
     </div>
   </dialog>
 

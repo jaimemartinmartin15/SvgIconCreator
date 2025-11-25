@@ -1,3 +1,4 @@
+import { CdkDrag, CdkDragHandle } from '@angular/cdk/drag-drop';
 import { Component, OnInit } from '@angular/core';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { ColorPickerComponent, InputNumberDirective } from '@jaimemartinmartin15/jei-devkit-angular-shared';
@@ -11,17 +12,20 @@ import { LineHost } from '../../shapes/line-host';
 import { PathHost } from '../../shapes/path-host';
 import { RectHost } from '../../shapes/rect-host';
 import { TextHost } from '../../shapes/text-host';
+import { BurgerSvgComponent } from '../../svg-output/burger.component';
+import { PlusSvgComponent } from '../../svg-output/plus.component';
 import { TrashCanSvgComponent } from '../../svg-output/trash-can.component';
 
 @Component({
   selector: 'app-attributes',
   templateUrl: './attributes.component.html',
   styleUrls: ['./attributes.component.scss'],
-  imports: [ColorPickerComponent, ReactiveFormsModule, InputNumberDirective, TrashCanSvgComponent],
+  imports: [ColorPickerComponent, ReactiveFormsModule, InputNumberDirective, TrashCanSvgComponent, CdkDrag, CdkDragHandle, PlusSvgComponent, BurgerSvgComponent],
 })
 export class AttributesComponent implements OnInit {
   private svgEditPointIndexMouseHover: number = -1;
   public colorPickerForm: FormControl<string>;
+  public isUsingEyeDropper: boolean = false;
 
   constructor(
     public readonly shapeListService: ShapeListService,

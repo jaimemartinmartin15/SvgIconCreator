@@ -39,7 +39,6 @@ function isArrowKey(key: string) {
     AttributesComponent,
     PlusSvgComponent,
     BurgerSvgComponent,
-    CdkDragHandle,
   ],
 })
 export class EditorComponent {
