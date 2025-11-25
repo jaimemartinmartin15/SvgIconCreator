@@ -4,6 +4,7 @@
 
 Features:
 
+- Allow to add any number of data-attribute-binding.
 - Highlight svg edit point control and form point when mouse over them for path shapes.
 
 Fixes:

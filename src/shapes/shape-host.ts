@@ -262,16 +262,16 @@ export abstract class ShapeHost {
   //#endregion
 
   //#region animation
-  public onBindingChanged(attribute: string, bindingName: string): void {
-    if (!bindingName?.trim()) {
-      delete this.svg.dataset[attribute];
-    } else {
-      this.svg.dataset[attribute] = bindingName;
-    }
+  public onBindingChanged(bindings: Partial<{ attribute: string; binding: string }>[]): void {
+    // delete all existing data-* attributes
+    [...this.svg.attributes].filter((a) => a.name.startsWith('data-')).forEach((attr) => this.svg.removeAttribute(attr.name));
+
+    // add new data-* attributes
+    bindings.filter((b) => b.attribute?.trim() && b.binding?.trim()).forEach((binding) => (this.svg.dataset[binding.attribute ?? ''] = binding.binding));
   }
 
-  public getBindingProperty(attribute: string): string {
-    return this.svg.dataset[attribute] ?? '';
+  public getBindingProperties(): { attribute: string; binding: string }[] {
+    return [...this.svg.attributes].filter((a) => a.name.startsWith('data-')).map((a) => ({ attribute: a.name.replace('data-', ''), binding: a.value }));
   }
   //#endregion
 

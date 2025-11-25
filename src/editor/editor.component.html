@@ -9,41 +9,35 @@
     <app-shape-list (openBindingsDialog)="bindingsDialog.showModal()"></app-shape-list>
   </div>
 
-  <dialog class="bindings-dialog" #bindingsDialog>
+  <dialog class="bindings-dialog" #bindingsDialog cdkDrag>
     <div class="content">
-      <button class="close-dialog-button" (click)="bindingsDialog.close()"></button>
+      <div class="header">
+        <!-- TODO remember to create the binding in the SvgIcons repository -->
+        <svg appBurgerSvg color="black" class="drag-dialog-handler" cdkDragHandle></svg>
+        <span class="title">BINDINGS</span>
+        <svg appPlusSvg class="close-dialog-button" (click)="bindingsDialog.close()"></svg>
+      </div>
 
-      <p class="info-message">Escribe el nombre de la propiedad de la directiva para editar los atributos:</p>
+      <p class="info-message">Define el atributo SVG y el nombre del @Input.</p>
 
       <ul>
-        <li>
-          <label>
-            <span>STROKE</span>
-            <input type="text" [formControl]="strokeBindingForm" />
-          </label>
-        </li>
+        <div class="two-columns">
+          <div class="column-1 column-1--title">ATRIBUTO</div>
+          <div class="column-2 column-2--title">@INPUT</div>
+        </div>
 
-        <li>
-          <label>
-            <span>FILL</span>
-            <input type="text" [formControl]="fillBindingForm" />
-          </label>
-        </li>
-
-        <li>
-          <label>
-            <span>STROKE-WIDTH</span>
-            <input type="text" [formControl]="strokeWidthBindingForm" />
-          </label>
-        </li>
-
-        <li>
-          <label>
-            <span>STROKE-DASHARRAY</span>
-            <input type="text" [formControl]="strokeDasharrayBindingForm" />
-          </label>
-        </li>
+        @for (bindingControl of bindingsForm.controls; track $index) {
+          <li>
+            <label [formGroup]="bindingControl" class="two-columns">
+              <input type="text" class="column-1 column-1--input" formControlName="attribute" />
+              <svg appPlusSvg color="red" class="delete-binding" (click)="deleteBinding($index)"></svg>
+              <input type="text" class="column-2 column-2--input" formControlName="binding" />
+            </label>
+          </li>
+        }
       </ul>
+
+      <svg appPlusSvg color="gray" class="add-binding" (click)="addNewBinding()"></svg>
     </div>
   </dialog>
 </div>

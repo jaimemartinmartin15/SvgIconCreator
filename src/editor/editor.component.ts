@@ -1,6 +1,7 @@
+import { CdkDrag, CdkDragHandle } from '@angular/cdk/drag-drop';
 import { Component } from '@angular/core';
-import { FormControl, ReactiveFormsModule } from '@angular/forms';
-import { ElementsRefService } from '@jaimemartinmartin15/jei-devkit-angular-shared';
+import { FormArray, FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
+import { ElementsRefService, ToFormType } from '@jaimemartinmartin15/jei-devkit-angular-shared';
 import { fromEvent } from 'rxjs';
 import { isPathInstruction } from '../models/path.model';
 import { Shape } from '../models/shape';
@@ -13,6 +14,8 @@ import { PathHost } from '../shapes/path-host';
 import { RectHost } from '../shapes/rect-host';
 import { ShapeHost } from '../shapes/shape-host';
 import { TextHost } from '../shapes/text-host';
+import { BurgerSvgComponent } from '../svg-output/burger.component';
+import { PlusSvgComponent } from '../svg-output/plus.component';
 import { AttributesComponent } from './attributes/attributes.component';
 import { CanvasComponent } from './canvas/canvas.component';
 import { ShapeListComponent } from './shape-list/shape-list.component';
@@ -26,13 +29,21 @@ function isArrowKey(key: string) {
   selector: 'app-editor',
   templateUrl: './editor.component.html',
   styleUrls: ['./editor.component.scss'],
-  imports: [ReactiveFormsModule, ToolbarComponent, CanvasComponent, ShapeListComponent, AttributesComponent],
+  imports: [
+    CdkDrag,
+    CdkDragHandle,
+    ReactiveFormsModule,
+    ToolbarComponent,
+    CanvasComponent,
+    ShapeListComponent,
+    AttributesComponent,
+    PlusSvgComponent,
+    BurgerSvgComponent,
+    CdkDragHandle,
+  ],
 })
 export class EditorComponent {
-  public strokeBindingForm = new FormControl<string>('', { nonNullable: true });
-  public fillBindingForm = new FormControl<string>('', { nonNullable: true });
-  public strokeWidthBindingForm = new FormControl<string>('', { nonNullable: true });
-  public strokeDasharrayBindingForm = new FormControl<string>('', { nonNullable: true });
+  public bindingsForm: FormArray<ToFormType<{ attribute: string; binding: string }>> = new FormArray<ToFormType<{ attribute: string; binding: string }>>([]);
 
   public constructor(
     private readonly shapeListService: ShapeListService,
@@ -42,26 +53,29 @@ export class EditorComponent {
   ) {}
 
   public ngOnInit(): void {
-    //#region bindings forms
+    this.bindingsForm.valueChanges.subscribe((value) => this.shapeListService.selectedShape?.onBindingChanged(value));
+
     this.shapeListService.selectedShape$.subscribe((newShape) => {
-      this.strokeBindingForm.setValue(newShape?.getBindingProperty('strokeBinding') ?? '');
-      this.fillBindingForm.setValue(newShape?.getBindingProperty('fillBinding') ?? '');
-      this.strokeWidthBindingForm.setValue(newShape?.getBindingProperty('strokeWidthBinding') ?? '');
-      this.strokeDasharrayBindingForm.setValue(newShape?.getBindingProperty('strokeDasharrayBinding') ?? '');
+      this.bindingsForm.clear({ emitEvent: false });
+
+      const bindings = newShape?.getBindingProperties();
+      if (bindings?.length === 0) {
+        // at at least one control to show inputs when opening the dialog
+        const control = new FormGroup({
+          attribute: new FormControl('', { nonNullable: true }),
+          binding: new FormControl('', { nonNullable: true }),
+        });
+        this.bindingsForm.push(control, { emitEvent: false });
+      } else {
+        bindings?.forEach((attrBinding) => {
+          const control = new FormGroup({
+            attribute: new FormControl(attrBinding.attribute, { nonNullable: true }),
+            binding: new FormControl(attrBinding.binding, { nonNullable: true }),
+          });
+          this.bindingsForm.push(control, { emitEvent: false });
+        });
+      }
     });
-    this.strokeBindingForm.valueChanges.subscribe((value) => {
-      this.shapeListService.selectedShape?.onBindingChanged('strokeBinding', value);
-    });
-    this.fillBindingForm.valueChanges.subscribe((value) => {
-      this.shapeListService.selectedShape?.onBindingChanged('fillBinding', value);
-    });
-    this.strokeWidthBindingForm.valueChanges.subscribe((value) => {
-      this.shapeListService.selectedShape?.onBindingChanged('strokeWidthBinding', value);
-    });
-    this.strokeDasharrayBindingForm.valueChanges.subscribe((value) => {
-      this.shapeListService.selectedShape?.onBindingChanged('strokeDasharrayBinding', value);
-    });
-    //#endregion
 
     this.canvasEventsService.canvasPointerDown$.subscribe((coord) => {
       if (this.shapeListService.selectedShape?.getEditPointUnderMousePoint(coord) !== undefined) {
@@ -104,6 +118,14 @@ export class EditorComponent {
       // allow to move all points of the selected shape using the arrows
       this.handleKeyboardEventsToMoveShapes(event);
     });
+  }
+
+  public addNewBinding() {
+    this.bindingsForm.push(new FormGroup({ attribute: new FormControl('', { nonNullable: true }), binding: new FormControl('', { nonNullable: true }) }));
+  }
+
+  public deleteBinding(index: number) {
+    this.bindingsForm.removeAt(index);
   }
 
   private handleKeyboardEventsForPath(event: KeyboardEvent) {
