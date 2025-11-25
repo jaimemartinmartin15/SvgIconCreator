@@ -180,21 +180,8 @@ export abstract class ShapeHost {
 
     let parsedShape = `<${this.tag}`;
 
-    if (this.svg.dataset['strokeBinding']) {
-      parsedShape += ` data-stroke-binding="${this.svg.dataset['strokeBinding']}"`;
-    }
-
-    if (this.svg.dataset['fillBinding']) {
-      parsedShape += ` data-fill-binding="${this.svg.dataset['fillBinding']}"`;
-    }
-
-    if (this.svg.dataset['strokeWidthBinding']) {
-      parsedShape += ` data-stroke-width-binding="${this.svg.dataset['strokeWidthBinding']}"`;
-    }
-
-    if (this.svg.dataset['strokeDasharrayBinding']) {
-      parsedShape += ` data-stroke-dasharray-binding="${this.svg.dataset['strokeDasharrayBinding']}"`;
-    }
+    // parse data-* attributes
+    this.getBindingProperties().forEach(({ attribute, binding }) => (parsedShape += ` data-${attribute}-binding="${binding}"`));
 
     // if stroke-width is 1, do not add it (it is the default)
     // if the stroke is transparent, do not add it neither
@@ -263,15 +250,17 @@ export abstract class ShapeHost {
 
   //#region animation
   public onBindingChanged(bindings: Partial<{ attribute: string; binding: string }>[]): void {
-    // delete all existing data-* attributes
-    [...this.svg.attributes].filter((a) => a.name.startsWith('data-')).forEach((attr) => this.svg.removeAttribute(attr.name));
+    // delete all existing data-*-binding attributes
+    [...this.svg.attributes].filter((a) => a.name.startsWith('data-') && a.name.endsWith('-binding')).forEach((attr) => this.svg.removeAttribute(attr.name));
 
-    // add new data-* attributes
-    bindings.filter((b) => b.attribute?.trim() && b.binding?.trim()).forEach((binding) => (this.svg.dataset[binding.attribute ?? ''] = binding.binding));
+    // add new data-*-binding attributes
+    bindings.filter((b) => b.attribute?.trim() && b.binding?.trim()).forEach((binding) => (this.svg.dataset[`${binding.attribute}Binding`] = binding.binding));
   }
 
   public getBindingProperties(): { attribute: string; binding: string }[] {
-    return [...this.svg.attributes].filter((a) => a.name.startsWith('data-')).map((a) => ({ attribute: a.name.replace('data-', ''), binding: a.value }));
+    return [...this.svg.attributes]
+      .filter((a) => a.name.startsWith('data-') && a.name.endsWith('-binding'))
+      .map((a) => ({ attribute: a.name.replace('data-', '').replace('-binding', ''), binding: a.value }));
   }
   //#endregion
 
