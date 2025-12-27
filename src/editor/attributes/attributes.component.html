@@ -138,27 +138,27 @@
 @if (selectedShapeIsPath) {
   <form class="attribute-group attribute-group--path" (submit)="$event.preventDefault()">
     @for (commandControl of formsService.dForm.controls; track commandControl; let cmdi = $index) {
-      <label [formGroup]="commandControl" class="command" (mouseenter)="mouseHoverIndex = cmdi" (mouseleave)="mouseHoverIndex = -cmdi">
-        <div class="command-type">
-          @if (mouseHoverIndex !== cmdi || mouseHoverIndex === 0) {
+      <label [formGroup]="commandControl" class="command" (mouseenter)="indexOfCommandWithMouseOver = cmdi" (mouseleave)="indexOfCommandWithMouseOver = -cmdi">
+        <div class="instruction">
+          @if (indexOfCommandWithMouseOver !== cmdi || indexOfCommandWithMouseOver === 0) {
             <span>{{ commandControl.value.instruction }}</span>
           }
-          @if (mouseHoverIndex === cmdi && mouseHoverIndex !== 0) {
+          @if (indexOfCommandWithMouseOver === cmdi && indexOfCommandWithMouseOver !== 0) {
             <span (click)="deleteCommand(cmdi, $event)">🗑️</span>
           }
         </div>
-        <div formArrayName="coords" class="coords-list">
-          @for (p of commandControl.controls.coords.controls; track p; let crdi = $index) {
-            <div
-              class="point-coords-input"
-              [class.point-coords-input--hover]="mouseIsOverSvgEditPoint(cmdi, crdi)"
-              formGroupName="{{ crdi }}"
-              (mouseenter)="highlightSvgEditPointControl(cmdi, crdi)"
-              (mouseleave)="removeHighlightSvgEditPointControl()"
-            >
-              <input type="text" jeiInputNumber formControlName="x" />
-              <input type="text" jeiInputNumber formControlName="y" />
-            </div>
+
+        <div formArrayName="parameters" class="parameters-list">
+          @for (p of commandControl.controls.parameters.controls; track p; let parmi = $index) {
+            <input
+              type="text"
+              jeiInputNumber
+              [formControlName]="parmi"
+              [class.point-highlighted]="highlightInputPoint(cmdi, parmi)"
+              [ngClass]="'shape-' + commandControl.value.instruction?.toLowerCase()"
+              (mouseenter)="mouseEnterInputPoint(cmdi, parmi)"
+              (mouseleave)="mouseLeaveInputPoint()"
+            />
           }
         </div>
       </label>

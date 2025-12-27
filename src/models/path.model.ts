@@ -1,19 +1,12 @@
-import { Coord } from '@jaimemartinmartin15/jei-devkit-angular-shared';
+export const PATH_INSTRUCTIONS = ['M', 'm', 'L', 'l', 'H', 'h', 'V', 'v', 'C', 'c', 'S', 's', 'Q', 'q', 'T', 't', 'A', 'a', 'Z', 'z'] as const;
 
-export type PathInstruction = 'M' | 'L' | 'C' | 'Z';
+export type PathInstruction = (typeof PATH_INSTRUCTIONS)[number];
 
 export function isPathInstruction(key: string): key is PathInstruction {
-  return ['M', 'L', 'C', 'Z'].includes(key);
+  return PATH_INSTRUCTIONS.includes(key as PathInstruction);
 }
-
-export const COMMANDS = {
-  MOVE_TO: 'M',
-  LINE_TO: 'L',
-  CUBIC_BEZIER: 'C',
-  CLOSE_PATH: 'Z',
-} as const satisfies Record<string, PathInstruction>;
 
 export interface Command {
   instruction: PathInstruction;
-  coords: Coord[];
+  parameters: number[];
 }

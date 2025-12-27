@@ -1,4 +1,5 @@
 import { CdkDrag, CdkDragHandle } from '@angular/cdk/drag-drop';
+import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { ColorPickerComponent, InputNumberDirective } from '@jaimemartinmartin15/jei-devkit-angular-shared';
@@ -20,10 +21,20 @@ import { TrashCanSvgComponent } from '../../svg-output/trash-can.component';
   selector: 'app-attributes',
   templateUrl: './attributes.component.html',
   styleUrls: ['./attributes.component.scss'],
-  imports: [ColorPickerComponent, ReactiveFormsModule, InputNumberDirective, TrashCanSvgComponent, CdkDrag, CdkDragHandle, PlusSvgComponent, BurgerSvgComponent],
+  imports: [
+    CommonModule,
+    ColorPickerComponent,
+    ReactiveFormsModule,
+    InputNumberDirective,
+    TrashCanSvgComponent,
+    CdkDrag,
+    CdkDragHandle,
+    PlusSvgComponent,
+    BurgerSvgComponent,
+  ],
 })
 export class AttributesComponent implements OnInit {
-  private svgEditPointIndexMouseHover: number = -1;
+  private svgEditPointIndexMouseOver: number = -1;
   public colorPickerForm: FormControl<string>;
   public isUsingEyeDropper: boolean = false;
 
@@ -180,7 +191,7 @@ export class AttributesComponent implements OnInit {
     });
 
     AppEventsService.mouseOverSvgEditPoint$.subscribe((index) => {
-      this.svgEditPointIndexMouseHover = index;
+      this.svgEditPointIndexMouseOver = index;
     });
   }
 
@@ -205,28 +216,62 @@ export class AttributesComponent implements OnInit {
   //#endregion
 
   //#region path helpers
-  public mouseHoverIndex = -1;
+  public indexOfCommandWithMouseOver = -1;
+  private indexOfParamWithMouseOver = -1;
 
   public deleteCommand(i: number, e: MouseEvent) {
     e.stopPropagation();
     this.formsService.dForm.removeAt(i);
   }
 
-  public highlightSvgEditPointControl(cmdi: number, crdi: number) {
+  public highlightInputPoint(cmdi: number, parmi: number): boolean {
+    if (!(this.shapeListService.selectedShape instanceof PathHost)) return false;
+
+    // if the mouse is over the svg edit point corresponding to the input, highlight it
+    const svgEditPointIndex = this.shapeListService.selectedShape.calculateSvgEditPointIndexForCommandAndControl(cmdi, parmi);
+    let mouseIsOverTheSvgEditPoint = this.svgEditPointIndexMouseOver === svgEditPointIndex;
+
+    // if command is an arc, highlight only last two inputs
+    if (this.shapeListService.selectedShape.d[cmdi].instruction.toLowerCase() === 'a') {
+      mouseIsOverTheSvgEditPoint &&= parmi === 5 || parmi === 6;
+    }
+
+    let mouseIsOverTheInput = this.indexOfCommandWithMouseOver === cmdi;
+
+    // the mouse is over the input itself or the other coordinate ( x and y )
+    let secondParmi = parmi;
+    if (parmi % 2 === 0) {
+      secondParmi++;
+    } else {
+      secondParmi--;
+    }
+    mouseIsOverTheInput &&= this.indexOfParamWithMouseOver === parmi || this.indexOfParamWithMouseOver === secondParmi;
+
+    // if command is an arc, highlight only last two inputs
+    if (this.indexOfCommandWithMouseOver === cmdi && this.shapeListService.selectedShape.d[cmdi].instruction.toLowerCase() === 'a') {
+      mouseIsOverTheInput = parmi === 5 || parmi === 6;
+    }
+
+    // if command is H or V, highlight only the input with the mouse over
+    if (this.shapeListService.selectedShape.d[cmdi].instruction.toLowerCase() === 'h' || this.shapeListService.selectedShape.d[cmdi].instruction.toLowerCase() === 'v') {
+      mouseIsOverTheInput &&= this.indexOfParamWithMouseOver === parmi;
+    }
+
+    return mouseIsOverTheSvgEditPoint || mouseIsOverTheInput;
+  }
+
+  public mouseEnterInputPoint(cmdi: number, parmi: number) {
     if (!(this.shapeListService.selectedShape instanceof PathHost)) return;
-    const index = this.shapeListService.selectedShape.calculateGlobalIndexForCoordInCommand(cmdi, crdi);
+    this.indexOfParamWithMouseOver = parmi;
+    const index = this.shapeListService.selectedShape.calculateSvgEditPointIndexForCommandAndControl(cmdi, parmi);
     this.shapeListService.selectedShape.highlightSvgEditPointAtIndex(index);
   }
 
-  public removeHighlightSvgEditPointControl() {
+  public mouseLeaveInputPoint() {
     if (!(this.shapeListService.selectedShape instanceof PathHost)) return;
+    this.indexOfParamWithMouseOver = -1;
     // this methods resets all svg edit points before highligting the selected one
     this.shapeListService.selectedShape.highlightSvgEditPointAtIndex(-1);
-  }
-
-  public mouseIsOverSvgEditPoint(cmdi: number, crdi: number) {
-    if (!(this.shapeListService.selectedShape instanceof PathHost)) return;
-    return this.svgEditPointIndexMouseHover === this.shapeListService.selectedShape.calculateGlobalIndexForCoordInCommand(cmdi, crdi);
   }
   //#endregion
 

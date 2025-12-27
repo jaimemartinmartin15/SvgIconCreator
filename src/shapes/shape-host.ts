@@ -410,24 +410,25 @@ export abstract class ShapeHost {
   public get d(): Command[] {
     const commands: Command[] = [];
     const d = this.getSvgAttributeAsString('d');
+
     for (let i = 0; i < d.length; i++) {
       const c = d.charAt(i);
       if (isPathInstruction(c)) {
-        // find the start and the end indexes of the command "M1,3" - "C1,3 4,5 6,7" - "L1,3"
+        // find the start and the end indexes of the command
         const init = i;
         let end = i + 1;
-        for (let j = i + 1; !['M', 'L', 'C', 'Z'].includes(d.charAt(j)) && j < d.length; j++) {
-          end = j + 1;
+        while (!isPathInstruction(d.charAt(end)) && end < d.length) {
+          end++;
         }
+        i = end - 1;
 
         commands.push({
           instruction: c,
-          coords: d
+          parameters: d
             .substring(init + 1, end)
-            .split(' ') // split coords
+            .split(/ |,/) // split numbers
             .filter((c) => c !== '')
-            .map((coords) => coords.split(',')) // split x and y
-            .map(([x, y]) => ({ x: +x, y: +y })),
+            .map((v) => +v),
         });
       }
     }
@@ -436,7 +437,7 @@ export abstract class ShapeHost {
   }
 
   public set d(value: Command[]) {
-    const d = value.map((c) => `${c.instruction}${c.coords.map((c) => `${c.x},${c.y}`).join(' ')}`).join('');
+    const d = value.map((c) => `${c.instruction}${c.parameters.join(' ')}`).join('');
     this.setSvgAttribute('d', d);
   }
 

@@ -1,6 +1,6 @@
 import { FormArray, FormControl, FormGroup } from '@angular/forms';
 import { Coord, CoordWithDelta, ElementsRefService, ToFormType } from '@jaimemartinmartin15/jei-devkit-angular-shared';
-import { Command, COMMANDS, PathInstruction } from '../models/path.model';
+import { Command, PathInstruction } from '../models/path.model';
 import { Shape } from '../models/shape';
 import { AppEventsService } from '../services/app-events.service';
 import { FormsService } from '../services/forms.service';
@@ -42,130 +42,128 @@ export class PathHost extends ShapeHost {
       this.canvas.append(this.svg);
     }
 
-    if (this.currentCommand === COMMANDS.MOVE_TO) {
-      this.formsService.dForm.push(this.createCommandFormWithCoords('M', [coord]));
-      this.currentCommand = COMMANDS.LINE_TO;
-      this.formsService.dForm.push(this.createCommandFormWithCoords('L', [coord]));
-      return;
-    }
+    // if (this.currentCommand === COMMANDS.MOVE_TO) {
+    //   this.formsService.dForm.push(this.createCommandFormWithParameters('M', [coord]));
+    //   this.currentCommand = COMMANDS.LINE_TO;
+    //   this.formsService.dForm.push(this.createCommandFormWithParameters('L', [coord]));
+    //   return;
+    // }
 
-    if (this.currentCommand === COMMANDS.LINE_TO) {
-      this.onMouseDownLineTo(coord);
-      return;
-    }
+    // if (this.currentCommand === COMMANDS.LINE_TO) {
+    //   this.onMouseDownLineTo(coord);
+    //   return;
+    // }
 
-    if (this.currentCommand === COMMANDS.CUBIC_BEZIER) {
-      this.onMouseDownCubicBezier(coord);
-      return;
-    }
+    // if (this.currentCommand === COMMANDS.CUBIC_BEZIER) {
+    //   this.onMouseDownCubicBezier(coord);
+    //   return;
+    // }
   }
 
-  private onMouseDownLineTo(coord: Coord) {
-    // check if previous command was of these type or not
-    const commands = this.formsService.dForm;
-    const lastControl = commands.controls[commands.length - 1];
+  // private onMouseDownLineTo(coord: Coord) {
+  //   // check if previous command was of these type or not
+  //   const commands = this.formsService.dForm;
+  //   const lastControl = commands.controls[commands.length - 1];
 
-    if (lastControl.value.instruction === COMMANDS.LINE_TO) {
-      // add a new point to last command
-      lastControl.controls['coords'].push(
-        new FormGroup({
-          x: new FormControl(coord.x, { nonNullable: true }),
-          y: new FormControl(coord.y, { nonNullable: true }),
-        }),
-      );
-    } else {
-      // add a new command
-      this.formsService.dForm.push(this.createCommandFormWithCoords('L', [coord]));
-    }
-  }
+  //   if (lastControl.value.instruction === COMMANDS.LINE_TO) {
+  //     // add a new point to last command
+  //     lastControl.controls['coords'].push(
+  //       new FormGroup({
+  //         x: new FormControl(coord.x, { nonNullable: true }),
+  //         y: new FormControl(coord.y, { nonNullable: true }),
+  //       }),
+  //     );
+  //   } else {
+  //     // add a new command
+  //     this.formsService.dForm.push(this.createCommandFormWithParameters('L', [coord]));
+  //   }
+  // }
 
-  private onMouseDownCubicBezier(coord: Coord) {
-    if (this.stateCubicBezier === 0) {
-      // add a new command with three coords (two control points and end point, init point is last of previous command)
-      this.formsService.dForm.push(this.createCommandFormWithCoords('C', [coord, coord, coord]));
-      return;
-    }
+  // private onMouseDownCubicBezier(coord: Coord) {
+  //   if (this.stateCubicBezier === 0) {
+  //     // add a new command with three coords (two control points and end point, init point is last of previous command)
+  //     this.formsService.dForm.push(this.createCommandFormWithParameters('C', [coord, coord, coord]));
+  //     return;
+  //   }
 
-    const commands = this.formsService.dForm;
-    const lastCommandControl = commands.controls[commands.length - 1];
-    const coordControls = lastCommandControl.controls['coords'];
+  //   const commands = this.formsService.dForm;
+  //   const lastCommandControl = commands.controls[commands.length - 1];
+  //   const coordControls = lastCommandControl.controls['coords'];
 
-    if (this.stateCubicBezier === 1) {
-      coordControls.controls[0].patchValue({
-        x: coord.x,
-        y: coord.y,
-      });
-      coordControls.controls[1].patchValue({
-        x: coord.x,
-        y: coord.y,
-      });
-    }
+  //   if (this.stateCubicBezier === 1) {
+  //     coordControls.controls[0].patchValue({
+  //       x: coord.x,
+  //       y: coord.y,
+  //     });
+  //     coordControls.controls[1].patchValue({
+  //       x: coord.x,
+  //       y: coord.y,
+  //     });
+  //   }
 
-    if (this.stateCubicBezier === 2) {
-      coordControls.controls[1].patchValue({
-        x: coord.x,
-        y: coord.y,
-      });
-    }
-  }
+  //   if (this.stateCubicBezier === 2) {
+  //     coordControls.controls[1].patchValue({
+  //       x: coord.x,
+  //       y: coord.y,
+  //     });
+  //   }
+  // }
   //#endregion
 
   //#region mouse drag
   public override mouseDrag(coord: CoordWithDelta): void {
-    const commands = this.formsService.dForm;
-    const currentCommandControl = commands.controls[commands.length - 1];
-
-    if (this.currentCommand === COMMANDS.LINE_TO) {
-      this.onMouseDragLineTo(coord, currentCommandControl);
-      return;
-    }
-
-    if (this.currentCommand === COMMANDS.CUBIC_BEZIER) {
-      this.onMouseDragCubicBezier(coord, currentCommandControl);
-      return;
-    }
+    // const commands = this.formsService.dForm;
+    // const currentCommandControl = commands.controls[commands.length - 1];
+    // if (this.currentCommand === COMMANDS.LINE_TO) {
+    //   this.onMouseDragLineTo(coord, currentCommandControl);
+    //   return;
+    // }
+    // if (this.currentCommand === COMMANDS.CUBIC_BEZIER) {
+    //   this.onMouseDragCubicBezier(coord, currentCommandControl);
+    //   return;
+    // }
   }
 
-  private onMouseDragLineTo(coord: Coord, currentCommandControl: ToFormType<Command>) {
-    const coordsFormArrayControls = currentCommandControl.controls['coords'].controls;
-    const pointsLength = coordsFormArrayControls.length;
-    coordsFormArrayControls[pointsLength - 1].patchValue({ x: coord.x, y: coord.y });
-  }
+  // private onMouseDragLineTo(coord: Coord, currentCommandControl: ToFormType<Command>) {
+  //   const coordsFormArrayControls = currentCommandControl.controls['coords'].controls;
+  //   const pointsLength = coordsFormArrayControls.length;
+  //   coordsFormArrayControls[pointsLength - 1].patchValue({ x: coord.x, y: coord.y });
+  // }
 
-  private onMouseDragCubicBezier(coord: Coord, currentCommandControl: ToFormType<Command>) {
-    const coordsFormArrayControls = currentCommandControl.controls['coords'].controls;
+  // private onMouseDragCubicBezier(coord: Coord, currentCommandControl: ToFormType<Command>) {
+  //   const coordsFormArrayControls = currentCommandControl.controls['coords'].controls;
 
-    if (this.stateCubicBezier === 0) {
-      coordsFormArrayControls[0].patchValue({ x: coord.x, y: coord.y });
-      coordsFormArrayControls[1].patchValue({ x: coord.x, y: coord.y });
-      coordsFormArrayControls[2].patchValue({ x: coord.x, y: coord.y });
-      return;
-    }
+  //   if (this.stateCubicBezier === 0) {
+  //     coordsFormArrayControls[0].patchValue({ x: coord.x, y: coord.y });
+  //     coordsFormArrayControls[1].patchValue({ x: coord.x, y: coord.y });
+  //     coordsFormArrayControls[2].patchValue({ x: coord.x, y: coord.y });
+  //     return;
+  //   }
 
-    if (this.stateCubicBezier === 1) {
-      coordsFormArrayControls[0].patchValue({ x: coord.x, y: coord.y });
-      coordsFormArrayControls[1].patchValue({ x: coord.x, y: coord.y });
-      return;
-    }
+  //   if (this.stateCubicBezier === 1) {
+  //     coordsFormArrayControls[0].patchValue({ x: coord.x, y: coord.y });
+  //     coordsFormArrayControls[1].patchValue({ x: coord.x, y: coord.y });
+  //     return;
+  //   }
 
-    if (this.stateCubicBezier === 2) {
-      coordsFormArrayControls[1].patchValue({ x: coord.x, y: coord.y });
-      return;
-    }
-  }
+  //   if (this.stateCubicBezier === 2) {
+  //     coordsFormArrayControls[1].patchValue({ x: coord.x, y: coord.y });
+  //     return;
+  //   }
+  // }
   //#endregion
 
   //#region mouse up
   public override mouseUp(coord: CoordWithDelta): void {
-    this.mouseDrag(coord);
-
-    if (this.currentCommand === COMMANDS.CUBIC_BEZIER) {
-      // change to next state or start a new cubic bezier command
-      this.stateCubicBezier++;
-      if (this.stateCubicBezier === 3) {
-        this.stateCubicBezier = 0;
-      }
-    }
+    // TODO
+    // this.mouseDrag(coord);
+    // if (this.currentCommand === COMMANDS.CUBIC_BEZIER) {
+    //   // change to next state or start a new cubic bezier command
+    //   this.stateCubicBezier++;
+    //   if (this.stateCubicBezier === 3) {
+    //     this.stateCubicBezier = 0;
+    //   }
+    // }
   }
   //#endregion
 
@@ -179,17 +177,79 @@ export class PathHost extends ShapeHost {
 
   //#region mouse drag edit
   public override mouseDragEdit(coord: CoordWithDelta): void {
-    const coordControls = this.formsService.dForm.controls.flatMap((c) => c.controls.coords.controls);
-    coordControls[this.selectedEditPointIndex].patchValue({
-      x: coord.x,
-      y: coord.y,
-    });
+    // TODO
+    // // let i = 0;
+    // // let controlsToEdit = [this.formsService.dForm.controls[0].controls.parameters.controls[0], this.formsService.dForm.controls[0].controls.parameters.controls[1]];
+    // // while(i < this.selectedEditPointIndex) {
+    // //   // TODO
+    // // }
+    // const coordControls = this.formsService.dForm.controls.flatMap((c) => c.controls.coords.controls);
+    // coordControls[this.selectedEditPointIndex].patchValue({
+    //   x: coord.x,
+    //   y: coord.y,
+    // });
   }
   //#endregion
 
   //#region edit point
   protected override getEditPointCoordsFromSvgShapeAttributes(): Coord[] {
-    return this.d.flatMap((c) => c.coords);
+    const coords: Coord[] = [];
+    const commands = this.d;
+
+    for (let c = 0; c < commands.length; c++) {
+      if (commands[c].instruction === 'A') {
+        coords.push({ x: commands[c].parameters[5], y: commands[c].parameters[6] });
+        continue;
+      }
+
+      if (commands[c].instruction === 'a') {
+        coords.push({ x: coords[coords.length - 1].x + commands[c].parameters[5], y: coords[coords.length - 1].y + commands[c].parameters[6] });
+        continue;
+      }
+
+      if (commands[c].instruction === 'H') {
+        for (let h = 0; h < commands[c].parameters.length; h++) {
+          coords.push({ x: commands[c].parameters[h], y: coords[coords.length - 1].y });
+        }
+        continue;
+      }
+
+      if (commands[c].instruction === 'h') {
+        for (let h = 0; h < commands[c].parameters.length; h++) {
+          coords.push({ x: coords[coords.length - 1].x + commands[c].parameters[h], y: coords[coords.length - 1].y });
+        }
+        continue;
+      }
+
+      if (commands[c].instruction === 'V') {
+        for (let v = 0; v < commands[c].parameters.length; v++) {
+          coords.push({ x: coords[coords.length - 1].x, y: commands[c].parameters[v] });
+        }
+        continue;
+      }
+
+      if (commands[c].instruction === 'v') {
+        for (let v = 0; v < commands[c].parameters.length; v++) {
+          coords.push({ x: coords[coords.length - 1].x, y: coords[coords.length - 1].y + commands[c].parameters[v] });
+        }
+        continue;
+      }
+
+      // absolute coords
+      if (commands[c].instruction.toUpperCase() === commands[c].instruction || (c === 0 && commands[c].instruction === 'm')) {
+        for (let v = 0; v < commands[c].parameters.length; v += 2) {
+          coords.push({ x: commands[c].parameters[v], y: commands[c].parameters[v + 1] });
+        }
+        continue;
+      }
+
+      // relative coords
+      for (let v = 0; v < commands[c].parameters.length; v += 2) {
+        coords.push({ x: coords[coords.length - 1].x + commands[c].parameters[v], y: coords[coords.length - 1].y + commands[c].parameters[v + 1] });
+      }
+    }
+
+    return coords;
   }
 
   public override updatePositionSvgEditPoints() {
@@ -205,7 +265,31 @@ export class PathHost extends ShapeHost {
   //#region move shape
   public override moveShapeUp(amount: number): void {
     this.d = this.d.map((command) => {
-      command.coords.forEach((coord) => (coord.y -= amount));
+      if (command.instruction === command.instruction.toLowerCase()) {
+        // if the command is relative, do not apply transformation
+        return command;
+      }
+
+      if (command.instruction === 'A') {
+        // if the command is an Arc, apply transformation only to end point
+        // A  rx  ry  x-axis-rotation  large-arc-flag  sweep-flag  x  y
+        command.parameters[6] -= amount;
+        return command;
+      }
+
+      if (command.instruction === 'H') {
+        return command;
+      }
+
+      if (command.instruction === 'V') {
+        command.parameters = command.parameters.map((v) => v - amount);
+        return command;
+      }
+
+      command.parameters = command.parameters.map((v, i) => {
+        if (i % 2 === 1) return v - amount;
+        return v;
+      });
       return command;
     });
 
@@ -217,7 +301,31 @@ export class PathHost extends ShapeHost {
 
   public override moveShapeRight(amount: number): void {
     this.d = this.d.map((command) => {
-      command.coords.forEach((coord) => (coord.x += amount));
+      if (command.instruction === command.instruction.toLowerCase()) {
+        // if the command is relative, do not apply transformation
+        return command;
+      }
+
+      if (command.instruction === 'A') {
+        // if the command is an Arc, apply transformation only to end point
+        // A  rx  ry  x-axis-rotation  large-arc-flag  sweep-flag  x  y
+        command.parameters[5] += amount;
+        return command;
+      }
+
+      if (command.instruction === 'H') {
+        command.parameters = command.parameters.map((v) => v + amount);
+        return command;
+      }
+
+      if (command.instruction === 'V') {
+        return command;
+      }
+
+      command.parameters = command.parameters.map((v, i) => {
+        if (i % 2 === 0) return v + amount;
+        return v;
+      });
       return command;
     });
 
@@ -229,7 +337,31 @@ export class PathHost extends ShapeHost {
 
   public override moveShapeDown(amount: number): void {
     this.d = this.d.map((command) => {
-      command.coords.forEach((coord) => (coord.y += amount));
+      if (command.instruction === command.instruction.toLowerCase()) {
+        // if the command is relative, do not apply transformation
+        return command;
+      }
+
+      if (command.instruction === 'A') {
+        // if the command is an Arc, apply transformation only to end point
+        // A  rx  ry  x-axis-rotation  large-arc-flag  sweep-flag  x  y
+        command.parameters[6] += amount;
+        return command;
+      }
+
+      if (command.instruction === 'H') {
+        return command;
+      }
+
+      if (command.instruction === 'V') {
+        command.parameters = command.parameters.map((v) => v + amount);
+        return command;
+      }
+
+      command.parameters = command.parameters.map((v, i) => {
+        if (i % 2 === 1) return v + amount;
+        return v;
+      });
       return command;
     });
 
@@ -241,7 +373,31 @@ export class PathHost extends ShapeHost {
 
   public override moveShapeLeft(amount: number): void {
     this.d = this.d.map((command) => {
-      command.coords.forEach((coord) => (coord.x -= amount));
+      if (command.instruction === command.instruction.toLowerCase()) {
+        // if the command is relative, do not apply transformation
+        return command;
+      }
+
+      if (command.instruction === 'A') {
+        // if the command is an Arc, apply transformation only to end point
+        // A  rx  ry  x-axis-rotation  large-arc-flag  sweep-flag  x  y
+        command.parameters[5] -= amount;
+        return command;
+      }
+
+      if (command.instruction === 'H') {
+        command.parameters = command.parameters.map((v) => v - amount);
+        return command;
+      }
+
+      if (command.instruction === 'V') {
+        return command;
+      }
+
+      command.parameters = command.parameters.map((v, i) => {
+        if (i % 2 === 0) return v - amount;
+        return v;
+      });
       return command;
     });
 
@@ -277,7 +433,7 @@ export class PathHost extends ShapeHost {
     // this method is called when an existing shape is selected
     // reset the dForm to show the coords of the selected path
     this.formsService.dForm.clear({ emitEvent: false });
-    this.d.map((c) => this.createCommandFormWithCoords(c.instruction, c.coords)).forEach((c) => this.formsService.dForm.push(c));
+    this.d.map((c) => this.createCommandFormWithParameters(c.instruction, c.parameters)).forEach((c) => this.formsService.dForm.push(c));
   }
   //#endregion
 
@@ -290,7 +446,7 @@ export class PathHost extends ShapeHost {
   }
 
   protected override parseCustomOptimizedStringAndCloseShape(): string {
-    let pathAttr = ` d="${this.d.map((command) => `${command.instruction}${command.coords.map((c) => `${c.x},${c.y}`).join(' ')}`).join('')}"`;
+    let pathAttr = ` d="${this.d.map((command) => `${command.instruction}${command.parameters.join(' ')}`).join('')}"`;
 
     if (this.strokeLinecap !== 'butt') {
       pathAttr += ` stroke-linecap="${this.strokeLinecap}"`;
@@ -308,42 +464,49 @@ export class PathHost extends ShapeHost {
   public closePath() {
     if (this.formsService.dForm.controls.length === 0) return;
     this.stateCubicBezier = 0;
-    this.currentCommand = COMMANDS.MOVE_TO;
-    this.formsService.dForm.push(
-      new FormGroup({
-        instruction: new FormControl(COMMANDS.CLOSE_PATH, { nonNullable: true }) as ToFormType<PathInstruction>,
-        coords: new FormArray([] as ToFormType<Coord>[]),
-      }),
-    );
+    this.currentCommand = 'M'; // TODO check if needs to be set to default next command
+    this.formsService.dForm.push(this.createCommandFormWithParameters('Z', []));
   }
 
-  private createCommandFormWithCoords(instruction: PathInstruction, coords: Coord[]): ToFormType<Command> {
+  private createCommandFormWithParameters(instruction: PathInstruction, parameters: number[]): ToFormType<Command> {
     return new FormGroup({
       instruction: new FormControl(instruction, { nonNullable: true }) as ToFormType<PathInstruction>,
-      coords: new FormArray(
-        coords.map(
-          (coord) =>
-            new FormGroup({
-              x: new FormControl(coord.x, { nonNullable: true }),
-              y: new FormControl(coord.y, { nonNullable: true }),
-            }),
-        ),
-      ),
+      parameters: new FormArray(parameters.map((v) => new FormControl(v, { nonNullable: true }))),
     });
   }
 
-  public calculateGlobalIndexForCoordInCommand(cmdi: number, crdi: number): number {
+  public calculateSvgEditPointIndexForCommandAndControl(cmdi: number, parmi: number): number {
     if (!(this.shapeListService.selectedShape instanceof PathHost)) return -1;
     const commands = this.shapeListService.selectedShape.d;
 
-    let globalCoordIndex = 0;
+    let svgEditPointIndex = 0;
     let i = 0;
+
+    // count edit points of previous commands
     while (i < cmdi) {
-      globalCoordIndex += commands[i].coords.length;
+      if (commands[i].instruction.toLowerCase() === 'a') {
+        svgEditPointIndex++; // Arcs only contain one edit point
+      } else if (commands[i].instruction.toLowerCase() === 'h' || commands[i].instruction.toLowerCase() === 'v') {
+        svgEditPointIndex += commands[i].parameters.length;
+      } else {
+        svgEditPointIndex += commands[i].parameters.length / 2;
+      }
       i++;
     }
-    globalCoordIndex += crdi;
-    return globalCoordIndex;
+
+    // i is now the index of the command that contains the edit point to calculate the index
+
+    if (commands[i].instruction.toLowerCase() === 'a') {
+      // Arcs only have one edit point, regardless of parmi
+      return svgEditPointIndex;
+    }
+
+    if (commands[i].instruction.toLowerCase() === 'h' || commands[i].instruction.toLowerCase() === 'v') {
+      // for H and V, each control (parmi) is a single edit point
+      return svgEditPointIndex + parmi;
+    }
+
+    return (svgEditPointIndex += Math.floor(parmi / 2));
   }
 
   public highlightSvgEditPointAtIndex(index: number): void {

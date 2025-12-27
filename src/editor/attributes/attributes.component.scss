@@ -28,30 +28,34 @@
       align-items: flex-start;
       gap: 5px;
 
-      .command-type {
+      .instruction {
         min-width: 25px;
         padding-top: 14px;
         cursor: pointer;
       }
 
-      .coords-list {
+      .parameters-list {
         display: flex;
         flex-wrap: wrap;
-        gap: 11px 25px;
+        gap: 5px;
 
-        .point-coords-input {
-          display: flex;
-          gap: 5px;
+        input[jeiInputNumber] {
+          width: 45px;
+          padding: 0;
+          outline: none;
 
-          &--hover input[jeiInputNumber],
-          &:hover input[jeiInputNumber] {
-            border-color: #0f0;
-            border-width: 2px;
+          &:not(.shape-a, .shape-h, .shape-v):nth-child(2n) {
+            margin-right: 28px;
           }
 
-          input[jeiInputNumber] {
-            width: 45px;
-            padding: 0;
+          &.point-highlighted {
+            border-color: #0f0;
+            border-width: 2px;
+
+            &:focus {
+              border-color: #0e0;
+              border-width: 3px;
+            }
           }
         }
       }
