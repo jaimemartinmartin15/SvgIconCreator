@@ -53,11 +53,11 @@ export abstract class ShapeHost {
   public svgEditPoints: SVGCircleElement[] = [];
   protected selectedEditPointIndex: number = -1;
 
-  protected abstract getEditPointCoordsFromSvgShapeAttributes(): Coord[];
+  protected abstract getEditPointCoords(): Coord[];
   public abstract updatePositionSvgEditPoints(): void;
 
   public createEditPoints(): void {
-    const editPointsCoords = this.getEditPointCoordsFromSvgShapeAttributes();
+    const editPointsCoords = this.getEditPointCoords();
     editPointsCoords.forEach((epc) => {
       const editPointEl = this.createEditPoint(epc);
       this.svgEditPoints.push(editPointEl);
@@ -86,7 +86,7 @@ export abstract class ShapeHost {
   }
 
   protected getEditPointIndexUnderCoord(coord: Coord): number {
-    return this.getEditPointCoordsFromSvgShapeAttributes().findIndex(
+    return this.getEditPointCoords().findIndex(
       (c) => Math.abs(c.x - coord.x) < this.getEditPointWidth() && Math.abs(c.y - coord.y) < this.getEditPointWidth(),
     );
   }

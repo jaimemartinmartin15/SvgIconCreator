@@ -128,17 +128,18 @@ export class EditorComponent {
   }
 
   private handleKeyboardEventsForPath(event: KeyboardEvent) {
-    const key = event.key.toUpperCase();
+    const key = event.key;
 
     if (!(this.shapeListService.selectedShape instanceof PathHost)) return;
+
 
     // avoid adding the command when typing in other inputs of the app, and the shape is already completed
     if (this.shapeListService.selectedShape.isShapeFinished) return;
 
-    if (key === 'F') {
+    if (key === 'F' || key === 'f') {
       this.shapeListService.selectedShape.isShapeFinished = true;
       this.shapeListService.selectedShape.createEditPoints();
-    } else if (key === 'Z') {
+    } else if (key === 'Z' || key === 'z') {
       this.shapeListService.selectedShape.closePath();
     } else if (isPathInstruction(key)) {
       this.shapeListService.selectedShape.currentCommand = key;

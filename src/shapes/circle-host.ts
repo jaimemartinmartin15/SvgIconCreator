@@ -49,7 +49,7 @@ export class CircleHost extends ShapeHost {
   //#endregion
 
   //#region edit point
-  protected override getEditPointCoordsFromSvgShapeAttributes(): Coord[] {
+  protected override getEditPointCoords(): Coord[] {
     return [
       { x: this.cx, y: this.cy }, // center
       { x: this.cx + this.r, y: this.cy }, // perimeter

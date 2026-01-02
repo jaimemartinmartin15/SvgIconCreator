@@ -41,7 +41,7 @@ export class TextHost extends ShapeHost {
   //#endregion
 
   //#region edit point
-  protected override getEditPointCoordsFromSvgShapeAttributes(): Coord[] {
+  protected override getEditPointCoords(): Coord[] {
     return [{ x: this.x, y: this.y }];
   }
 

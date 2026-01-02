@@ -7,22 +7,19 @@ import { FormsService } from '../services/forms.service';
 import { ShapeListService } from '../services/shape-list.service';
 import { EDIT_POINT_COLORS, ShapeHost } from './shape-host';
 
+const C_LENGTH = 6;
+const S_Q_LENGTH = 4;
+
 export class PathHost extends ShapeHost {
   //#region path host vars
-  /**
-   * 0 -> no points added
-   * 1 -> end point added
-   * 2 -> control point 1 added
-   * 3 -> control point 2 added
-   */
-  private stateCubicBezier: number = 0;
+  private parameterToEditIndex: number = -1;
 
   private _currentCommand: PathInstruction = 'M';
   public get currentCommand(): PathInstruction {
     return this._currentCommand;
   }
   public set currentCommand(command: PathInstruction) {
-    this.stateCubicBezier = 0;
+    this.parameterToEditIndex = -1;
     this._currentCommand = command;
   }
   //#endregion
@@ -42,128 +39,455 @@ export class PathHost extends ShapeHost {
       this.canvas.append(this.svg);
     }
 
-    // if (this.currentCommand === COMMANDS.MOVE_TO) {
-    //   this.formsService.dForm.push(this.createCommandFormWithParameters('M', [coord]));
-    //   this.currentCommand = COMMANDS.LINE_TO;
-    //   this.formsService.dForm.push(this.createCommandFormWithParameters('L', [coord]));
-    //   return;
-    // }
+    if (this.currentCommand === 'M') {
+      this.formsService.dForm.push(this.createCommandFormWithParameters('M', [coord.x, coord.y]));
+      this.currentCommand = 'L';
+      this.formsService.dForm.push(this.createCommandFormWithParameters('L', [coord.x, coord.y]));
+      return;
+    }
 
-    // if (this.currentCommand === COMMANDS.LINE_TO) {
-    //   this.onMouseDownLineTo(coord);
-    //   return;
-    // }
+    if (this.currentCommand === 'm') {
+      const relativeCoord: Coord = this.calculateRelativeCoord(coord);
 
-    // if (this.currentCommand === COMMANDS.CUBIC_BEZIER) {
-    //   this.onMouseDownCubicBezier(coord);
-    //   return;
-    // }
+      this.formsService.dForm.push(this.createCommandFormWithParameters('m', [relativeCoord.x, relativeCoord.y]));
+      this.currentCommand = 'L';
+      this.formsService.dForm.push(this.createCommandFormWithParameters('L', [coord.x, coord.y]));
+      return;
+    }
+
+    if (this.currentCommand === 'L') {
+      if (this.isLastCommandInstructionTheSame('L')) {
+        this.lastCommandControl.controls.parameters.push([new FormControl(coord.x, { nonNullable: true }), new FormControl(coord.y, { nonNullable: true })]);
+      } else {
+        this.formsService.dForm.push(this.createCommandFormWithParameters('L', [coord.x, coord.y]));
+      }
+      return;
+    }
+
+    if (this.currentCommand === 'l') {
+      const relativeCoord: Coord = this.calculateRelativeCoord(coord);
+
+      if (this.isLastCommandInstructionTheSame('l')) {
+        this.lastCommandControl.controls.parameters.push([
+          new FormControl(relativeCoord.x, { nonNullable: true }),
+          new FormControl(relativeCoord.y, { nonNullable: true }),
+        ]);
+      } else {
+        this.formsService.dForm.push(this.createCommandFormWithParameters('l', [relativeCoord.x, relativeCoord.y]));
+      }
+      return;
+    }
+
+    if (this.currentCommand === 'H') {
+      if (this.isLastCommandInstructionTheSame('H')) {
+        this.lastCommandControl.controls.parameters.push([new FormControl(coord.x, { nonNullable: true })]);
+      } else {
+        this.formsService.dForm.push(this.createCommandFormWithParameters('H', [coord.x]));
+      }
+      return;
+    }
+
+    if (this.currentCommand === 'h') {
+      const relativeCoord: Coord = this.calculateRelativeCoord(coord);
+
+      if (this.isLastCommandInstructionTheSame('h')) {
+        this.lastCommandControl.controls.parameters.push([new FormControl(relativeCoord.x, { nonNullable: true })]);
+      } else {
+        this.formsService.dForm.push(this.createCommandFormWithParameters('h', [relativeCoord.x]));
+      }
+      return;
+    }
+
+    if (this.currentCommand === 'V') {
+      if (this.isLastCommandInstructionTheSame('V')) {
+        this.lastCommandControl.controls.parameters.push([new FormControl(coord.y, { nonNullable: true })]);
+      } else {
+        this.formsService.dForm.push(this.createCommandFormWithParameters('V', [coord.y]));
+      }
+      return;
+    }
+
+    if (this.currentCommand === 'v') {
+      const relativeCoord: Coord = this.calculateRelativeCoord(coord);
+
+      if (this.isLastCommandInstructionTheSame('v')) {
+        this.lastCommandControl.controls.parameters.push([new FormControl(relativeCoord.y, { nonNullable: true })]);
+      } else {
+        this.formsService.dForm.push(this.createCommandFormWithParameters('v', [relativeCoord.y]));
+      }
+      return;
+    }
+
+    if (this.currentCommand === 'C') {
+      if (this.parameterToEditIndex === -1 || (this.parameterToEditIndex - 4) % 6 === 0) {
+        // create a new curve
+
+        if (this.isLastCommandInstructionTheSame('C')) {
+          this.lastCommandControl.controls.parameters.push([
+            new FormControl(coord.x, { nonNullable: true }),
+            new FormControl(coord.y, { nonNullable: true }),
+            new FormControl(coord.x, { nonNullable: true }),
+            new FormControl(coord.y, { nonNullable: true }),
+            new FormControl(coord.x, { nonNullable: true }),
+            new FormControl(coord.y, { nonNullable: true }),
+          ]);
+        } else {
+          this.formsService.dForm.push(this.createCommandFormWithParameters('C', [coord.x, coord.y, coord.x, coord.y, coord.x, coord.y]));
+          this.parameterToEditIndex = 4;
+        }
+        return;
+      }
+      if ((this.parameterToEditIndex - 2) % 6 === 0 || (this.parameterToEditIndex - 4) % 6 === 0) {
+        this.mouseDrag(coord as CoordWithDelta);
+        return;
+      }
+      return;
+    }
+
+    if (this.currentCommand === 'c') {
+      if (this.parameterToEditIndex === -1 || (this.parameterToEditIndex - 4) % C_LENGTH === 0) {
+        // create a new curve
+
+        const relativeCoord = this.calculateRelativeCoord(coord);
+        if (this.isLastCommandInstructionTheSame('c')) {
+          this.lastCommandControl.controls.parameters.push([
+            new FormControl(relativeCoord.x, { nonNullable: true }),
+            new FormControl(relativeCoord.y, { nonNullable: true }),
+            new FormControl(relativeCoord.x, { nonNullable: true }),
+            new FormControl(relativeCoord.y, { nonNullable: true }),
+            new FormControl(relativeCoord.x, { nonNullable: true }),
+            new FormControl(relativeCoord.y, { nonNullable: true }),
+          ]);
+        } else {
+          this.formsService.dForm.push(
+            this.createCommandFormWithParameters('c', [relativeCoord.x, relativeCoord.y, relativeCoord.x, relativeCoord.y, relativeCoord.x, relativeCoord.y]),
+          );
+          this.parameterToEditIndex = 4;
+        }
+        return;
+      }
+      if ((this.parameterToEditIndex - 2) % 6 === 0 || (this.parameterToEditIndex - 4) % 6 === 0) {
+        this.mouseDrag(coord as CoordWithDelta);
+        return;
+      }
+      return;
+    }
+
+    if (this.currentCommand === 'S' || this.currentCommand === 'Q') {
+      if (this.parameterToEditIndex === -1 || (this.parameterToEditIndex - 2) % S_Q_LENGTH === 0) {
+        // create a new curve
+
+        if (this.isLastCommandInstructionTheSame(this.currentCommand)) {
+          this.lastCommandControl.controls.parameters.push([
+            new FormControl(coord.x, { nonNullable: true }),
+            new FormControl(coord.y, { nonNullable: true }),
+            new FormControl(coord.x, { nonNullable: true }),
+            new FormControl(coord.y, { nonNullable: true }),
+          ]);
+        } else {
+          this.formsService.dForm.push(this.createCommandFormWithParameters(this.currentCommand, [coord.x, coord.y, coord.x, coord.y]));
+          this.parameterToEditIndex = 2;
+        }
+        return;
+      }
+      if ((this.parameterToEditIndex - 2) % S_Q_LENGTH === 0) {
+        this.mouseDrag(coord as CoordWithDelta);
+        return;
+      }
+      return;
+    }
+
+    if (this.currentCommand === 's' || this.currentCommand === 'q') {
+      if (this.parameterToEditIndex === -1 || (this.parameterToEditIndex - 2) % S_Q_LENGTH === 0) {
+        // create a new curve
+
+        const relativeCoord = this.calculateRelativeCoord(coord);
+        if (this.isLastCommandInstructionTheSame(this.currentCommand)) {
+          this.lastCommandControl.controls.parameters.push([
+            new FormControl(relativeCoord.x, { nonNullable: true }),
+            new FormControl(relativeCoord.y, { nonNullable: true }),
+            new FormControl(relativeCoord.x, { nonNullable: true }),
+            new FormControl(relativeCoord.y, { nonNullable: true }),
+          ]);
+        } else {
+          this.formsService.dForm.push(this.createCommandFormWithParameters(this.currentCommand, [relativeCoord.x, relativeCoord.y, relativeCoord.x, relativeCoord.y]));
+          this.parameterToEditIndex = 2;
+        }
+        return;
+      }
+      if ((this.parameterToEditIndex - 2) % S_Q_LENGTH === 0) {
+        this.mouseDrag(coord as CoordWithDelta);
+        return;
+      }
+      return;
+    }
+
+    if (this.currentCommand === 'T') {
+      if (this.isLastCommandInstructionTheSame('T')) {
+        this.lastCommandControl.controls.parameters.push([new FormControl(coord.x, { nonNullable: true }), new FormControl(coord.y, { nonNullable: true })]);
+      } else {
+        this.formsService.dForm.push(this.createCommandFormWithParameters('T', [coord.x, coord.y]));
+      }
+      return;
+    }
+
+    if (this.currentCommand === 't') {
+      const coords = this.getEditPointCoords();
+      const lastCoord = coords[coords.length - 1];
+      const relativeCoord: Coord = { x: coord.x - lastCoord.x, y: coord.y - lastCoord.y };
+
+      if (this.isLastCommandInstructionTheSame('t')) {
+        this.lastCommandControl.controls.parameters.push([
+          new FormControl(relativeCoord.x, { nonNullable: true }),
+          new FormControl(relativeCoord.y, { nonNullable: true }),
+        ]);
+      } else {
+        this.formsService.dForm.push(this.createCommandFormWithParameters('t', [relativeCoord.x, relativeCoord.y]));
+      }
+      return;
+    }
+
+    if (this.currentCommand === 'A') {
+      if (this.isLastCommandInstructionTheSame('A')) {
+        this.lastCommandControl.controls.parameters.push([
+          new FormControl(0, { nonNullable: true }),
+          new FormControl(0, { nonNullable: true }),
+          new FormControl(0, { nonNullable: true }),
+          new FormControl(0, { nonNullable: true }),
+          new FormControl(0, { nonNullable: true }),
+          new FormControl(coord.x, { nonNullable: true }),
+          new FormControl(coord.y, { nonNullable: true }),
+        ]);
+      } else {
+        this.formsService.dForm.push(this.createCommandFormWithParameters('A', [0, 0, 0, 0, 0, coord.x, coord.y]));
+      }
+      return;
+    }
+
+    if (this.currentCommand === 'a') {
+      const coords = this.getEditPointCoords();
+      const lastCoord = coords[coords.length - 1];
+      const relativeCoord: Coord = { x: coord.x - lastCoord.x, y: coord.y - lastCoord.y };
+
+      if (this.isLastCommandInstructionTheSame('a')) {
+        this.lastCommandControl.controls.parameters.push([
+          new FormControl(0, { nonNullable: true }),
+          new FormControl(0, { nonNullable: true }),
+          new FormControl(0, { nonNullable: true }),
+          new FormControl(0, { nonNullable: true }),
+          new FormControl(0, { nonNullable: true }),
+          new FormControl(relativeCoord.x, { nonNullable: true }),
+          new FormControl(relativeCoord.y, { nonNullable: true }),
+        ]);
+      } else {
+        this.formsService.dForm.push(this.createCommandFormWithParameters('a', [0, 0, 0, 0, 0, relativeCoord.x, relativeCoord.y]));
+      }
+      return;
+    }
   }
-
-  // private onMouseDownLineTo(coord: Coord) {
-  //   // check if previous command was of these type or not
-  //   const commands = this.formsService.dForm;
-  //   const lastControl = commands.controls[commands.length - 1];
-
-  //   if (lastControl.value.instruction === COMMANDS.LINE_TO) {
-  //     // add a new point to last command
-  //     lastControl.controls['coords'].push(
-  //       new FormGroup({
-  //         x: new FormControl(coord.x, { nonNullable: true }),
-  //         y: new FormControl(coord.y, { nonNullable: true }),
-  //       }),
-  //     );
-  //   } else {
-  //     // add a new command
-  //     this.formsService.dForm.push(this.createCommandFormWithParameters('L', [coord]));
-  //   }
-  // }
-
-  // private onMouseDownCubicBezier(coord: Coord) {
-  //   if (this.stateCubicBezier === 0) {
-  //     // add a new command with three coords (two control points and end point, init point is last of previous command)
-  //     this.formsService.dForm.push(this.createCommandFormWithParameters('C', [coord, coord, coord]));
-  //     return;
-  //   }
-
-  //   const commands = this.formsService.dForm;
-  //   const lastCommandControl = commands.controls[commands.length - 1];
-  //   const coordControls = lastCommandControl.controls['coords'];
-
-  //   if (this.stateCubicBezier === 1) {
-  //     coordControls.controls[0].patchValue({
-  //       x: coord.x,
-  //       y: coord.y,
-  //     });
-  //     coordControls.controls[1].patchValue({
-  //       x: coord.x,
-  //       y: coord.y,
-  //     });
-  //   }
-
-  //   if (this.stateCubicBezier === 2) {
-  //     coordControls.controls[1].patchValue({
-  //       x: coord.x,
-  //       y: coord.y,
-  //     });
-  //   }
-  // }
   //#endregion
 
   //#region mouse drag
   public override mouseDrag(coord: CoordWithDelta): void {
-    // const commands = this.formsService.dForm;
-    // const currentCommandControl = commands.controls[commands.length - 1];
-    // if (this.currentCommand === COMMANDS.LINE_TO) {
-    //   this.onMouseDragLineTo(coord, currentCommandControl);
-    //   return;
-    // }
-    // if (this.currentCommand === COMMANDS.CUBIC_BEZIER) {
-    //   this.onMouseDragCubicBezier(coord, currentCommandControl);
-    //   return;
-    // }
+    const parameters = this.lastCommandControl.controls.parameters;
+    const coords = this.getEditPointCoords();
+
+    if (this.currentCommand === 'L') {
+      parameters.controls[parameters.controls.length - 2].setValue(coord.x);
+      parameters.controls[parameters.controls.length - 1].setValue(coord.y);
+      return;
+    }
+
+    if (this.currentCommand === 'l') {
+      const relativeCoord = { x: coord.x - coords[coords.length - 2].x, y: coord.y - coords[coords.length - 2].y };
+      parameters.controls[parameters.controls.length - 2].setValue(relativeCoord.x);
+      parameters.controls[parameters.controls.length - 1].setValue(relativeCoord.y);
+      return;
+    }
+
+    if (this.currentCommand === 'H') {
+      parameters.controls[parameters.controls.length - 1].setValue(coord.x);
+      return;
+    }
+
+    if (this.currentCommand === 'h') {
+      const relativeCoord = { x: coord.x - coords[coords.length - 2].x, y: coord.y - coords[coords.length - 2].y };
+      parameters.controls[parameters.controls.length - 1].setValue(relativeCoord.x);
+      return;
+    }
+
+    if (this.currentCommand === 'V') {
+      parameters.controls[parameters.controls.length - 1].setValue(coord.y);
+      return;
+    }
+
+    if (this.currentCommand === 'v') {
+      const relativeCoord = { x: coord.x - coords[coords.length - 2].x, y: coord.y - coords[coords.length - 2].y };
+      parameters.controls[parameters.controls.length - 1].setValue(relativeCoord.y);
+      return;
+    }
+
+    if (this.currentCommand === 'C') {
+      if ((this.parameterToEditIndex - 4) % C_LENGTH === 0) {
+        parameters.controls[this.parameterToEditIndex - 4].setValue(coord.x);
+        parameters.controls[this.parameterToEditIndex - 3].setValue(coord.y);
+        parameters.controls[this.parameterToEditIndex - 2].setValue(coord.x);
+        parameters.controls[this.parameterToEditIndex - 1].setValue(coord.y);
+        parameters.controls[this.parameterToEditIndex].setValue(coord.x);
+        parameters.controls[this.parameterToEditIndex + 1].setValue(coord.y);
+        return;
+      }
+
+      if (this.parameterToEditIndex % C_LENGTH === 0) {
+        parameters.controls[this.parameterToEditIndex].setValue(coord.x);
+        parameters.controls[this.parameterToEditIndex + 1].setValue(coord.y);
+        parameters.controls[this.parameterToEditIndex + 2].setValue(coord.x);
+        parameters.controls[this.parameterToEditIndex + 3].setValue(coord.y);
+        return;
+      }
+
+      if ((this.parameterToEditIndex - 2) % C_LENGTH === 0) {
+        parameters.controls[this.parameterToEditIndex].setValue(coord.x);
+        parameters.controls[this.parameterToEditIndex + 1].setValue(coord.y);
+        return;
+      }
+      return;
+    }
+
+    if (this.currentCommand === 'c') {
+      const relativeCoord = this.calculateRelativeCoord(coord, 3);
+
+      if ((this.parameterToEditIndex - 4) % C_LENGTH === 0) {
+        parameters.controls[this.parameterToEditIndex - 4].setValue(relativeCoord.x);
+        parameters.controls[this.parameterToEditIndex - 3].setValue(relativeCoord.y);
+        parameters.controls[this.parameterToEditIndex - 2].setValue(relativeCoord.x);
+        parameters.controls[this.parameterToEditIndex - 1].setValue(relativeCoord.y);
+        parameters.controls[this.parameterToEditIndex].setValue(relativeCoord.x);
+        parameters.controls[this.parameterToEditIndex + 1].setValue(relativeCoord.y);
+        return;
+      }
+
+      if (this.parameterToEditIndex % C_LENGTH === 0) {
+        parameters.controls[this.parameterToEditIndex].setValue(relativeCoord.x);
+        parameters.controls[this.parameterToEditIndex + 1].setValue(relativeCoord.y);
+        parameters.controls[this.parameterToEditIndex + 2].setValue(relativeCoord.x);
+        parameters.controls[this.parameterToEditIndex + 3].setValue(relativeCoord.y);
+        return;
+      }
+
+      if ((this.parameterToEditIndex - 2) % C_LENGTH === 0) {
+        parameters.controls[this.parameterToEditIndex].setValue(relativeCoord.x);
+        parameters.controls[this.parameterToEditIndex + 1].setValue(relativeCoord.y);
+        return;
+      }
+      return;
+    }
+
+    if (this.currentCommand === 'S' || this.currentCommand === 'Q') {
+      if (this.parameterToEditIndex % S_Q_LENGTH === 0) {
+        parameters.controls[this.parameterToEditIndex].setValue(coord.x);
+        parameters.controls[this.parameterToEditIndex + 1].setValue(coord.y);
+        return;
+      }
+
+      if ((this.parameterToEditIndex - 2) % S_Q_LENGTH === 0) {
+        parameters.controls[this.parameterToEditIndex - 2].setValue(coord.x);
+        parameters.controls[this.parameterToEditIndex - 1].setValue(coord.y);
+        parameters.controls[this.parameterToEditIndex].setValue(coord.x);
+        parameters.controls[this.parameterToEditIndex + 1].setValue(coord.y);
+        return;
+      }
+      return;
+    }
+
+    if (this.currentCommand === 's' || this.currentCommand === 'q') {
+      const relativeCoord = this.calculateRelativeCoord(coord, S_Q_LENGTH / 2);
+
+      if ((this.parameterToEditIndex - 2) % S_Q_LENGTH === 0) {
+        parameters.controls[this.parameterToEditIndex - 2].setValue(relativeCoord.x);
+        parameters.controls[this.parameterToEditIndex - 1].setValue(relativeCoord.y);
+        parameters.controls[this.parameterToEditIndex].setValue(relativeCoord.x);
+        parameters.controls[this.parameterToEditIndex + 1].setValue(relativeCoord.y);
+        return;
+      }
+
+      if (this.parameterToEditIndex % S_Q_LENGTH === 0) {
+        parameters.controls[this.parameterToEditIndex].setValue(relativeCoord.x);
+        parameters.controls[this.parameterToEditIndex + 1].setValue(relativeCoord.y);
+        return;
+      }
+
+      return;
+    }
+
+    if (this.currentCommand === 'T') {
+      parameters.controls[this.parameterToEditIndex].setValue(coord.x);
+      parameters.controls[this.parameterToEditIndex + 1].setValue(coord.y);
+      return;
+    }
+
+    if (this.currentCommand === 't') {
+      const relativeCoord = { x: coord.x - coords[coords.length - 2].x, y: coord.y - coords[coords.length - 2].y };
+      parameters.controls[this.parameterToEditIndex].setValue(relativeCoord.x);
+      parameters.controls[this.parameterToEditIndex + 1].setValue(relativeCoord.y);
+      return;
+    }
+
+    if (this.currentCommand === 'A') {
+      parameters.controls[parameters.controls.length - 2].setValue(coord.x);
+      parameters.controls[parameters.controls.length - 1].setValue(coord.y);
+      return;
+    }
+
+    if (this.currentCommand === 'a') {
+      const relativeCoord = { x: coord.x - coords[coords.length - 2].x, y: coord.y - coords[coords.length - 2].y };
+      parameters.controls[parameters.controls.length - 2].setValue(relativeCoord.x);
+      parameters.controls[parameters.controls.length - 1].setValue(relativeCoord.y);
+      return;
+    }
   }
-
-  // private onMouseDragLineTo(coord: Coord, currentCommandControl: ToFormType<Command>) {
-  //   const coordsFormArrayControls = currentCommandControl.controls['coords'].controls;
-  //   const pointsLength = coordsFormArrayControls.length;
-  //   coordsFormArrayControls[pointsLength - 1].patchValue({ x: coord.x, y: coord.y });
-  // }
-
-  // private onMouseDragCubicBezier(coord: Coord, currentCommandControl: ToFormType<Command>) {
-  //   const coordsFormArrayControls = currentCommandControl.controls['coords'].controls;
-
-  //   if (this.stateCubicBezier === 0) {
-  //     coordsFormArrayControls[0].patchValue({ x: coord.x, y: coord.y });
-  //     coordsFormArrayControls[1].patchValue({ x: coord.x, y: coord.y });
-  //     coordsFormArrayControls[2].patchValue({ x: coord.x, y: coord.y });
-  //     return;
-  //   }
-
-  //   if (this.stateCubicBezier === 1) {
-  //     coordsFormArrayControls[0].patchValue({ x: coord.x, y: coord.y });
-  //     coordsFormArrayControls[1].patchValue({ x: coord.x, y: coord.y });
-  //     return;
-  //   }
-
-  //   if (this.stateCubicBezier === 2) {
-  //     coordsFormArrayControls[1].patchValue({ x: coord.x, y: coord.y });
-  //     return;
-  //   }
-  // }
   //#endregion
 
   //#region mouse up
   public override mouseUp(coord: CoordWithDelta): void {
-    // TODO
-    // this.mouseDrag(coord);
-    // if (this.currentCommand === COMMANDS.CUBIC_BEZIER) {
-    //   // change to next state or start a new cubic bezier command
-    //   this.stateCubicBezier++;
-    //   if (this.stateCubicBezier === 3) {
-    //     this.stateCubicBezier = 0;
-    //   }
-    // }
+    this.mouseDrag(coord);
+
+    if (this.currentCommand.toUpperCase() === 'C') {
+      if (this.parameterToEditIndex === -1) {
+        this.parameterToEditIndex = 4;
+        return;
+      }
+      if ((this.parameterToEditIndex - 4) % C_LENGTH === 0) {
+        // finish moving end of the curve (first click)
+        this.parameterToEditIndex -= 4;
+        return;
+      }
+      if (this.parameterToEditIndex % C_LENGTH === 0) {
+        // finish moving edit point 1 (second click)
+        this.parameterToEditIndex += 2;
+        return;
+      }
+      if ((this.parameterToEditIndex - 2) % C_LENGTH === 0) {
+        // finish moving edit point 2 (second click)
+        this.parameterToEditIndex += 8;
+        return;
+      }
+    }
+
+    if (['S', 's', 'Q', 'q'].includes(this.currentCommand)) {
+      if (this.parameterToEditIndex === -1) {
+        this.parameterToEditIndex = 0;
+        return;
+      }
+      if ((this.parameterToEditIndex - 2) % S_Q_LENGTH === 0) {
+        this.parameterToEditIndex -= 2;
+        return;
+      }
+      if (this.parameterToEditIndex % S_Q_LENGTH === 0) {
+        this.parameterToEditIndex += 6;
+        return;
+      }
+    }
   }
   //#endregion
 
@@ -192,60 +516,100 @@ export class PathHost extends ShapeHost {
   //#endregion
 
   //#region edit point
-  protected override getEditPointCoordsFromSvgShapeAttributes(): Coord[] {
+  protected override getEditPointCoords(): Coord[] {
     const coords: Coord[] = [];
-    const commands = this.d;
+    const commands: Command[] = this.d;
 
     for (let c = 0; c < commands.length; c++) {
-      if (commands[c].instruction === 'A') {
-        coords.push({ x: commands[c].parameters[5], y: commands[c].parameters[6] });
-        continue;
-      }
+      const instruction = commands[c].instruction;
+      const parameters = commands[c].parameters;
 
-      if (commands[c].instruction === 'a') {
-        coords.push({ x: coords[coords.length - 1].x + commands[c].parameters[5], y: coords[coords.length - 1].y + commands[c].parameters[6] });
-        continue;
-      }
-
-      if (commands[c].instruction === 'H') {
-        for (let h = 0; h < commands[c].parameters.length; h++) {
-          coords.push({ x: commands[c].parameters[h], y: coords[coords.length - 1].y });
+      if (['M', 'L', 'C', 'S', 'Q', 'T'].includes(instruction)) {
+        for (let p = 0; p < parameters.length; p += 2) {
+          coords.push({ x: parameters[p], y: parameters[p + 1] });
         }
         continue;
       }
 
-      if (commands[c].instruction === 'h') {
-        for (let h = 0; h < commands[c].parameters.length; h++) {
-          coords.push({ x: coords[coords.length - 1].x + commands[c].parameters[h], y: coords[coords.length - 1].y });
+      if (['m', 'l', 't'].includes(instruction)) {
+        for (let p = 0; p < parameters.length; p += 2) {
+          const lastCoord = coords[coords.length - 1];
+          coords.push({ x: lastCoord.x + parameters[p], y: lastCoord.y + parameters[p + 1] });
         }
         continue;
       }
 
-      if (commands[c].instruction === 'V') {
-        for (let v = 0; v < commands[c].parameters.length; v++) {
-          coords.push({ x: coords[coords.length - 1].x, y: commands[c].parameters[v] });
+      if (instruction === 'H') {
+        for (let p = 0; p < parameters.length; p++) {
+          const lastCoord = coords[coords.length - 1];
+          coords.push({ x: parameters[p], y: lastCoord.y });
         }
         continue;
       }
 
-      if (commands[c].instruction === 'v') {
-        for (let v = 0; v < commands[c].parameters.length; v++) {
-          coords.push({ x: coords[coords.length - 1].x, y: coords[coords.length - 1].y + commands[c].parameters[v] });
+      if (instruction === 'h') {
+        for (let p = 0; p < parameters.length; p++) {
+          const lastCoord = coords[coords.length - 1];
+          coords.push({ x: lastCoord.x + parameters[p], y: lastCoord.y });
         }
         continue;
       }
 
-      // absolute coords
-      if (commands[c].instruction.toUpperCase() === commands[c].instruction || (c === 0 && commands[c].instruction === 'm')) {
-        for (let v = 0; v < commands[c].parameters.length; v += 2) {
-          coords.push({ x: commands[c].parameters[v], y: commands[c].parameters[v + 1] });
+      if (instruction === 'V') {
+        for (let p = 0; p < parameters.length; p++) {
+          const lastCoord = coords[coords.length - 1];
+          coords.push({ x: lastCoord.x, y: parameters[p] });
         }
         continue;
       }
 
-      // relative coords
-      for (let v = 0; v < commands[c].parameters.length; v += 2) {
-        coords.push({ x: coords[coords.length - 1].x + commands[c].parameters[v], y: coords[coords.length - 1].y + commands[c].parameters[v + 1] });
+      if (instruction === 'v') {
+        for (let p = 0; p < parameters.length; p++) {
+          const lastCoord = coords[coords.length - 1];
+          coords.push({ x: lastCoord.x, y: lastCoord.y + parameters[p] });
+        }
+        continue;
+      }
+
+      if (instruction === 'c') {
+        for (let s = 0; s < parameters.length / C_LENGTH; s++) {
+          const lastCoord = coords[coords.length - 1];
+          for (let p = 0; p < C_LENGTH; p += 2) {
+            coords.push({
+              x: lastCoord.x + parameters[s * C_LENGTH + p],
+              y: lastCoord.y + parameters[s * C_LENGTH + p + 1],
+            });
+          }
+        }
+        continue;
+      }
+
+      if (['s', 'q'].includes(instruction)) {
+        for (let s = 0; s < parameters.length / S_Q_LENGTH; s++) {
+          const lastCoord = coords[coords.length - 1];
+          for (let p = 0; p < S_Q_LENGTH; p += 2) {
+            coords.push({
+              x: lastCoord.x + parameters[s * S_Q_LENGTH + p],
+              y: lastCoord.y + parameters[s * S_Q_LENGTH + p + 1],
+            });
+          }
+        }
+        continue;
+      }
+
+      if (instruction === 'A') {
+        for (let p = 0; p < parameters.length; p += 7) {
+          coords.push({ x: parameters[p + 5], y: parameters[p + 6] });
+        }
+        continue;
+      }
+
+      if (instruction === 'a') {
+        for (let p = 0; p < parameters.length; p += 7) {
+          const lastCoord = coords[coords.length - 1];
+          coords.push({ x: lastCoord.x + parameters[p + 5], y: lastCoord.y + parameters[p + 6] });
+        }
+        continue;
       }
     }
 
@@ -255,7 +619,7 @@ export class PathHost extends ShapeHost {
   public override updatePositionSvgEditPoints() {
     if (this.svgEditPoints.length === 0) return;
 
-    this.getEditPointCoordsFromSvgShapeAttributes().forEach((c, i) => {
+    this.getEditPointCoords().forEach((c, i) => {
       this.setSvgAttribute('cx', c.x, this.svgEditPoints[i]);
       this.setSvgAttribute('cy', c.y, this.svgEditPoints[i]);
     });
@@ -461,10 +825,27 @@ export class PathHost extends ShapeHost {
   //#endregion
 
   //#region path host
+  private isLastCommandInstructionTheSame(i: PathInstruction): boolean {
+    const commandControls = this.formsService.dForm;
+    const lastCommandControl = commandControls.controls[commandControls.length - 1];
+    return lastCommandControl.value.instruction === i;
+  }
+
+  private get lastCommandControl(): ToFormType<Command> {
+    const commandControls = this.formsService.dForm;
+    return commandControls.controls[commandControls.length - 1];
+  }
+
+  private calculateRelativeCoord(coord: Coord, offset: number = 0): Coord {
+    const coords = this.getEditPointCoords();
+    const lastCoord = coords[coords.length - offset - 1];
+    return { x: coord.x - lastCoord.x, y: coord.y - lastCoord.y };
+  }
+
   public closePath() {
     if (this.formsService.dForm.controls.length === 0) return;
-    this.stateCubicBezier = 0;
-    this.currentCommand = 'M'; // TODO check if needs to be set to default next command
+    this.parameterToEditIndex = 0;
+    this.currentCommand = 'M';
     this.formsService.dForm.push(this.createCommandFormWithParameters('Z', []));
   }
 
