@@ -14,6 +14,8 @@ export class PathHost extends ShapeHost {
   //#region path host vars
   private parameterToEditIndex: number = -1;
 
+  private pivotDragEditPoint: Coord;
+
   private _currentCommand: PathInstruction = 'M';
   public get currentCommand(): PathInstruction {
     return this._currentCommand;
@@ -421,15 +423,15 @@ export class PathHost extends ShapeHost {
     }
 
     if (this.currentCommand === 'T') {
-      parameters.controls[this.parameterToEditIndex].setValue(coord.x);
-      parameters.controls[this.parameterToEditIndex + 1].setValue(coord.y);
+      parameters.controls[parameters.controls.length - 2].setValue(coord.x);
+      parameters.controls[parameters.controls.length - 1].setValue(coord.y);
       return;
     }
 
     if (this.currentCommand === 't') {
       const relativeCoord = { x: coord.x - coords[coords.length - 2].x, y: coord.y - coords[coords.length - 2].y };
-      parameters.controls[this.parameterToEditIndex].setValue(relativeCoord.x);
-      parameters.controls[this.parameterToEditIndex + 1].setValue(relativeCoord.y);
+      parameters.controls[parameters.controls.length - 2].setValue(relativeCoord.x);
+      parameters.controls[parameters.controls.length - 1].setValue(relativeCoord.y);
       return;
     }
 
@@ -499,19 +501,22 @@ export class PathHost extends ShapeHost {
   }
   //#endregion
 
+  //#region  mouse down edit
+  public override mouseDownEdit(coord: Coord): void {
+    super.mouseDownEdit(coord);
+
+    if (this.selectedEditPointIndex !== -1) {
+      this.pivotDragEditPoint = this.getFormControlValueForEditPoint();
+    }
+  }
+  //#endregion
+
   //#region mouse drag edit
   public override mouseDragEdit(coord: CoordWithDelta): void {
-    // TODO
-    // // let i = 0;
-    // // let controlsToEdit = [this.formsService.dForm.controls[0].controls.parameters.controls[0], this.formsService.dForm.controls[0].controls.parameters.controls[1]];
-    // // while(i < this.selectedEditPointIndex) {
-    // //   // TODO
-    // // }
-    // const coordControls = this.formsService.dForm.controls.flatMap((c) => c.controls.coords.controls);
-    // coordControls[this.selectedEditPointIndex].patchValue({
-    //   x: coord.x,
-    //   y: coord.y,
-    // });
+    const controls = this.getFormControlsForSelectedEditPointIndex();
+
+    controls[0].setValue(this.pivotDragEditPoint.x + coord.dx);
+    controls[1].setValue(this.pivotDragEditPoint.y + coord.dy);
   }
   //#endregion
 
@@ -840,6 +845,58 @@ export class PathHost extends ShapeHost {
     const coords = this.getEditPointCoords();
     const lastCoord = coords[coords.length - offset - 1];
     return { x: coord.x - lastCoord.x, y: coord.y - lastCoord.y };
+  }
+
+  private getFormControlsForSelectedEditPointIndex(): [FormControl<number>, FormControl<number>] {
+    const commandControls = this.formsService.dForm.controls;
+    const mockFormControl = new FormControl<number>(0, { nonNullable: true });
+
+    let counter = 0;
+    for (let c = 0; c < commandControls.length; c++) {
+      const instruction = commandControls[c].controls.instruction;
+      const parameters = commandControls[c].controls.parameters;
+
+      if (['M', 'm', 'L', 'l', 'C', 'c', 'S', 's', 'Q', 'q', 'T', 't'].includes(instruction.value)) {
+        for (let i = 0; i < parameters.length; i += 2) {
+          if (counter === this.selectedEditPointIndex) {
+            return [parameters.controls[i], parameters.controls[i + 1]];
+          } else {
+            counter++;
+          }
+        }
+      } else if (['H', 'h'].includes(instruction.value)) {
+        for (let i = 0; i < parameters.length; i++) {
+          if (counter === this.selectedEditPointIndex) {
+            return [parameters.controls[i], mockFormControl];
+          } else {
+            counter++;
+          }
+        }
+      } else if (['V', 'v'].includes(instruction.value)) {
+        for (let i = 0; i < parameters.length; i++) {
+          if (counter === this.selectedEditPointIndex) {
+            return [mockFormControl, parameters.controls[i + 1]];
+          } else {
+            counter++;
+          }
+        }
+      } else if (['A', 'a'].includes(instruction.value)) {
+        for (let i = 5; i < parameters.length; i += 7) {
+          if (counter === this.selectedEditPointIndex) {
+            return [parameters.controls[i], parameters.controls[i + 1]];
+          } else {
+            counter++;
+          }
+        }
+      }
+    }
+
+    return [mockFormControl, mockFormControl]; // should never return this
+  }
+
+  private getFormControlValueForEditPoint(): Coord {
+    const controls = this.getFormControlsForSelectedEditPointIndex();
+    return { x: controls[0].value, y: controls[1].value };
   }
 
   public closePath() {
