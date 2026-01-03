@@ -308,6 +308,7 @@ export class PathHost extends ShapeHost {
     super.mouseDownEdit(coord);
 
     if (this.selectedEditPointIndex !== -1) {
+      // save the position of the coord in the form before starting to drag the edit point
       this.pivotDragEditPoint = this.getFormControlValueForEditPoint();
     }
   }
@@ -315,9 +316,7 @@ export class PathHost extends ShapeHost {
 
   //#region mouse drag edit
   public override mouseDragEdit(coord: CoordWithDelta): void {
-    // TODO fix this methods, sometimes throws error (try adding a lot of H h and V v commands)
     const controls = this.getFormControlsForSelectedEditPointIndex();
-
     controls[0].setValue(this.pivotDragEditPoint.x + coord.dx);
     controls[1].setValue(this.pivotDragEditPoint.y + coord.dy);
   }
@@ -341,7 +340,7 @@ export class PathHost extends ShapeHost {
 
       if (['m', 'l', 't'].includes(instruction)) {
         for (let p = 0; p < parameters.length; p += 2) {
-          const lastCoord = coords[coords.length - 1];
+          const lastCoord = coords.at(-1)!;
           coords.push({ x: lastCoord.x + parameters[p], y: lastCoord.y + parameters[p + 1] });
         }
         continue;
@@ -349,7 +348,7 @@ export class PathHost extends ShapeHost {
 
       if (instruction === 'H') {
         for (let p = 0; p < parameters.length; p++) {
-          const lastCoord = coords[coords.length - 1];
+          const lastCoord = coords.at(-1)!;
           coords.push({ x: parameters[p], y: lastCoord.y });
         }
         continue;
@@ -357,7 +356,7 @@ export class PathHost extends ShapeHost {
 
       if (instruction === 'h') {
         for (let p = 0; p < parameters.length; p++) {
-          const lastCoord = coords[coords.length - 1];
+          const lastCoord = coords.at(-1)!;
           coords.push({ x: lastCoord.x + parameters[p], y: lastCoord.y });
         }
         continue;
@@ -365,7 +364,7 @@ export class PathHost extends ShapeHost {
 
       if (instruction === 'V') {
         for (let p = 0; p < parameters.length; p++) {
-          const lastCoord = coords[coords.length - 1];
+          const lastCoord = coords.at(-1)!;
           coords.push({ x: lastCoord.x, y: parameters[p] });
         }
         continue;
@@ -373,7 +372,7 @@ export class PathHost extends ShapeHost {
 
       if (instruction === 'v') {
         for (let p = 0; p < parameters.length; p++) {
-          const lastCoord = coords[coords.length - 1];
+          const lastCoord = coords.at(-1)!;
           coords.push({ x: lastCoord.x, y: lastCoord.y + parameters[p] });
         }
         continue;
@@ -381,7 +380,7 @@ export class PathHost extends ShapeHost {
 
       if (instruction === 'c') {
         for (let s = 0; s < parameters.length / C_LENGTH; s++) {
-          const lastCoord = coords[coords.length - 1];
+          const lastCoord = coords.at(-1)!;
           for (let p = 0; p < C_LENGTH; p += 2) {
             coords.push({
               x: lastCoord.x + parameters[s * C_LENGTH + p],
@@ -394,7 +393,7 @@ export class PathHost extends ShapeHost {
 
       if (['s', 'q'].includes(instruction)) {
         for (let s = 0; s < parameters.length / S_Q_LENGTH; s++) {
-          const lastCoord = coords[coords.length - 1];
+          const lastCoord = coords.at(-1)!;
           for (let p = 0; p < S_Q_LENGTH; p += 2) {
             coords.push({
               x: lastCoord.x + parameters[s * S_Q_LENGTH + p],
@@ -414,7 +413,7 @@ export class PathHost extends ShapeHost {
 
       if (instruction === 'a') {
         for (let p = 0; p < parameters.length; p += 7) {
-          const lastCoord = coords[coords.length - 1];
+          const lastCoord = coords.at(-1)!;
           coords.push({ x: lastCoord.x + parameters[p + 5], y: lastCoord.y + parameters[p + 6] });
         }
         continue;
@@ -635,13 +634,12 @@ export class PathHost extends ShapeHost {
   //#region path host
   private isLastCommandInstructionTheSame(i: PathInstruction): boolean {
     const commandControls = this.formsService.dForm;
-    const lastCommandControl = commandControls.controls[commandControls.length - 1];
+    const lastCommandControl = commandControls.controls.at(-1)!;
     return lastCommandControl.value.instruction === i;
   }
 
   private get lastCommandControl(): ToFormType<Command> {
-    const commandControls = this.formsService.dForm;
-    return commandControls.controls[commandControls.length - 1];
+    return this.formsService.dForm.controls.at(-1)!;
   }
 
   private calculateRelativeCoord(coord: Coord, offset: number = 0): Coord {
@@ -667,7 +665,10 @@ export class PathHost extends ShapeHost {
             counter++;
           }
         }
-      } else if (['H', 'h'].includes(instruction.value)) {
+        continue;
+      }
+
+      if (['H', 'h'].includes(instruction.value)) {
         for (let i = 0; i < parameters.length; i++) {
           if (counter === this.selectedEditPointIndex) {
             return [parameters.controls[i], mockFormControl];
@@ -675,15 +676,21 @@ export class PathHost extends ShapeHost {
             counter++;
           }
         }
-      } else if (['V', 'v'].includes(instruction.value)) {
+        continue;
+      }
+
+      if (['V', 'v'].includes(instruction.value)) {
         for (let i = 0; i < parameters.length; i++) {
           if (counter === this.selectedEditPointIndex) {
-            return [mockFormControl, parameters.controls[i + 1]];
+            return [mockFormControl, parameters.controls[i]];
           } else {
             counter++;
           }
         }
-      } else if (['A', 'a'].includes(instruction.value)) {
+        continue;
+      }
+
+      if (['A', 'a'].includes(instruction.value)) {
         for (let i = 5; i < parameters.length; i += 7) {
           if (counter === this.selectedEditPointIndex) {
             return [parameters.controls[i], parameters.controls[i + 1]];
@@ -691,6 +698,7 @@ export class PathHost extends ShapeHost {
             counter++;
           }
         }
+        continue;
       }
     }
 
@@ -708,9 +716,8 @@ export class PathHost extends ShapeHost {
 
   public closePath() {
     if (this.formsService.dForm.controls.length === 0) return;
-    this.parameterToEditIndex = 0;
-    this.currentCommand = 'M';
     this.formsService.dForm.push(this.createCommandFormWithParameters('Z', []));
+    this.currentCommand = 'M';
   }
 
   private createCommandFormWithParameters(instruction: PathInstruction, parameters: number[]): ToFormType<Command> {
@@ -721,17 +728,16 @@ export class PathHost extends ShapeHost {
   }
 
   public calculateSvgEditPointIndexForCommandAndControl(cmdi: number, parmi: number): number {
-    if (!(this.shapeListService.selectedShape instanceof PathHost)) return -1;
-    const commands = this.shapeListService.selectedShape.d;
+    const commands = this.d;
 
     let svgEditPointIndex = 0;
     let i = 0;
 
     // count edit points of previous commands
     while (i < cmdi) {
-      if (commands[i].instruction.toLowerCase() === 'a') {
+      if (['A', 'a'].includes(commands[i].instruction)) {
         svgEditPointIndex++; // Arcs only contain one edit point
-      } else if (commands[i].instruction.toLowerCase() === 'h' || commands[i].instruction.toLowerCase() === 'v') {
+      } else if (['H', 'h', 'V', 'v'].includes(commands[i].instruction)) {
         svgEditPointIndex += commands[i].parameters.length;
       } else {
         svgEditPointIndex += commands[i].parameters.length / 2;
@@ -741,12 +747,12 @@ export class PathHost extends ShapeHost {
 
     // i is now the index of the command that contains the edit point to calculate the index
 
-    if (commands[i].instruction.toLowerCase() === 'a') {
+    if (['A', 'a'].includes(commands[i].instruction)) {
       // Arcs only have one edit point, regardless of parmi
       return svgEditPointIndex;
     }
 
-    if (commands[i].instruction.toLowerCase() === 'h' || commands[i].instruction.toLowerCase() === 'v') {
+    if (['H', 'h', 'V', 'v'].includes(commands[i].instruction)) {
       // for H and V, each control (parmi) is a single edit point
       return svgEditPointIndex + parmi;
     }
