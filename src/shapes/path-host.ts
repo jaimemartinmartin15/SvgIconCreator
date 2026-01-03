@@ -21,7 +21,9 @@ export class PathHost extends ShapeHost {
     return this._currentCommand;
   }
   public set currentCommand(command: PathInstruction) {
-    this.parameterToEditIndex = -1;
+    if (this._currentCommand !== command) {
+      this.parameterToEditIndex = -1;
+    }
     this._currentCommand = command;
   }
   //#endregion
@@ -41,248 +43,131 @@ export class PathHost extends ShapeHost {
       this.canvas.append(this.svg);
     }
 
-    if (this.currentCommand === 'M') {
-      this.formsService.dForm.push(this.createCommandFormWithParameters('M', [coord.x, coord.y]));
+    if (['M', 'm'].includes(this.currentCommand)) {
+      // Note: in the standard it is possible to have multiple coords for M or m commands, but I only support one coord.
+      //       That is why it changes to L automatically. It allows to draw a line on first mouse down and mouse up.
+      // TODO: allow to choose default instruction after M or m instructions (tip: remove return in this block?)
+
+      const c = this.isRelativeInstruction(this.currentCommand) ? this.calculateRelativeCoord(coord) : coord;
+
+      this.formsService.dForm.push(this.createCommandFormWithParameters(this.currentCommand, [c.x, c.y]));
       this.currentCommand = 'L';
       this.formsService.dForm.push(this.createCommandFormWithParameters('L', [coord.x, coord.y]));
       return;
     }
 
-    if (this.currentCommand === 'm') {
-      const relativeCoord: Coord = this.calculateRelativeCoord(coord);
+    if (['L', 'l', 'T', 't'].includes(this.currentCommand)) {
+      const c = this.isRelativeInstruction(this.currentCommand) ? this.calculateRelativeCoord(coord) : coord;
 
-      this.formsService.dForm.push(this.createCommandFormWithParameters('m', [relativeCoord.x, relativeCoord.y]));
-      this.currentCommand = 'L';
-      this.formsService.dForm.push(this.createCommandFormWithParameters('L', [coord.x, coord.y]));
-      return;
-    }
-
-    if (this.currentCommand === 'L') {
-      if (this.isLastCommandInstructionTheSame('L')) {
-        this.lastCommandControl.controls.parameters.push([new FormControl(coord.x, { nonNullable: true }), new FormControl(coord.y, { nonNullable: true })]);
+      if (this.isLastCommandInstructionTheSame(this.currentCommand)) {
+        this.lastCommandControl.controls.parameters.push([new FormControl(c.x, { nonNullable: true }), new FormControl(c.y, { nonNullable: true })]);
       } else {
-        this.formsService.dForm.push(this.createCommandFormWithParameters('L', [coord.x, coord.y]));
+        this.formsService.dForm.push(this.createCommandFormWithParameters(this.currentCommand, [c.x, c.y]));
       }
       return;
     }
 
-    if (this.currentCommand === 'l') {
-      const relativeCoord: Coord = this.calculateRelativeCoord(coord);
+    if (['H', 'h'].includes(this.currentCommand)) {
+      const c = this.isRelativeInstruction(this.currentCommand) ? this.calculateRelativeCoord(coord) : coord;
 
-      if (this.isLastCommandInstructionTheSame('l')) {
-        this.lastCommandControl.controls.parameters.push([
-          new FormControl(relativeCoord.x, { nonNullable: true }),
-          new FormControl(relativeCoord.y, { nonNullable: true }),
-        ]);
+      if (this.isLastCommandInstructionTheSame(this.currentCommand)) {
+        this.lastCommandControl.controls.parameters.push([new FormControl(c.x, { nonNullable: true })]);
       } else {
-        this.formsService.dForm.push(this.createCommandFormWithParameters('l', [relativeCoord.x, relativeCoord.y]));
+        this.formsService.dForm.push(this.createCommandFormWithParameters(this.currentCommand, [c.x]));
       }
       return;
     }
 
-    if (this.currentCommand === 'H') {
-      if (this.isLastCommandInstructionTheSame('H')) {
-        this.lastCommandControl.controls.parameters.push([new FormControl(coord.x, { nonNullable: true })]);
+    if (['V', 'v'].includes(this.currentCommand)) {
+      const c = this.isRelativeInstruction(this.currentCommand) ? this.calculateRelativeCoord(coord) : coord;
+
+      if (this.isLastCommandInstructionTheSame(this.currentCommand)) {
+        this.lastCommandControl.controls.parameters.push([new FormControl(c.y, { nonNullable: true })]);
       } else {
-        this.formsService.dForm.push(this.createCommandFormWithParameters('H', [coord.x]));
+        this.formsService.dForm.push(this.createCommandFormWithParameters(this.currentCommand, [c.y]));
       }
       return;
     }
 
-    if (this.currentCommand === 'h') {
-      const relativeCoord: Coord = this.calculateRelativeCoord(coord);
-
-      if (this.isLastCommandInstructionTheSame('h')) {
-        this.lastCommandControl.controls.parameters.push([new FormControl(relativeCoord.x, { nonNullable: true })]);
-      } else {
-        this.formsService.dForm.push(this.createCommandFormWithParameters('h', [relativeCoord.x]));
-      }
-      return;
-    }
-
-    if (this.currentCommand === 'V') {
-      if (this.isLastCommandInstructionTheSame('V')) {
-        this.lastCommandControl.controls.parameters.push([new FormControl(coord.y, { nonNullable: true })]);
-      } else {
-        this.formsService.dForm.push(this.createCommandFormWithParameters('V', [coord.y]));
-      }
-      return;
-    }
-
-    if (this.currentCommand === 'v') {
-      const relativeCoord: Coord = this.calculateRelativeCoord(coord);
-
-      if (this.isLastCommandInstructionTheSame('v')) {
-        this.lastCommandControl.controls.parameters.push([new FormControl(relativeCoord.y, { nonNullable: true })]);
-      } else {
-        this.formsService.dForm.push(this.createCommandFormWithParameters('v', [relativeCoord.y]));
-      }
-      return;
-    }
-
-    if (this.currentCommand === 'C') {
-      if (this.parameterToEditIndex === -1 || (this.parameterToEditIndex - 4) % 6 === 0) {
-        // create a new curve
-
-        if (this.isLastCommandInstructionTheSame('C')) {
-          this.lastCommandControl.controls.parameters.push([
-            new FormControl(coord.x, { nonNullable: true }),
-            new FormControl(coord.y, { nonNullable: true }),
-            new FormControl(coord.x, { nonNullable: true }),
-            new FormControl(coord.y, { nonNullable: true }),
-            new FormControl(coord.x, { nonNullable: true }),
-            new FormControl(coord.y, { nonNullable: true }),
-          ]);
-        } else {
-          this.formsService.dForm.push(this.createCommandFormWithParameters('C', [coord.x, coord.y, coord.x, coord.y, coord.x, coord.y]));
-          this.parameterToEditIndex = 4;
-        }
-        return;
-      }
-      if ((this.parameterToEditIndex - 2) % 6 === 0 || (this.parameterToEditIndex - 4) % 6 === 0) {
-        this.mouseDrag(coord as CoordWithDelta);
-        return;
-      }
-      return;
-    }
-
-    if (this.currentCommand === 'c') {
+    if (['C', 'c'].includes(this.currentCommand)) {
       if (this.parameterToEditIndex === -1 || (this.parameterToEditIndex - 4) % C_LENGTH === 0) {
         // create a new curve
 
-        const relativeCoord = this.calculateRelativeCoord(coord);
-        if (this.isLastCommandInstructionTheSame('c')) {
-          this.lastCommandControl.controls.parameters.push([
-            new FormControl(relativeCoord.x, { nonNullable: true }),
-            new FormControl(relativeCoord.y, { nonNullable: true }),
-            new FormControl(relativeCoord.x, { nonNullable: true }),
-            new FormControl(relativeCoord.y, { nonNullable: true }),
-            new FormControl(relativeCoord.x, { nonNullable: true }),
-            new FormControl(relativeCoord.y, { nonNullable: true }),
-          ]);
-        } else {
-          this.formsService.dForm.push(
-            this.createCommandFormWithParameters('c', [relativeCoord.x, relativeCoord.y, relativeCoord.x, relativeCoord.y, relativeCoord.x, relativeCoord.y]),
-          );
-          this.parameterToEditIndex = 4;
-        }
-        return;
-      }
-      if ((this.parameterToEditIndex - 2) % 6 === 0 || (this.parameterToEditIndex - 4) % 6 === 0) {
-        this.mouseDrag(coord as CoordWithDelta);
-        return;
-      }
-      return;
-    }
-
-    if (this.currentCommand === 'S' || this.currentCommand === 'Q') {
-      if (this.parameterToEditIndex === -1 || (this.parameterToEditIndex - 2) % S_Q_LENGTH === 0) {
-        // create a new curve
+        const c = this.isRelativeInstruction(this.currentCommand) ? this.calculateRelativeCoord(coord) : coord;
 
         if (this.isLastCommandInstructionTheSame(this.currentCommand)) {
           this.lastCommandControl.controls.parameters.push([
-            new FormControl(coord.x, { nonNullable: true }),
-            new FormControl(coord.y, { nonNullable: true }),
-            new FormControl(coord.x, { nonNullable: true }),
-            new FormControl(coord.y, { nonNullable: true }),
+            new FormControl(c.x, { nonNullable: true }),
+            new FormControl(c.y, { nonNullable: true }),
+            new FormControl(c.x, { nonNullable: true }),
+            new FormControl(c.y, { nonNullable: true }),
+            new FormControl(c.x, { nonNullable: true }),
+            new FormControl(c.y, { nonNullable: true }),
           ]);
+          // this.parameterToEditIndex is already set to start editing the end point of the new list of parameters (on mouse up)
         } else {
-          this.formsService.dForm.push(this.createCommandFormWithParameters(this.currentCommand, [coord.x, coord.y, coord.x, coord.y]));
-          this.parameterToEditIndex = 2;
+          this.formsService.dForm.push(this.createCommandFormWithParameters(this.currentCommand, [c.x, c.y, c.x, c.y, c.x, c.y]));
+          this.parameterToEditIndex = 4; // first time, overrides the -1
         }
         return;
       }
-      if ((this.parameterToEditIndex - 2) % S_Q_LENGTH === 0) {
+
+      if ((this.parameterToEditIndex - 2) % C_LENGTH === 0 || (this.parameterToEditIndex - 4) % C_LENGTH === 0) {
+        // set first and second edit point controls
         this.mouseDrag(coord as CoordWithDelta);
         return;
       }
-      return;
+
+      return; // should not happen
     }
 
-    if (this.currentCommand === 's' || this.currentCommand === 'q') {
+    if (['S', 's', 'Q', 'q'].includes(this.currentCommand)) {
       if (this.parameterToEditIndex === -1 || (this.parameterToEditIndex - 2) % S_Q_LENGTH === 0) {
         // create a new curve
 
-        const relativeCoord = this.calculateRelativeCoord(coord);
+        const c = this.isRelativeInstruction(this.currentCommand) ? this.calculateRelativeCoord(coord) : coord;
+
         if (this.isLastCommandInstructionTheSame(this.currentCommand)) {
           this.lastCommandControl.controls.parameters.push([
-            new FormControl(relativeCoord.x, { nonNullable: true }),
-            new FormControl(relativeCoord.y, { nonNullable: true }),
-            new FormControl(relativeCoord.x, { nonNullable: true }),
-            new FormControl(relativeCoord.y, { nonNullable: true }),
+            new FormControl(c.x, { nonNullable: true }),
+            new FormControl(c.y, { nonNullable: true }),
+            new FormControl(c.x, { nonNullable: true }),
+            new FormControl(c.y, { nonNullable: true }),
           ]);
+          // this.parameterToEditIndex is already set to start editing the end point of the new list of parameters (on mouse up)
         } else {
-          this.formsService.dForm.push(this.createCommandFormWithParameters(this.currentCommand, [relativeCoord.x, relativeCoord.y, relativeCoord.x, relativeCoord.y]));
-          this.parameterToEditIndex = 2;
+          this.formsService.dForm.push(this.createCommandFormWithParameters(this.currentCommand, [c.x, c.y, c.x, c.y]));
+          this.parameterToEditIndex = 2; // first time, overrides the -1
         }
+
         return;
       }
+
       if ((this.parameterToEditIndex - 2) % S_Q_LENGTH === 0) {
+        // set first and second edit point controls
         this.mouseDrag(coord as CoordWithDelta);
         return;
       }
-      return;
+
+      return; // should not happen
     }
 
-    if (this.currentCommand === 'T') {
-      if (this.isLastCommandInstructionTheSame('T')) {
-        this.lastCommandControl.controls.parameters.push([new FormControl(coord.x, { nonNullable: true }), new FormControl(coord.y, { nonNullable: true })]);
-      } else {
-        this.formsService.dForm.push(this.createCommandFormWithParameters('T', [coord.x, coord.y]));
-      }
-      return;
-    }
+    if (['A', 'a'].includes(this.currentCommand)) {
+      // TODO think a way to set a size with the mouse instead of 2 and 4 by default and using the forms
+      const c = this.isRelativeInstruction(this.currentCommand) ? this.calculateRelativeCoord(coord) : coord;
 
-    if (this.currentCommand === 't') {
-      const coords = this.getEditPointCoords();
-      const lastCoord = coords[coords.length - 1];
-      const relativeCoord: Coord = { x: coord.x - lastCoord.x, y: coord.y - lastCoord.y };
-
-      if (this.isLastCommandInstructionTheSame('t')) {
+      if (this.isLastCommandInstructionTheSame(this.currentCommand)) {
         this.lastCommandControl.controls.parameters.push([
-          new FormControl(relativeCoord.x, { nonNullable: true }),
-          new FormControl(relativeCoord.y, { nonNullable: true }),
+          new FormControl(2, { nonNullable: true }),
+          new FormControl(4, { nonNullable: true }),
+          new FormControl(0, { nonNullable: true }),
+          new FormControl(0, { nonNullable: true }),
+          new FormControl(0, { nonNullable: true }),
+          new FormControl(c.x, { nonNullable: true }),
+          new FormControl(c.y, { nonNullable: true }),
         ]);
       } else {
-        this.formsService.dForm.push(this.createCommandFormWithParameters('t', [relativeCoord.x, relativeCoord.y]));
-      }
-      return;
-    }
-
-    if (this.currentCommand === 'A') {
-      if (this.isLastCommandInstructionTheSame('A')) {
-        this.lastCommandControl.controls.parameters.push([
-          new FormControl(0, { nonNullable: true }),
-          new FormControl(0, { nonNullable: true }),
-          new FormControl(0, { nonNullable: true }),
-          new FormControl(0, { nonNullable: true }),
-          new FormControl(0, { nonNullable: true }),
-          new FormControl(coord.x, { nonNullable: true }),
-          new FormControl(coord.y, { nonNullable: true }),
-        ]);
-      } else {
-        this.formsService.dForm.push(this.createCommandFormWithParameters('A', [0, 0, 0, 0, 0, coord.x, coord.y]));
-      }
-      return;
-    }
-
-    if (this.currentCommand === 'a') {
-      const coords = this.getEditPointCoords();
-      const lastCoord = coords[coords.length - 1];
-      const relativeCoord: Coord = { x: coord.x - lastCoord.x, y: coord.y - lastCoord.y };
-
-      if (this.isLastCommandInstructionTheSame('a')) {
-        this.lastCommandControl.controls.parameters.push([
-          new FormControl(0, { nonNullable: true }),
-          new FormControl(0, { nonNullable: true }),
-          new FormControl(0, { nonNullable: true }),
-          new FormControl(0, { nonNullable: true }),
-          new FormControl(0, { nonNullable: true }),
-          new FormControl(relativeCoord.x, { nonNullable: true }),
-          new FormControl(relativeCoord.y, { nonNullable: true }),
-        ]);
-      } else {
-        this.formsService.dForm.push(this.createCommandFormWithParameters('a', [0, 0, 0, 0, 0, relativeCoord.x, relativeCoord.y]));
+        this.formsService.dForm.push(this.createCommandFormWithParameters(this.currentCommand, [2, 4, 0, 0, 0, c.x, c.y]));
       }
       return;
     }
@@ -897,6 +782,10 @@ export class PathHost extends ShapeHost {
   private getFormControlValueForEditPoint(): Coord {
     const controls = this.getFormControlsForSelectedEditPointIndex();
     return { x: controls[0].value, y: controls[1].value };
+  }
+
+  private isRelativeInstruction(instruction: PathInstruction): boolean {
+    return instruction.toLowerCase() === instruction;
   }
 
   public closePath() {
