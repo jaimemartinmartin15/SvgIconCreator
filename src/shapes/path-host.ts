@@ -177,159 +177,77 @@ export class PathHost extends ShapeHost {
   //#region mouse drag
   public override mouseDrag(coord: CoordWithDelta): void {
     const parameters = this.lastCommandControl.controls.parameters;
-    const coords = this.getEditPointCoords();
 
-    if (this.currentCommand === 'L') {
-      parameters.controls[parameters.controls.length - 2].setValue(coord.x);
-      parameters.controls[parameters.controls.length - 1].setValue(coord.y);
+    if (['L', 'l', 'T', 't', 'A', 'a'].includes(this.currentCommand)) {
+      const c = this.isRelativeInstruction(this.currentCommand) ? this.calculateRelativeCoord(coord, 1) : coord;
+      parameters.controls.at(-2)!.setValue(c.x);
+      parameters.controls.at(-1)!.setValue(c.y);
       return;
     }
 
-    if (this.currentCommand === 'l') {
-      const relativeCoord = { x: coord.x - coords[coords.length - 2].x, y: coord.y - coords[coords.length - 2].y };
-      parameters.controls[parameters.controls.length - 2].setValue(relativeCoord.x);
-      parameters.controls[parameters.controls.length - 1].setValue(relativeCoord.y);
+    if (['H', 'h'].includes(this.currentCommand)) {
+      const c = this.isRelativeInstruction(this.currentCommand) ? this.calculateRelativeCoord(coord, 1) : coord;
+      parameters.controls.at(-1)!.setValue(c.x);
       return;
     }
 
-    if (this.currentCommand === 'H') {
-      parameters.controls[parameters.controls.length - 1].setValue(coord.x);
+    if (['V', 'v'].includes(this.currentCommand)) {
+      const c = this.isRelativeInstruction(this.currentCommand) ? this.calculateRelativeCoord(coord, 1) : coord;
+      parameters.controls.at(-1)!.setValue(c.y);
       return;
     }
 
-    if (this.currentCommand === 'h') {
-      const relativeCoord = { x: coord.x - coords[coords.length - 2].x, y: coord.y - coords[coords.length - 2].y };
-      parameters.controls[parameters.controls.length - 1].setValue(relativeCoord.x);
-      return;
-    }
+    if (['C', 'c'].includes(this.currentCommand)) {
+      const c = this.isRelativeInstruction(this.currentCommand) ? this.calculateRelativeCoord(coord, C_LENGTH / 2) : coord;
 
-    if (this.currentCommand === 'V') {
-      parameters.controls[parameters.controls.length - 1].setValue(coord.y);
-      return;
-    }
-
-    if (this.currentCommand === 'v') {
-      const relativeCoord = { x: coord.x - coords[coords.length - 2].x, y: coord.y - coords[coords.length - 2].y };
-      parameters.controls[parameters.controls.length - 1].setValue(relativeCoord.y);
-      return;
-    }
-
-    if (this.currentCommand === 'C') {
       if ((this.parameterToEditIndex - 4) % C_LENGTH === 0) {
-        parameters.controls[this.parameterToEditIndex - 4].setValue(coord.x);
-        parameters.controls[this.parameterToEditIndex - 3].setValue(coord.y);
-        parameters.controls[this.parameterToEditIndex - 2].setValue(coord.x);
-        parameters.controls[this.parameterToEditIndex - 1].setValue(coord.y);
-        parameters.controls[this.parameterToEditIndex].setValue(coord.x);
-        parameters.controls[this.parameterToEditIndex + 1].setValue(coord.y);
+        // dragging end of the curve
+        parameters.controls[this.parameterToEditIndex - 4].setValue(c.x);
+        parameters.controls[this.parameterToEditIndex - 3].setValue(c.y);
+        parameters.controls[this.parameterToEditIndex - 2].setValue(c.x);
+        parameters.controls[this.parameterToEditIndex - 1].setValue(c.y);
+        parameters.controls[this.parameterToEditIndex + 0].setValue(c.x);
+        parameters.controls[this.parameterToEditIndex + 1].setValue(c.y);
         return;
       }
 
       if (this.parameterToEditIndex % C_LENGTH === 0) {
-        parameters.controls[this.parameterToEditIndex].setValue(coord.x);
-        parameters.controls[this.parameterToEditIndex + 1].setValue(coord.y);
-        parameters.controls[this.parameterToEditIndex + 2].setValue(coord.x);
-        parameters.controls[this.parameterToEditIndex + 3].setValue(coord.y);
+        // dragging first edit point control
+        parameters.controls[this.parameterToEditIndex + 0].setValue(c.x);
+        parameters.controls[this.parameterToEditIndex + 1].setValue(c.y);
+        parameters.controls[this.parameterToEditIndex + 2].setValue(c.x);
+        parameters.controls[this.parameterToEditIndex + 3].setValue(c.y);
         return;
       }
 
       if ((this.parameterToEditIndex - 2) % C_LENGTH === 0) {
-        parameters.controls[this.parameterToEditIndex].setValue(coord.x);
-        parameters.controls[this.parameterToEditIndex + 1].setValue(coord.y);
+        // dragging second edit point control
+        parameters.controls[this.parameterToEditIndex + 0].setValue(c.x);
+        parameters.controls[this.parameterToEditIndex + 1].setValue(c.y);
         return;
       }
       return;
     }
 
-    if (this.currentCommand === 'c') {
-      const relativeCoord = this.calculateRelativeCoord(coord, 3);
-
-      if ((this.parameterToEditIndex - 4) % C_LENGTH === 0) {
-        parameters.controls[this.parameterToEditIndex - 4].setValue(relativeCoord.x);
-        parameters.controls[this.parameterToEditIndex - 3].setValue(relativeCoord.y);
-        parameters.controls[this.parameterToEditIndex - 2].setValue(relativeCoord.x);
-        parameters.controls[this.parameterToEditIndex - 1].setValue(relativeCoord.y);
-        parameters.controls[this.parameterToEditIndex].setValue(relativeCoord.x);
-        parameters.controls[this.parameterToEditIndex + 1].setValue(relativeCoord.y);
-        return;
-      }
-
-      if (this.parameterToEditIndex % C_LENGTH === 0) {
-        parameters.controls[this.parameterToEditIndex].setValue(relativeCoord.x);
-        parameters.controls[this.parameterToEditIndex + 1].setValue(relativeCoord.y);
-        parameters.controls[this.parameterToEditIndex + 2].setValue(relativeCoord.x);
-        parameters.controls[this.parameterToEditIndex + 3].setValue(relativeCoord.y);
-        return;
-      }
-
-      if ((this.parameterToEditIndex - 2) % C_LENGTH === 0) {
-        parameters.controls[this.parameterToEditIndex].setValue(relativeCoord.x);
-        parameters.controls[this.parameterToEditIndex + 1].setValue(relativeCoord.y);
-        return;
-      }
-      return;
-    }
-
-    if (this.currentCommand === 'S' || this.currentCommand === 'Q') {
-      if (this.parameterToEditIndex % S_Q_LENGTH === 0) {
-        parameters.controls[this.parameterToEditIndex].setValue(coord.x);
-        parameters.controls[this.parameterToEditIndex + 1].setValue(coord.y);
-        return;
-      }
+    if (['S', 's', 'Q', 'q'].includes(this.currentCommand)) {
+      const c = this.isRelativeInstruction(this.currentCommand) ? this.calculateRelativeCoord(coord, S_Q_LENGTH / 2) : coord;
 
       if ((this.parameterToEditIndex - 2) % S_Q_LENGTH === 0) {
-        parameters.controls[this.parameterToEditIndex - 2].setValue(coord.x);
-        parameters.controls[this.parameterToEditIndex - 1].setValue(coord.y);
-        parameters.controls[this.parameterToEditIndex].setValue(coord.x);
-        parameters.controls[this.parameterToEditIndex + 1].setValue(coord.y);
-        return;
-      }
-      return;
-    }
-
-    if (this.currentCommand === 's' || this.currentCommand === 'q') {
-      const relativeCoord = this.calculateRelativeCoord(coord, S_Q_LENGTH / 2);
-
-      if ((this.parameterToEditIndex - 2) % S_Q_LENGTH === 0) {
-        parameters.controls[this.parameterToEditIndex - 2].setValue(relativeCoord.x);
-        parameters.controls[this.parameterToEditIndex - 1].setValue(relativeCoord.y);
-        parameters.controls[this.parameterToEditIndex].setValue(relativeCoord.x);
-        parameters.controls[this.parameterToEditIndex + 1].setValue(relativeCoord.y);
+        // dragging end of the curve
+        parameters.controls[this.parameterToEditIndex - 2].setValue(c.x);
+        parameters.controls[this.parameterToEditIndex - 1].setValue(c.y);
+        parameters.controls[this.parameterToEditIndex + 0].setValue(c.x);
+        parameters.controls[this.parameterToEditIndex + 1].setValue(c.y);
         return;
       }
 
       if (this.parameterToEditIndex % S_Q_LENGTH === 0) {
-        parameters.controls[this.parameterToEditIndex].setValue(relativeCoord.x);
-        parameters.controls[this.parameterToEditIndex + 1].setValue(relativeCoord.y);
+        // dragging the edit point control
+        parameters.controls[this.parameterToEditIndex + 0].setValue(c.x);
+        parameters.controls[this.parameterToEditIndex + 1].setValue(c.y);
         return;
       }
 
-      return;
-    }
-
-    if (this.currentCommand === 'T') {
-      parameters.controls[parameters.controls.length - 2].setValue(coord.x);
-      parameters.controls[parameters.controls.length - 1].setValue(coord.y);
-      return;
-    }
-
-    if (this.currentCommand === 't') {
-      const relativeCoord = { x: coord.x - coords[coords.length - 2].x, y: coord.y - coords[coords.length - 2].y };
-      parameters.controls[parameters.controls.length - 2].setValue(relativeCoord.x);
-      parameters.controls[parameters.controls.length - 1].setValue(relativeCoord.y);
-      return;
-    }
-
-    if (this.currentCommand === 'A') {
-      parameters.controls[parameters.controls.length - 2].setValue(coord.x);
-      parameters.controls[parameters.controls.length - 1].setValue(coord.y);
-      return;
-    }
-
-    if (this.currentCommand === 'a') {
-      const relativeCoord = { x: coord.x - coords[coords.length - 2].x, y: coord.y - coords[coords.length - 2].y };
-      parameters.controls[parameters.controls.length - 2].setValue(relativeCoord.x);
-      parameters.controls[parameters.controls.length - 1].setValue(relativeCoord.y);
       return;
     }
   }
@@ -398,6 +316,7 @@ export class PathHost extends ShapeHost {
 
   //#region mouse drag edit
   public override mouseDragEdit(coord: CoordWithDelta): void {
+    // TODO fix this methods, sometimes throws error (try adding a lot of H h and V v commands)
     const controls = this.getFormControlsForSelectedEditPointIndex();
 
     controls[0].setValue(this.pivotDragEditPoint.x + coord.dx);
