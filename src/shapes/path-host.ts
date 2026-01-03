@@ -257,38 +257,37 @@ export class PathHost extends ShapeHost {
   public override mouseUp(coord: CoordWithDelta): void {
     this.mouseDrag(coord);
 
-    if (this.currentCommand.toUpperCase() === 'C') {
-      if (this.parameterToEditIndex === -1) {
-        this.parameterToEditIndex = 4;
-        return;
-      }
+    if (['C', 'c'].includes(this.currentCommand)) {
       if ((this.parameterToEditIndex - 4) % C_LENGTH === 0) {
         // finish moving end of the curve (first click)
+        // pass to move the first edit point control
         this.parameterToEditIndex -= 4;
         return;
       }
       if (this.parameterToEditIndex % C_LENGTH === 0) {
         // finish moving edit point 1 (second click)
+        // pass to move the second edit point control
         this.parameterToEditIndex += 2;
         return;
       }
       if ((this.parameterToEditIndex - 2) % C_LENGTH === 0) {
         // finish moving edit point 2 (second click)
+        // pass to move the (possible) next curve end point
         this.parameterToEditIndex += 8;
         return;
       }
     }
 
     if (['S', 's', 'Q', 'q'].includes(this.currentCommand)) {
-      if (this.parameterToEditIndex === -1) {
-        this.parameterToEditIndex = 0;
-        return;
-      }
       if ((this.parameterToEditIndex - 2) % S_Q_LENGTH === 0) {
+        // finish moving end of the curve (first click)
+        // pass to move the edit point control
         this.parameterToEditIndex -= 2;
         return;
       }
       if (this.parameterToEditIndex % S_Q_LENGTH === 0) {
+        // finish moving edit point (second click)
+        // pass to move the (possible) next curve end point
         this.parameterToEditIndex += 6;
         return;
       }
