@@ -233,10 +233,10 @@ export class AttributesComponent implements OnInit {
 
     // if command is an arc, highlight only last two inputs
     if (this.shapeListService.selectedShape.d[cmdi].instruction.toLowerCase() === 'a') {
-      mouseIsOverTheSvgEditPoint &&= parmi === 5 || parmi === 6;
+      mouseIsOverTheSvgEditPoint &&= parmi % 7 === 5 || parmi % 7 === 6;
     }
 
-    let mouseIsOverTheInput = this.indexOfCommandWithMouseOver === cmdi;
+    const mouseIsOverTheCommand = this.indexOfCommandWithMouseOver === cmdi;
 
     // the mouse is over the input itself or the other coordinate ( x and y )
     let secondParmi = parmi;
@@ -245,19 +245,20 @@ export class AttributesComponent implements OnInit {
     } else {
       secondParmi--;
     }
-    mouseIsOverTheInput &&= this.indexOfParamWithMouseOver === parmi || this.indexOfParamWithMouseOver === secondParmi;
+    let mouseIsOverTheInput = this.indexOfParamWithMouseOver === parmi || this.indexOfParamWithMouseOver === secondParmi;
 
     // if command is an arc, highlight only last two inputs
-    if (this.indexOfCommandWithMouseOver === cmdi && this.shapeListService.selectedShape.d[cmdi].instruction.toLowerCase() === 'a') {
-      mouseIsOverTheInput = parmi === 5 || parmi === 6;
+    if (this.shapeListService.selectedShape.d[cmdi].instruction.toLowerCase() === 'a') {
+      const initRowIndexParam = Math.floor(this.indexOfParamWithMouseOver / 7) * 7;
+      mouseIsOverTheInput = initRowIndexParam + 5 === parmi || initRowIndexParam + 6 === parmi;
     }
 
     // if command is H or V, highlight only the input with the mouse over
     if (this.shapeListService.selectedShape.d[cmdi].instruction.toLowerCase() === 'h' || this.shapeListService.selectedShape.d[cmdi].instruction.toLowerCase() === 'v') {
-      mouseIsOverTheInput &&= this.indexOfParamWithMouseOver === parmi;
+      mouseIsOverTheInput = this.indexOfParamWithMouseOver === parmi;
     }
 
-    return mouseIsOverTheSvgEditPoint || mouseIsOverTheInput;
+    return mouseIsOverTheSvgEditPoint || (mouseIsOverTheCommand && mouseIsOverTheInput);
   }
 
   public mouseEnterInputPoint(cmdi: number, parmi: number) {

@@ -9,6 +9,7 @@ import { EDIT_POINT_COLORS, ShapeHost } from './shape-host';
 
 const C_LENGTH = 6;
 const S_Q_LENGTH = 4;
+const A_LENGTH = 7;
 
 export class PathHost extends ShapeHost {
   //#region path host vars
@@ -736,7 +737,7 @@ export class PathHost extends ShapeHost {
     // count edit points of previous commands
     while (i < cmdi) {
       if (['A', 'a'].includes(commands[i].instruction)) {
-        svgEditPointIndex++; // Arcs only contain one edit point
+        svgEditPointIndex += commands[i].parameters.length / A_LENGTH;
       } else if (['H', 'h', 'V', 'v'].includes(commands[i].instruction)) {
         svgEditPointIndex += commands[i].parameters.length;
       } else {
@@ -748,8 +749,7 @@ export class PathHost extends ShapeHost {
     // i is now the index of the command that contains the edit point to calculate the index
 
     if (['A', 'a'].includes(commands[i].instruction)) {
-      // Arcs only have one edit point, regardless of parmi
-      return svgEditPointIndex;
+      return svgEditPointIndex + Math.floor(parmi / A_LENGTH);
     }
 
     if (['H', 'h', 'V', 'v'].includes(commands[i].instruction)) {
