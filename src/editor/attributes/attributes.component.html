@@ -1,4 +1,5 @@
 <form class="attribute-group" (submit)="$event.preventDefault()">
+  <!-- MARK: colorpicker -->
   <label class="label-and-control" (click)="showColorPickerDialog(colorPickerDialog, 'stroke')">
     <span class="label">STROKE</span>
     <div class="color-picker-invoker" [style]="{ backgroundColor: formsService.strokeForm.value }"></div>
@@ -26,6 +27,7 @@
     </div>
   </dialog>
 
+  <!-- MARK: strokewidth -->
   <label class="label-and-control">
     <span class="label">STROKE-WIDTH</span>
     <div class="stroke-width-control">
@@ -37,6 +39,7 @@
     </div>
   </label>
 
+  <!-- MARK: linecap -->
   @if (shapeSelectorIsLine || shapeSelectorIsPath || shapeSelectorIsText || selectedShapeIsLine || selectedShapeIsPath || selectedShapeIsText) {
     <label class="label-and-control">
       <span class="label">STROKE-LINECAP</span>
@@ -50,6 +53,7 @@
     </label>
   }
 
+  <!-- MARK: linejoin -->
   @if (shapeSelectorIsRect || shapeSelectorIsPath || shapeSelectorIsText || selectedShapeIsRect || selectedShapeIsPath || selectedShapeIsText) {
     <label class="label-and-control">
       <span class="label">STROKE-LINEJOIN</span>
@@ -63,6 +67,7 @@
     </label>
   }
 
+  <!-- MARK: dasharray -->
   <label class="label-and-control">
     <span class="label">STROKE-DASHARRAY</span>
     <div class="stroke-dasharray-control">
@@ -77,6 +82,7 @@
   </label>
 </form>
 
+<!-- MARK: Rect -->
 @if (selectedShapeIsRect) {
   <form class="attribute-group" (submit)="$event.preventDefault()">
     <label class="label-and-control">
@@ -111,6 +117,7 @@
   </form>
 }
 
+<!-- MARK: Line -->
 @if (selectedShapeIsLine) {
   <form class="attribute-group" (submit)="$event.preventDefault()">
     <label class="label-and-control">
@@ -135,6 +142,7 @@
   </form>
 }
 
+<!-- MARK: Path -->
 @if (selectedShapeIsPath) {
   <form class="attribute-group attribute-group--path" (submit)="$event.preventDefault()">
     @for (commandControl of formsService.dForm.controls; track commandControl; let cmdi = $index) {
@@ -148,7 +156,7 @@
           }
         </div>
 
-        <div formArrayName="parameters" class="parameters-list">
+        <div formArrayName="parameters" class="parameters-list" [ngClass]="'parameters-list-' + commandControl.value.instruction?.toLowerCase()">
           @for (p of commandControl.controls.parameters.controls; track p; let parmi = $index) {
             <input
               type="text"
@@ -166,6 +174,7 @@
   </form>
 }
 
+<!-- MARK: Circle -->
 @if (selectedShapeIsCircle) {
   <form class="attribute-group" (submit)="$event.preventDefault()">
     <label class="label-and-control">
@@ -185,6 +194,7 @@
   </form>
 }
 
+<!-- MARK: Text -->
 @if (selectedShapeIsText) {
   <form class="attribute-group" (submit)="$event.preventDefault()">
     <label class="label-and-control">

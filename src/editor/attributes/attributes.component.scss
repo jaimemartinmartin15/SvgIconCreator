@@ -35,18 +35,48 @@
       }
 
       .parameters-list {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 5px;
+        display: grid;
+        row-gap: 10px;
+        column-gap: 5px;
+
+        &-m,
+        &-l,
+        &-c,
+        &-t {
+          grid-template-columns: repeat(3, auto auto);
+
+          *:nth-child(2n) {
+            margin-right: 20px;
+          }
+        }
+
+        &-h,
+        &-v {
+          grid-template-columns: repeat(3, auto auto);
+          column-gap: 25px;
+        }
+
+        &-s,
+        &-q {
+          grid-template-columns: repeat(2, auto auto);
+
+          *:nth-child(2n) {
+            margin-right: 20px;
+          }
+        }
+
+        &-a {
+          grid-template-columns: repeat(7, auto);
+        }
 
         input[jeiInputNumber] {
           width: 45px;
           padding: 0;
           outline: none;
 
-          &:not(.shape-a, .shape-h, .shape-v):nth-child(2n) {
-            margin-right: 28px;
-          }
+          // &:not(.shape-a, .shape-h, .shape-v):nth-child(2n) {
+          //   margin-right: 28px;
+          // }
 
           &.point-highlighted {
             border-color: #0f0;
