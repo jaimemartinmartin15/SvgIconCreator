@@ -29,9 +29,54 @@
       gap: 5px;
 
       .instruction {
-        min-width: 25px;
-        padding-top: 14px;
-        cursor: pointer;
+        position: relative;
+        width: 25px;
+        padding: 14px 3px 0px 3px;
+
+        svg {
+          width: 80%;
+        }
+
+        .context-menu {
+          position: absolute;
+          left: 100%;
+          top: 50%;
+          transform: translateY(-50%);
+          background-color: white;
+          border-radius: 5px;
+          box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+          white-space: nowrap;
+
+          &--command {
+            display: flex;
+            flex-direction: column;
+          }
+
+          &--insert {
+            display: none;
+          }
+
+          .option {
+            padding: 10px 20px;
+            cursor: pointer;
+
+            &:hover {
+              background-color: gainsboro;
+            }
+
+            &:not(:last-child) {
+              border-bottom: var(--border);
+            }
+
+            &--insert {
+              position: relative;
+
+              &:hover .context-menu--insert {
+                display: block;
+              }
+            }
+          }
+        }
       }
 
       .parameters-list {

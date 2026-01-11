@@ -721,7 +721,7 @@ export class PathHost extends ShapeHost {
     this.currentCommand = 'M';
   }
 
-  private createCommandFormWithParameters(instruction: PathInstruction, parameters: number[]): ToFormType<Command> {
+  public createCommandFormWithParameters(instruction: PathInstruction, parameters: number[]): ToFormType<Command> {
     return new FormGroup({
       instruction: new FormControl(instruction, { nonNullable: true }) as ToFormType<PathInstruction>,
       parameters: new FormArray(parameters.map((v) => new FormControl(v, { nonNullable: true }))),

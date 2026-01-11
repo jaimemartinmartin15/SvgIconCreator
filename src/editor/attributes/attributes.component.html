@@ -146,13 +146,39 @@
 @if (selectedShapeIsPath) {
   <form class="attribute-group attribute-group--path" (submit)="$event.preventDefault()">
     @for (commandControl of formsService.dForm.controls; track commandControl; let cmdi = $index) {
-      <label [formGroup]="commandControl" class="command" (mouseenter)="indexOfCommandWithMouseOver = cmdi" (mouseleave)="indexOfCommandWithMouseOver = -cmdi">
-        <div class="instruction">
-          @if (indexOfCommandWithMouseOver !== cmdi || indexOfCommandWithMouseOver === 0) {
+      <label [formGroup]="commandControl" class="command" (mouseenter)="indexOfCommandWithMouseOver = cmdi" (mouseleave)="indexOfCommandWithMouseOver = -1">
+        <div class="instruction" (mouseenter)="mouseOverInstruction = cmdi" (mouseleave)="mouseOverInstruction = -1">
+          @if (indexOfCommandWithMouseOver === cmdi) {
+            <svg appBurgerSvg></svg>
+          } @else {
             <span>{{ commandControl.value.instruction }}</span>
           }
-          @if (indexOfCommandWithMouseOver === cmdi && indexOfCommandWithMouseOver !== 0) {
-            <span (click)="deleteCommand(cmdi, $event)">🗑️</span>
+
+          <!-- contextual menu -->
+          @if (mouseOverInstruction === cmdi) {
+            <div class="context-menu context-menu--command">
+              <!-- convert to relative/absolute -->
+              @if (commandControl.value.instruction?.toUpperCase() === commandControl.value.instruction) {
+                <div class="option" (click)="convertoToRelative(commandControl)">Convertir a relativa</div>
+              } @else {
+                <div class="option" (click)="convertoToAbsolute(commandControl)">Convertir a absoluta</div>
+              }
+
+              <!-- insert -->
+              <div class="option option--insert">
+                Insertar
+
+                <div class="context-menu context-menu--insert">
+                  <!-- TODO -->
+                  <div class="option">,,,TODO,,,</div>
+                </div>
+              </div>
+
+              <!-- delete -->
+              @if (cmdi !== 0) {
+                <div class="option" (click)="deleteCommand(cmdi, $event)">Eliminar</div>
+              }
+            </div>
           }
         </div>
 

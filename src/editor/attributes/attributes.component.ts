@@ -2,8 +2,8 @@ import { CdkDrag, CdkDragHandle } from '@angular/cdk/drag-drop';
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
-import { ColorPickerComponent, InputNumberDirective } from '@jaimemartinmartin15/jei-devkit-angular-shared';
-import { Command } from '../../models/path.model';
+import { ColorPickerComponent, InputNumberDirective, ToFormType } from '@jaimemartinmartin15/jei-devkit-angular-shared';
+import { Command, PATH_INSTRUCTIONS, PathInstruction } from '../../models/path.model';
 import { Shape } from '../../models/shape';
 import { AppEventsService } from '../../services/app-events.service';
 import { FormsService } from '../../services/forms.service';
@@ -216,12 +216,17 @@ export class AttributesComponent implements OnInit {
   //#endregion
 
   //#region path helpers
+  public PATH_INSTRUCTIONS = PATH_INSTRUCTIONS;
+
   public indexOfCommandWithMouseOver = -1;
   private indexOfParamWithMouseOver = -1;
+
+  public mouseOverInstruction = -1;
 
   public deleteCommand(i: number, e: MouseEvent) {
     e.stopPropagation();
     this.formsService.dForm.removeAt(i);
+    this.mouseOverInstruction = -1;
   }
 
   public highlightInputPoint(cmdi: number, parmi: number): boolean {
@@ -273,6 +278,41 @@ export class AttributesComponent implements OnInit {
     this.indexOfParamWithMouseOver = -1;
     // this methods resets all svg edit points before highligting the selected one
     this.shapeListService.selectedShape.highlightSvgEditPointAtIndex(-1);
+  }
+
+  public convertoToRelative(commandControl: ToFormType<Command>): void {
+    // TODO decide if shape should keep looking the same
+    const instruction = commandControl.controls.instruction.value.toLowerCase();
+    commandControl.controls.instruction.setValue(instruction as never); // TODO fix this in the library
+  }
+
+  public convertoToAbsolute(commandControl: ToFormType<Command>): void {
+    // TODO decide if shape should keep looking the same
+    const instruction = commandControl.controls.instruction.value.toUpperCase();
+    commandControl.controls.instruction.setValue(instruction as never); // TODO fix this in the library
+  }
+
+  public addNewCommandAfterPosition(instruction: PathInstruction, position: number) {
+    const selectedShape = this.shapeListService.selectedShape;
+    if (!(selectedShape instanceof PathHost)) return;
+
+    // TODO merge commands if are the same
+    const lastPoint = this.formsService.dForm.controls[position - 1].controls.parameters.value.slice(-2);
+    if (['M', 'm', 'L', 'l', 'T', 't'].includes(instruction)) {
+      this.formsService.dForm.insert(position, selectedShape.createCommandFormWithParameters(instruction, lastPoint));
+    } else if (['H', 'h'].includes(instruction)) {
+      this.formsService.dForm.insert(position, selectedShape.createCommandFormWithParameters(instruction, [lastPoint[0]]));
+    } else if (['V', 'v'].includes(instruction)) {
+      this.formsService.dForm.insert(position, selectedShape.createCommandFormWithParameters(instruction, [lastPoint[1]]));
+    } else if (['C', 'c'].includes(instruction)) {
+      this.formsService.dForm.insert(position, selectedShape.createCommandFormWithParameters(instruction, [...lastPoint, ...lastPoint, ...lastPoint]));
+    } else if (['S', 's', 'Q', 'q'].includes(instruction)) {
+      this.formsService.dForm.insert(position, selectedShape.createCommandFormWithParameters(instruction, [...lastPoint, ...lastPoint]));
+    } else if (['A', 'a'].includes(instruction)) {
+      this.formsService.dForm.insert(position, selectedShape.createCommandFormWithParameters(instruction, [4, 2, 0, 0, 0, ...lastPoint]));
+    } else if (['Z', 'z'].includes(instruction)) {
+      this.formsService.dForm.insert(position, selectedShape.createCommandFormWithParameters(instruction, []));
+    }
   }
   //#endregion
 
