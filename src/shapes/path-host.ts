@@ -717,6 +717,7 @@ export class PathHost extends ShapeHost {
 
   public closePath() {
     if (this.formsService.dForm.controls.length === 0) return;
+    if (['Z', 'z'].includes(this.lastCommandControl.value.instruction!)) return;
     this.formsService.dForm.push(this.createCommandFormWithParameters('Z', []));
     this.currentCommand = 'M';
   }
