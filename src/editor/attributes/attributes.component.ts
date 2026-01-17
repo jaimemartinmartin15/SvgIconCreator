@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { ColorPickerComponent, InputNumberDirective, ToFormType } from '@jaimemartinmartin15/jei-devkit-angular-shared';
-import { Command, PATH_INSTRUCTIONS, PathInstruction } from '../../models/path.model';
+import { Command, COMMAND_SEGMENT_LENGTH, NUMBER_OF_PARAMETERS_PER_COLUMN, PATH_INSTRUCTIONS, PathInstruction } from '../../models/path.model';
 import { Shape } from '../../models/shape';
 import { AppEventsService } from '../../services/app-events.service';
 import { FormsService } from '../../services/forms.service';
@@ -217,15 +217,20 @@ export class AttributesComponent implements OnInit {
 
   //#region path helpers
   public PATH_INSTRUCTIONS = PATH_INSTRUCTIONS;
+  public COMMAND_SEGMENT_LENGTH = COMMAND_SEGMENT_LENGTH;
+  public NUMBER_OF_PARAMETERS_PER_COLUMN = NUMBER_OF_PARAMETERS_PER_COLUMN;
 
   public indexOfCommandWithMouseOver = -1;
   private indexOfParamWithMouseOver = -1;
 
   public mouseOverInstruction = -1;
 
-  public deleteCommand(i: number, e: MouseEvent) {
-    e.stopPropagation();
+  public deleteCommand(i: number) {
     this.formsService.dForm.removeAt(i);
+    if (this.shapeListService.selectedShape?.isShapeFinished) {
+      this.shapeListService.selectedShape.clearEditPoints();
+      this.shapeListService.selectedShape.createEditPoints();
+    }
     this.mouseOverInstruction = -1;
   }
 

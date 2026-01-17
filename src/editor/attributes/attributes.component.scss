@@ -33,7 +33,7 @@
         width: 25px;
         padding: 14px 3px 0px 3px;
 
-        svg {
+        .burger-icon {
           width: 80%;
         }
 
@@ -52,10 +52,6 @@
             flex-direction: column;
           }
 
-          &--insert {
-            display: none;
-          }
-
           .option {
             padding: 10px 20px;
             cursor: pointer;
@@ -66,14 +62,6 @@
 
             &:not(:last-child) {
               border-bottom: var(--border);
-            }
-
-            &--insert {
-              position: relative;
-
-              &:hover .context-menu--insert {
-                display: block;
-              }
             }
           }
         }
@@ -86,42 +74,50 @@
 
         &-m,
         &-l,
-        &-c,
         &-t {
-          grid-template-columns: repeat(3, auto auto);
+          grid-template-columns: repeat(10, auto);
+        }
 
-          *:nth-child(2n) {
-            margin-right: 20px;
-          }
+        &-c {
+          grid-template-columns: auto 2fr 3fr 2fr 3fr 2fr 2fr auto;
         }
 
         &-h,
         &-v {
-          grid-template-columns: repeat(3, auto auto);
-          column-gap: 25px;
+          grid-template-columns: repeat(11, auto);
         }
 
         &-s,
         &-q {
-          grid-template-columns: repeat(2, auto auto);
-
-          *:nth-child(2n) {
-            margin-right: 20px;
-          }
+          grid-template-columns: auto 2fr 3fr 2fr 2fr auto;
         }
 
         &-a {
-          grid-template-columns: repeat(7, auto);
+          grid-template-columns: repeat(9, auto);
+        }
+
+        .add-icon {
+          width: 10px;
+          align-self: center;
+          border: 2px solid red;
+          padding: 4px;
+          border-radius: 50%;
+          opacity: 0;
+          cursor: pointer;
+
+          &--z {
+            margin-top: 14px;
+          }
+
+          &:hover {
+            opacity: 1;
+          }
         }
 
         input[jeiInputNumber] {
           width: 45px;
           padding: 0;
           outline: none;
-
-          // &:not(.shape-a, .shape-h, .shape-v):nth-child(2n) {
-          //   margin-right: 28px;
-          // }
 
           &.point-highlighted {
             border-color: #0f0;

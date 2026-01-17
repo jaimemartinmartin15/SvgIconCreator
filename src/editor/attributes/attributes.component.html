@@ -148,13 +148,14 @@
     @for (commandControl of formsService.dForm.controls; track commandControl; let cmdi = $index) {
       <label [formGroup]="commandControl" class="command" (mouseenter)="indexOfCommandWithMouseOver = cmdi" (mouseleave)="indexOfCommandWithMouseOver = -1">
         <div class="instruction" (mouseenter)="mouseOverInstruction = cmdi" (mouseleave)="mouseOverInstruction = -1">
+          <!-- instruction -->
           @if (indexOfCommandWithMouseOver === cmdi) {
-            <svg appBurgerSvg></svg>
+            <svg appBurgerSvg class="burger-icon"></svg>
           } @else {
             <span>{{ commandControl.value.instruction }}</span>
           }
 
-          <!-- contextual menu -->
+          <!-- contextual menu when hovering the instruction -->
           @if (mouseOverInstruction === cmdi) {
             <div class="context-menu context-menu--command">
               <!-- convert to relative/absolute -->
@@ -164,26 +165,27 @@
                 <div class="option" (click)="convertoToAbsolute(commandControl)">Convertir a absoluta</div>
               }
 
-              <!-- insert -->
-              <div class="option option--insert">
-                Insertar
-
-                <div class="context-menu context-menu--insert">
-                  <!-- TODO -->
-                  <div class="option">,,,TODO,,,</div>
-                </div>
-              </div>
-
               <!-- delete -->
               @if (cmdi !== 0) {
-                <div class="option" (click)="deleteCommand(cmdi, $event)">Eliminar</div>
+                <div class="option" (click)="deleteCommand(cmdi)">Eliminar</div>
               }
             </div>
           }
         </div>
 
+        <!-- parameters list -->
         <div formArrayName="parameters" class="parameters-list" [ngClass]="'parameters-list-' + commandControl.value.instruction?.toLowerCase()">
+          @if (['Z', 'z'].includes(commandControl.controls.instruction.value)) {
+            <!-- z does not have parameters -->
+            <svg appPlusSvg color="red" class="add-icon add-icon--z"></svg>
+          }
+
           @for (p of commandControl.controls.parameters.controls; track p; let parmi = $index) {
+            @if (parmi % NUMBER_OF_PARAMETERS_PER_COLUMN[commandControl.controls.instruction.value] === 0) {
+              <!-- first item of each line -->
+              <svg appPlusSvg color="red" class="add-icon"></svg>
+            }
+
             <input
               type="text"
               jeiInputNumber
@@ -193,6 +195,11 @@
               (mouseenter)="mouseEnterInputPoint(cmdi, parmi)"
               (mouseleave)="mouseLeaveInputPoint()"
             />
+
+            @if ((parmi + 1) % COMMAND_SEGMENT_LENGTH[commandControl.controls.instruction.value] === 0) {
+              <!-- after each segment of parameters for the instruction -->
+              <svg appPlusSvg color="red" class="add-icon"></svg>
+            }
           }
         </div>
       </label>
