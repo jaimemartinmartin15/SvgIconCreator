@@ -35,6 +35,7 @@
 
         .burger-icon {
           width: 80%;
+          cursor: pointer;
         }
 
         .context-menu {
@@ -50,6 +51,7 @@
           &--command {
             display: flex;
             flex-direction: column;
+            z-index: 1; // avoid closing the menu when hovering element behind it
           }
 
           .option {

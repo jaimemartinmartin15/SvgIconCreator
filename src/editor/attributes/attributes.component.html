@@ -147,10 +147,10 @@
   <form class="attribute-group attribute-group--path" (submit)="$event.preventDefault()">
     @for (commandControl of formsService.dForm.controls; track commandControl; let cmdi = $index) {
       <label [formGroup]="commandControl" class="command" (mouseenter)="indexOfCommandWithMouseOver = cmdi" (mouseleave)="indexOfCommandWithMouseOver = -1">
-        <div class="instruction" (mouseenter)="mouseOverInstruction = cmdi" (mouseleave)="mouseOverInstruction = -1">
+        <div class="instruction" (mouseleave)="mouseOverInstruction = -1">
           <!-- instruction -->
           @if (indexOfCommandWithMouseOver === cmdi) {
-            <svg appBurgerSvg class="burger-icon"></svg>
+            <svg appBurgerSvg class="burger-icon" (click)="mouseOverInstruction = cmdi"></svg>
           } @else {
             <span>{{ commandControl.value.instruction }}</span>
           }
