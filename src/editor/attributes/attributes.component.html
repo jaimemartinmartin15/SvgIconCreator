@@ -144,46 +144,63 @@
 
 <!-- MARK: Path -->
 @if (selectedShapeIsPath) {
+  <ng-template #commandOptionsMenuTpl let-instruction="instruction" let-cmdi="cmdi">
+    <div class="menu">
+      <!-- convert to relative/absolute -->
+      @if (instruction.toUpperCase() === instruction) {
+        <div class="option" (click)="convertoToRelative(cmdi)">Convertir a relativa</div>
+      } @else {
+        <div class="option" (click)="convertoToAbsolute(cmdi)">Convertir a absoluta</div>
+      }
+
+      <!-- TODO opcion fusionar: si se elimina un comando, pueden quedar dos iguales seguidos como separados  -->
+
+      <!-- delete -->
+      @if (cmdi !== 0) {
+        <div class="option" (click)="deleteCommand(cmdi)">Eliminar</div>
+      }
+    </div>
+  </ng-template>
+
+  <ng-template #newCommandMenuTpl let-cmdi="cmdi" let-parmi="parmi">
+    <div class="menu">
+      <!-- TODO allow to add relative commands if shift is pressed, or block mayus? -->
+      <!-- TODO do not allow S or T if previous command is not C or Q ? -->
+      <!-- TODO optimice this using a loop -->
+      <div class="option" (click)="addNewCommandAfterPosition('M', cmdi, parmi)">Add M</div>
+      <div class="option" (click)="addNewCommandAfterPosition('L', cmdi, parmi)">Add L</div>
+      <div class="option" (click)="addNewCommandAfterPosition('H', cmdi, parmi)">Add H</div>
+      <div class="option" (click)="addNewCommandAfterPosition('V', cmdi, parmi)">Add V</div>
+      <div class="option" (click)="addNewCommandAfterPosition('C', cmdi, parmi)">Add C</div>
+      <div class="option" (click)="addNewCommandAfterPosition('S', cmdi, parmi)">Add S</div>
+      <div class="option" (click)="addNewCommandAfterPosition('Q', cmdi, parmi)">Add Q</div>
+      <div class="option" (click)="addNewCommandAfterPosition('T', cmdi, parmi)">Add T</div>
+      <div class="option" (click)="addNewCommandAfterPosition('A', cmdi, parmi)">Add A</div>
+      <div class="option" (click)="addNewCommandAfterPosition('Z', cmdi, parmi)">Add Z</div>
+    </div>
+  </ng-template>
+
   <form class="attribute-group attribute-group--path" (submit)="$event.preventDefault()">
     @for (commandControl of formsService.dForm.controls; track commandControl; let cmdi = $index) {
       <label [formGroup]="commandControl" class="command" (mouseenter)="indexOfCommandWithMouseOver = cmdi" (mouseleave)="indexOfCommandWithMouseOver = -1">
-        <div class="instruction" (mouseleave)="mouseOverInstruction = -1">
-          <!-- instruction -->
-          @if (indexOfCommandWithMouseOver === cmdi) {
-            <svg appBurgerSvg class="burger-icon" (click)="mouseOverInstruction = cmdi"></svg>
+        <div class="instruction" (mouseenter)="mouseOverInstruction = cmdi" (mouseleave)="mouseOverInstruction = -1">
+          @if (mouseOverInstruction === cmdi) {
+            <svg appBurgerSvg class="burger-icon" (click)="showCommandOptionsMenu($event, cmdi, commandControl.controls.instruction.value)"></svg>
           } @else {
             <span>{{ commandControl.value.instruction }}</span>
           }
-
-          <!-- contextual menu when hovering the instruction -->
-          @if (mouseOverInstruction === cmdi) {
-            <div class="context-menu context-menu--command">
-              <!-- convert to relative/absolute -->
-              @if (commandControl.value.instruction?.toUpperCase() === commandControl.value.instruction) {
-                <div class="option" (click)="convertoToRelative(commandControl)">Convertir a relativa</div>
-              } @else {
-                <div class="option" (click)="convertoToAbsolute(commandControl)">Convertir a absoluta</div>
-              }
-
-              <!-- delete -->
-              @if (cmdi !== 0) {
-                <div class="option" (click)="deleteCommand(cmdi)">Eliminar</div>
-              }
-            </div>
-          }
         </div>
 
-        <!-- parameters list -->
         <div formArrayName="parameters" class="parameters-list" [ngClass]="'parameters-list-' + commandControl.value.instruction?.toLowerCase()">
           @if (['Z', 'z'].includes(commandControl.controls.instruction.value)) {
             <!-- z does not have parameters -->
-            <svg appPlusSvg color="red" class="add-icon add-icon--z"></svg>
+            <svg appPlusSvg color="red" class="add-icon add-icon--z" (click)="showNewCommandMenu($event, cmdi, 0)"></svg>
           }
 
           @for (p of commandControl.controls.parameters.controls; track p; let parmi = $index) {
             @if (parmi % NUMBER_OF_PARAMETERS_PER_COLUMN[commandControl.controls.instruction.value] === 0) {
               <!-- first item of each line -->
-              <svg appPlusSvg color="red" class="add-icon"></svg>
+              <svg appPlusSvg color="red" class="add-icon" (click)="showNewCommandMenu($event, cmdi, parmi)"></svg>
             }
 
             <input
@@ -198,7 +215,7 @@
 
             @if ((parmi + 1) % COMMAND_SEGMENT_LENGTH[commandControl.controls.instruction.value] === 0) {
               <!-- after each segment of parameters for the instruction -->
-              <svg appPlusSvg color="red" class="add-icon"></svg>
+              <svg appPlusSvg color="red" class="add-icon" (click)="showNewCommandMenu($event, cmdi, parmi)"></svg>
             }
           }
         </div>

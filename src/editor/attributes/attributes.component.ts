@@ -1,6 +1,8 @@
 import { CdkDrag, CdkDragHandle } from '@angular/cdk/drag-drop';
+import { Overlay, OverlayConfig, OverlayRef } from '@angular/cdk/overlay';
+import { TemplatePortal } from '@angular/cdk/portal';
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, TemplateRef, ViewChild, ViewContainerRef } from '@angular/core';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { ColorPickerComponent, InputNumberDirective, ToFormType } from '@jaimemartinmartin15/jei-devkit-angular-shared';
 import { Command, COMMAND_SEGMENT_LENGTH, NUMBER_OF_PARAMETERS_PER_COLUMN, PATH_INSTRUCTIONS, PathInstruction } from '../../models/path.model';
@@ -41,6 +43,8 @@ export class AttributesComponent implements OnInit {
   constructor(
     public readonly shapeListService: ShapeListService,
     public readonly formsService: FormsService,
+    private readonly overlay: Overlay,
+    private readonly viewContainerRef: ViewContainerRef,
   ) {
     this.colorPickerForm = this.formsService.strokeForm;
   }
@@ -232,6 +236,8 @@ export class AttributesComponent implements OnInit {
       this.shapeListService.selectedShape.createEditPoints();
     }
     this.mouseOverInstruction = -1;
+
+    this.overlayRef.detach();
   }
 
   public highlightInputPoint(cmdi: number, parmi: number): boolean {
@@ -285,21 +291,71 @@ export class AttributesComponent implements OnInit {
     this.shapeListService.selectedShape.highlightSvgEditPointAtIndex(-1);
   }
 
-  public convertoToRelative(commandControl: ToFormType<Command>): void {
+  public convertoToRelative(cmdi: number): void {
     // TODO decide if shape should keep looking the same
+    const commandControl: ToFormType<Command> = this.formsService.dForm.controls[cmdi];
     const instruction = commandControl.controls.instruction.value.toLowerCase();
     commandControl.controls.instruction.setValue(instruction as never); // TODO fix this in the library
+
+    this.overlayRef.detach();
   }
 
-  public convertoToAbsolute(commandControl: ToFormType<Command>): void {
+  public convertoToAbsolute(cmdi: number): void {
     // TODO decide if shape should keep looking the same
+    const commandControl: ToFormType<Command> = this.formsService.dForm.controls[cmdi];
     const instruction = commandControl.controls.instruction.value.toUpperCase();
     commandControl.controls.instruction.setValue(instruction as never); // TODO fix this in the library
+
+    this.overlayRef.detach();
   }
 
-  public addNewCommandAfterPosition(instruction: PathInstruction, position: number) {
+  private overlayRef: OverlayRef;
+
+  @ViewChild('commandOptionsMenuTpl')
+  public commandOptionsMenuTpl: TemplateRef<{ instruction: PathInstruction; cmdi: number }>;
+
+  public showCommandOptionsMenu(event: MouseEvent, cmdi: number, instruction: PathInstruction) {
+    const element = event.target as HTMLElement;
+    this.overlayRef?.detach();
+
+    const config: OverlayConfig = new OverlayConfig({
+      positionStrategy: this.overlay
+        .position()
+        .flexibleConnectedTo(element)
+        .withPositions([{ originX: 'center', originY: 'center', overlayX: 'start', overlayY: 'center' }]),
+    });
+
+    this.overlayRef = this.overlay.create(config);
+    const portal = new TemplatePortal(this.commandOptionsMenuTpl, this.viewContainerRef, { cmdi, instruction });
+
+    this.overlayRef.attach(portal);
+  }
+
+  @ViewChild('newCommandMenuTpl')
+  public newCommandMenuTpl: TemplateRef<{ instruction: PathInstruction; cmdi: number; parmi: number }>;
+
+  public showNewCommandMenu(event: MouseEvent, cmdi: number, parmi: number) {
+    const element = event.target as HTMLElement;
+    this.overlayRef?.detach();
+
+    const config: OverlayConfig = new OverlayConfig({
+      positionStrategy: this.overlay
+        .position()
+        .flexibleConnectedTo(element)
+        .withPositions([{ originX: 'center', originY: 'center', overlayX: 'start', overlayY: 'center' }]),
+    });
+
+    this.overlayRef = this.overlay.create(config);
+    const portal = new TemplatePortal(this.newCommandMenuTpl, this.viewContainerRef, { cmdi, instruction: 'A', parmi });
+
+    this.overlayRef.attach(portal);
+  }
+
+  public addNewCommandAfterPosition(instruction: PathInstruction, position: number, parmi: number) {
     const selectedShape = this.shapeListService.selectedShape;
     if (!(selectedShape instanceof PathHost)) return;
+
+    this.overlayRef.detach();
 
     // TODO merge commands if are the same
     const lastPoint = this.formsService.dForm.controls[position - 1].controls.parameters.value.slice(-2);

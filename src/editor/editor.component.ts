@@ -132,7 +132,6 @@ export class EditorComponent {
 
     if (!(this.shapeListService.selectedShape instanceof PathHost)) return;
 
-
     // avoid adding the command when typing in other inputs of the app, and the shape is already completed
     if (this.shapeListService.selectedShape.isShapeFinished) return;
 

@@ -341,6 +341,7 @@ export class PathHost extends ShapeHost {
 
       if (['m', 'l', 't'].includes(instruction)) {
         for (let p = 0; p < parameters.length; p += 2) {
+          // TODO: fix when converting to relative first command and there is not previoous coord
           const lastCoord = coords.at(-1)!;
           coords.push({ x: lastCoord.x + parameters[p], y: lastCoord.y + parameters[p + 1] });
         }

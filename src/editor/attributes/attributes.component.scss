@@ -12,6 +12,26 @@
   flex-shrink: 0;
 }
 
+.menu {
+  background-color: white;
+  border-radius: 5px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+  white-space: nowrap;
+
+  .option {
+    padding: 10px 20px;
+    cursor: pointer;
+
+    &:hover {
+      background-color: gainsboro;
+    }
+
+    &:not(:last-child) {
+      border-bottom: var(--border);
+    }
+  }
+}
+
 .attribute-group {
   display: flex;
   flex-wrap: wrap;
@@ -36,36 +56,6 @@
         .burger-icon {
           width: 80%;
           cursor: pointer;
-        }
-
-        .context-menu {
-          position: absolute;
-          left: 100%;
-          top: 50%;
-          transform: translateY(-50%);
-          background-color: white;
-          border-radius: 5px;
-          box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
-          white-space: nowrap;
-
-          &--command {
-            display: flex;
-            flex-direction: column;
-            z-index: 1; // avoid closing the menu when hovering element behind it
-          }
-
-          .option {
-            padding: 10px 20px;
-            cursor: pointer;
-
-            &:hover {
-              background-color: gainsboro;
-            }
-
-            &:not(:last-child) {
-              border-bottom: var(--border);
-            }
-          }
         }
       }
 

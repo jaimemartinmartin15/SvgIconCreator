@@ -86,9 +86,7 @@ export abstract class ShapeHost {
   }
 
   protected getEditPointIndexUnderCoord(coord: Coord): number {
-    return this.getEditPointCoords().findIndex(
-      (c) => Math.abs(c.x - coord.x) < this.getEditPointWidth() && Math.abs(c.y - coord.y) < this.getEditPointWidth(),
-    );
+    return this.getEditPointCoords().findIndex((c) => Math.abs(c.x - coord.x) < this.getEditPointWidth() && Math.abs(c.y - coord.y) < this.getEditPointWidth());
   }
 
   public getEditPointUnderMousePoint(mousePoint: Coord): SVGCircleElement | undefined {
