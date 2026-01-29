@@ -101,6 +101,10 @@
             margin-top: 14px;
           }
 
+          &--hidden {
+            visibility: hidden;
+          }
+
           &:hover {
             opacity: 1;
           }

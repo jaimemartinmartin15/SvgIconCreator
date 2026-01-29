@@ -167,16 +167,16 @@
       <!-- TODO allow to add relative commands if shift is pressed, or block mayus? -->
       <!-- TODO do not allow S or T if previous command is not C or Q ? -->
       <!-- TODO optimice this using a loop -->
-      <div class="option" (click)="addNewCommandAfterPosition('M', cmdi, parmi)">Add M</div>
-      <div class="option" (click)="addNewCommandAfterPosition('L', cmdi, parmi)">Add L</div>
-      <div class="option" (click)="addNewCommandAfterPosition('H', cmdi, parmi)">Add H</div>
-      <div class="option" (click)="addNewCommandAfterPosition('V', cmdi, parmi)">Add V</div>
-      <div class="option" (click)="addNewCommandAfterPosition('C', cmdi, parmi)">Add C</div>
-      <div class="option" (click)="addNewCommandAfterPosition('S', cmdi, parmi)">Add S</div>
-      <div class="option" (click)="addNewCommandAfterPosition('Q', cmdi, parmi)">Add Q</div>
-      <div class="option" (click)="addNewCommandAfterPosition('T', cmdi, parmi)">Add T</div>
-      <div class="option" (click)="addNewCommandAfterPosition('A', cmdi, parmi)">Add A</div>
-      <div class="option" (click)="addNewCommandAfterPosition('Z', cmdi, parmi)">Add Z</div>
+      <div class="option" (click)="addNewCommandInPosition('M', cmdi, parmi)">Add M</div>
+      <div class="option" (click)="addNewCommandInPosition('L', cmdi, parmi)">Add L</div>
+      <div class="option" (click)="addNewCommandInPosition('H', cmdi, parmi)">Add H</div>
+      <div class="option" (click)="addNewCommandInPosition('V', cmdi, parmi)">Add V</div>
+      <div class="option" (click)="addNewCommandInPosition('C', cmdi, parmi)">Add C</div>
+      <div class="option" (click)="addNewCommandInPosition('S', cmdi, parmi)">Add S</div>
+      <div class="option" (click)="addNewCommandInPosition('Q', cmdi, parmi)">Add Q</div>
+      <div class="option" (click)="addNewCommandInPosition('T', cmdi, parmi)">Add T</div>
+      <div class="option" (click)="addNewCommandInPosition('A', cmdi, parmi)">Add A</div>
+      <div class="option" (click)="addNewCommandInPosition('Z', cmdi, parmi)">Add Z</div>
     </div>
   </ng-template>
 
@@ -198,9 +198,14 @@
           }
 
           @for (p of commandControl.controls.parameters.controls; track p; let parmi = $index) {
-            @if (parmi % NUMBER_OF_PARAMETERS_PER_COLUMN[commandControl.controls.instruction.value] === 0) {
+            @if (parmi % NUMBER_OF_PARAMETERS_PER_ROW[commandControl.controls.instruction.value] === 0) {
               <!-- first item of each line -->
-              <svg appPlusSvg color="red" class="add-icon" (click)="showNewCommandMenu($event, cmdi, parmi)"></svg>
+              @if (cmdi === 0) {
+                <!-- do not allow adding anything before first M command -->
+                <svg appPlusSvg class="add-icon add-icon--hidden"></svg>
+              } @else {
+                <svg appPlusSvg color="red" class="add-icon" (click)="showNewCommandMenu($event, cmdi, parmi)"></svg>
+              }
             }
 
             <input
@@ -213,9 +218,9 @@
               (mouseleave)="mouseLeaveInputPoint()"
             />
 
-            @if ((parmi + 1) % COMMAND_SEGMENT_LENGTH[commandControl.controls.instruction.value] === 0) {
-              <!-- after each segment of parameters for the instruction -->
-              <svg appPlusSvg color="red" class="add-icon" (click)="showNewCommandMenu($event, cmdi, parmi)"></svg>
+            @if ((parmi + 1) % COMMAND_ARITY[commandControl.controls.instruction.value] === 0) {
+              <!-- after each arity of parameters for the instruction -->
+              <svg appPlusSvg color="red" class="add-icon" (click)="showNewCommandMenu($event, cmdi, parmi + 1)"></svg>
             }
           }
         </div>

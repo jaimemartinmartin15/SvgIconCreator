@@ -5,7 +5,7 @@ import { CommonModule } from '@angular/common';
 import { Component, OnInit, TemplateRef, ViewChild, ViewContainerRef } from '@angular/core';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { ColorPickerComponent, InputNumberDirective, ToFormType } from '@jaimemartinmartin15/jei-devkit-angular-shared';
-import { Command, COMMAND_SEGMENT_LENGTH, NUMBER_OF_PARAMETERS_PER_COLUMN, PATH_INSTRUCTIONS, PathInstruction } from '../../models/path.model';
+import { Command, COMMAND_SPECS, PATH_INSTRUCTIONS, PathInstruction } from '../../models/path.model';
 import { Shape } from '../../models/shape';
 import { AppEventsService } from '../../services/app-events.service';
 import { FormsService } from '../../services/forms.service';
@@ -220,9 +220,16 @@ export class AttributesComponent implements OnInit {
   //#endregion
 
   //#region path helpers
+  // TODO review all TODOs in the project and this section region path helpers
   public PATH_INSTRUCTIONS = PATH_INSTRUCTIONS;
-  public COMMAND_SEGMENT_LENGTH = COMMAND_SEGMENT_LENGTH;
-  public NUMBER_OF_PARAMETERS_PER_COLUMN = NUMBER_OF_PARAMETERS_PER_COLUMN;
+  public COMMAND_ARITY: { [K in PathInstruction]: number } = Object.fromEntries(Object.entries(COMMAND_SPECS).map(([key, value]) => [key, value.arity])) as {
+    [K in PathInstruction]: number;
+  };
+  public NUMBER_OF_PARAMETERS_PER_ROW: { [K in PathInstruction]: number } = Object.fromEntries(
+    Object.entries(COMMAND_SPECS).map(([key, value]) => [key, value.parametersPerRow]),
+  ) as {
+    [K in PathInstruction]: number;
+  };
 
   public indexOfCommandWithMouseOver = -1;
   private indexOfParamWithMouseOver = -1;
@@ -238,6 +245,17 @@ export class AttributesComponent implements OnInit {
     this.mouseOverInstruction = -1;
 
     this.overlayRef.detach();
+  }
+
+  public addNewCommandInPosition(instruction: PathInstruction, cmdi: number, parmi: number) {
+    const pathHost = this.shapeListService.selectedShape;
+    if (!(pathHost instanceof PathHost)) return;
+
+    this.overlayRef.detach();
+
+    const previousCoord = pathHost.getPreviousCoord(cmdi, parmi);
+    const parameters = COMMAND_SPECS[instruction].defaultParams(previousCoord);
+    pathHost.insertNewCommandAt(instruction, parameters, cmdi, parmi);
   }
 
   public highlightInputPoint(cmdi: number, parmi: number): boolean {
@@ -326,6 +344,11 @@ export class AttributesComponent implements OnInit {
     });
 
     this.overlayRef = this.overlay.create(config);
+    this.overlayRef.keydownEvents().subscribe((event) => {
+      if (event.key === 'Escape') {
+        this.overlayRef.detach();
+      }
+    });
     const portal = new TemplatePortal(this.commandOptionsMenuTpl, this.viewContainerRef, { cmdi, instruction });
 
     this.overlayRef.attach(portal);
@@ -346,34 +369,14 @@ export class AttributesComponent implements OnInit {
     });
 
     this.overlayRef = this.overlay.create(config);
+    this.overlayRef.keydownEvents().subscribe((event) => {
+      if (event.key === 'Escape') {
+        this.overlayRef.detach();
+      }
+    });
     const portal = new TemplatePortal(this.newCommandMenuTpl, this.viewContainerRef, { cmdi, instruction: 'A', parmi });
 
     this.overlayRef.attach(portal);
-  }
-
-  public addNewCommandAfterPosition(instruction: PathInstruction, position: number, parmi: number) {
-    const selectedShape = this.shapeListService.selectedShape;
-    if (!(selectedShape instanceof PathHost)) return;
-
-    this.overlayRef.detach();
-
-    // TODO merge commands if are the same
-    const lastPoint = this.formsService.dForm.controls[position - 1].controls.parameters.value.slice(-2);
-    if (['M', 'm', 'L', 'l', 'T', 't'].includes(instruction)) {
-      this.formsService.dForm.insert(position, selectedShape.createCommandFormWithParameters(instruction, lastPoint));
-    } else if (['H', 'h'].includes(instruction)) {
-      this.formsService.dForm.insert(position, selectedShape.createCommandFormWithParameters(instruction, [lastPoint[0]]));
-    } else if (['V', 'v'].includes(instruction)) {
-      this.formsService.dForm.insert(position, selectedShape.createCommandFormWithParameters(instruction, [lastPoint[1]]));
-    } else if (['C', 'c'].includes(instruction)) {
-      this.formsService.dForm.insert(position, selectedShape.createCommandFormWithParameters(instruction, [...lastPoint, ...lastPoint, ...lastPoint]));
-    } else if (['S', 's', 'Q', 'q'].includes(instruction)) {
-      this.formsService.dForm.insert(position, selectedShape.createCommandFormWithParameters(instruction, [...lastPoint, ...lastPoint]));
-    } else if (['A', 'a'].includes(instruction)) {
-      this.formsService.dForm.insert(position, selectedShape.createCommandFormWithParameters(instruction, [4, 2, 0, 0, 0, ...lastPoint]));
-    } else if (['Z', 'z'].includes(instruction)) {
-      this.formsService.dForm.insert(position, selectedShape.createCommandFormWithParameters(instruction, []));
-    }
   }
   //#endregion
 

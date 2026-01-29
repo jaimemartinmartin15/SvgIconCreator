@@ -1,3 +1,5 @@
+import { Coord } from '@jaimemartinmartin15/jei-devkit-angular-shared';
+
 export const PATH_INSTRUCTIONS = ['M', 'm', 'L', 'l', 'H', 'h', 'V', 'v', 'C', 'c', 'S', 's', 'Q', 'q', 'T', 't', 'A', 'a', 'Z', 'z'] as const;
 
 export type PathInstruction = (typeof PATH_INSTRUCTIONS)[number];
@@ -11,48 +13,138 @@ export interface Command {
   parameters: number[];
 }
 
-export const COMMAND_SEGMENT_LENGTH: Record<PathInstruction, number> = {
-  M: 2,
-  m: 2,
-  L: 2,
-  l: 2,
-  H: 1,
-  h: 1,
-  V: 1,
-  v: 1,
-  C: 6,
-  c: 6,
-  S: 4,
-  s: 4,
-  Q: 4,
-  q: 4,
-  T: 2,
-  t: 2,
-  A: 7,
-  a: 7,
-  Z: 0,
-  z: 0,
-};
+interface CommandSpec {
+  arity: number;
+  parametersPerRow: number;
+  defaultParams: (c: Coord) => number[];
+  getNewPositionAfterMove: (params: number[], currentPosition: Coord) => Coord;
+}
 
-export const NUMBER_OF_PARAMETERS_PER_COLUMN: Record<PathInstruction, number> = {
-  M: 6,
-  m: 6,
-  L: 6,
-  l: 6,
-  H: 5,
-  h: 5,
-  V: 5,
-  v: 5,
-  C: 6,
-  c: 6,
-  S: 4,
-  s: 4,
-  Q: 4,
-  q: 4,
-  T: 6,
-  t: 6,
-  A: 7,
-  a: 7,
-  Z: 0,
-  z: 0,
+export const COMMAND_SPECS: { [K in PathInstruction]: CommandSpec } = {
+  M: {
+    arity: 2,
+    parametersPerRow: 6,
+    defaultParams: (c: Coord) => [c.x, c.y],
+    getNewPositionAfterMove: (params: number[], _: Coord) => ({ x: params[0], y: params[1] }),
+  },
+  m: {
+    arity: 2,
+    parametersPerRow: 6,
+    defaultParams: (c: Coord) => [c.x, c.y],
+    getNewPositionAfterMove: (params: number[], currentPosition: Coord) => ({ x: currentPosition.x + params[0], y: currentPosition.y + params[1] }),
+  },
+  L: {
+    arity: 2,
+    parametersPerRow: 6,
+    defaultParams: (c: Coord) => [c.x, c.y],
+    getNewPositionAfterMove: (params: number[], _: Coord) => ({ x: params[0], y: params[1] }),
+  },
+  l: {
+    arity: 2,
+    parametersPerRow: 6,
+    defaultParams: (c: Coord) => [c.x, c.y],
+    getNewPositionAfterMove: (params: number[], currentPosition: Coord) => ({ x: currentPosition.x + params[0], y: currentPosition.y + params[1] }),
+  },
+  H: {
+    arity: 1,
+    parametersPerRow: 5,
+    defaultParams: (c: Coord) => [c.x],
+    getNewPositionAfterMove: (params: number[], currentPosition: Coord) => ({ x: params[0], y: currentPosition.y }),
+  },
+  h: {
+    arity: 1,
+    parametersPerRow: 5,
+    defaultParams: (c: Coord) => [c.x],
+    getNewPositionAfterMove: (params: number[], currentPosition: Coord) => ({ x: currentPosition.x + params[0], y: currentPosition.y }),
+  },
+  V: {
+    arity: 1,
+    parametersPerRow: 5,
+    defaultParams: (c: Coord) => [c.y],
+    getNewPositionAfterMove: (params: number[], currentPosition: Coord) => ({ x: currentPosition.x, y: params[0] }),
+  },
+  v: {
+    arity: 1,
+    parametersPerRow: 5,
+    defaultParams: (c: Coord) => [c.y],
+    getNewPositionAfterMove: (params: number[], currentPosition: Coord) => ({ x: currentPosition.x, y: currentPosition.y + params[0] }),
+  },
+  C: {
+    arity: 6,
+    parametersPerRow: 6,
+    defaultParams: (c: Coord) => [c.x, c.y, c.x, c.y, c.x, c.y],
+    getNewPositionAfterMove: (params: number[], _: Coord) => ({ x: params[4], y: params[5] }),
+  },
+  c: {
+    arity: 6,
+    parametersPerRow: 6,
+    defaultParams: (c: Coord) => [c.x, c.y, c.x, c.y, c.x, c.y],
+    getNewPositionAfterMove: (params: number[], currentPosition: Coord) => ({
+      x: currentPosition.x + params[4],
+      y: currentPosition.y + params[5],
+    }),
+  },
+  S: {
+    arity: 4,
+    parametersPerRow: 4,
+    defaultParams: (c: Coord) => [c.x, c.y, c.x, c.y],
+    getNewPositionAfterMove: (params: number[], _: Coord) => ({ x: params[2], y: params[3] }),
+  },
+  s: {
+    arity: 4,
+    parametersPerRow: 4,
+    defaultParams: (c: Coord) => [c.x, c.y, c.x, c.y],
+    getNewPositionAfterMove: (params: number[], currentPosition: Coord) => ({ x: currentPosition.x + params[2], y: currentPosition.y + params[3] }),
+  },
+  Q: {
+    arity: 4,
+    parametersPerRow: 4,
+    defaultParams: (c: Coord) => [c.x, c.y, c.x, c.y],
+    getNewPositionAfterMove: (params: number[], _: Coord) => ({ x: params[2], y: params[3] }),
+  },
+  q: {
+    arity: 4,
+    parametersPerRow: 4,
+    defaultParams: (c: Coord) => [c.x, c.y, c.x, c.y],
+    getNewPositionAfterMove: (params: number[], currentPosition: Coord) => ({ x: currentPosition.x + params[2], y: currentPosition.y + params[3] }),
+  },
+  T: {
+    arity: 2,
+    parametersPerRow: 6,
+    defaultParams: (c: Coord) => [c.x, c.y],
+    getNewPositionAfterMove: (params: number[], _: Coord) => ({ x: params[0], y: params[1] }),
+  },
+  t: {
+    arity: 2,
+    parametersPerRow: 6,
+    defaultParams: (c: Coord) => [c.x, c.y],
+    getNewPositionAfterMove: (params: number[], currentPosition: Coord) => ({ x: currentPosition.x + params[0], y: currentPosition.y + params[1] }),
+  },
+  A: {
+    arity: 7,
+    parametersPerRow: 7,
+    defaultParams: (c: Coord) => [4, 2, 0, 0, 0, c.x, c.y],
+    getNewPositionAfterMove: (params: number[], _: Coord) => ({ x: params[5], y: params[6] }),
+  },
+  a: {
+    arity: 7,
+    parametersPerRow: 7,
+    defaultParams: (c: Coord) => [4, 2, 0, 0, 0, c.x, c.y],
+    getNewPositionAfterMove: (params: number[], currentPosition: Coord) => ({
+      x: currentPosition.x + params[5],
+      y: currentPosition.y + params[6],
+    }),
+  },
+  Z: {
+    arity: 0,
+    parametersPerRow: 0,
+    defaultParams: (_: Coord) => [],
+    getNewPositionAfterMove: (_: number[], currentPosition: Coord) => currentPosition,
+  },
+  z: {
+    arity: 0,
+    parametersPerRow: 0,
+    defaultParams: (_: Coord) => [],
+    getNewPositionAfterMove: (_: number[], currentPosition: Coord) => currentPosition,
+  },
 };

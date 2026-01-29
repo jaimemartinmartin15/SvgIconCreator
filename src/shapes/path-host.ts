@@ -1,6 +1,6 @@
 import { FormArray, FormControl, FormGroup } from '@angular/forms';
 import { Coord, CoordWithDelta, ElementsRefService, ToFormType } from '@jaimemartinmartin15/jei-devkit-angular-shared';
-import { Command, PathInstruction } from '../models/path.model';
+import { Command, COMMAND_SPECS, PathInstruction } from '../models/path.model';
 import { Shape } from '../models/shape';
 import { AppEventsService } from '../services/app-events.service';
 import { FormsService } from '../services/forms.service';
@@ -49,7 +49,7 @@ export class PathHost extends ShapeHost {
       //       That is why it changes to L automatically. It allows to draw a line on first mouse down and mouse up.
       // TODO: allow to choose default instruction after M or m instructions (tip: remove return in this block?)
 
-      const c = this.isRelativeInstruction(this.currentCommand) ? this.calculateRelativeCoord(coord) : coord;
+      const c = this.isRelativeInstruction(this.currentCommand) ? this.calculateRelativeCoordToLastOne(coord) : coord;
 
       this.formsService.dForm.push(this.createCommandFormWithParameters(this.currentCommand, [c.x, c.y]));
       this.currentCommand = 'L';
@@ -58,9 +58,9 @@ export class PathHost extends ShapeHost {
     }
 
     if (['L', 'l', 'T', 't'].includes(this.currentCommand)) {
-      const c = this.isRelativeInstruction(this.currentCommand) ? this.calculateRelativeCoord(coord) : coord;
+      const c = this.isRelativeInstruction(this.currentCommand) ? this.calculateRelativeCoordToLastOne(coord) : coord;
 
-      if (this.isLastCommandInstructionTheSame(this.currentCommand)) {
+      if (this.lastCommandInstructionIs(this.currentCommand)) {
         this.lastCommandControl.controls.parameters.push([new FormControl(c.x, { nonNullable: true }), new FormControl(c.y, { nonNullable: true })]);
       } else {
         this.formsService.dForm.push(this.createCommandFormWithParameters(this.currentCommand, [c.x, c.y]));
@@ -69,9 +69,9 @@ export class PathHost extends ShapeHost {
     }
 
     if (['H', 'h'].includes(this.currentCommand)) {
-      const c = this.isRelativeInstruction(this.currentCommand) ? this.calculateRelativeCoord(coord) : coord;
+      const c = this.isRelativeInstruction(this.currentCommand) ? this.calculateRelativeCoordToLastOne(coord) : coord;
 
-      if (this.isLastCommandInstructionTheSame(this.currentCommand)) {
+      if (this.lastCommandInstructionIs(this.currentCommand)) {
         this.lastCommandControl.controls.parameters.push([new FormControl(c.x, { nonNullable: true })]);
       } else {
         this.formsService.dForm.push(this.createCommandFormWithParameters(this.currentCommand, [c.x]));
@@ -80,9 +80,9 @@ export class PathHost extends ShapeHost {
     }
 
     if (['V', 'v'].includes(this.currentCommand)) {
-      const c = this.isRelativeInstruction(this.currentCommand) ? this.calculateRelativeCoord(coord) : coord;
+      const c = this.isRelativeInstruction(this.currentCommand) ? this.calculateRelativeCoordToLastOne(coord) : coord;
 
-      if (this.isLastCommandInstructionTheSame(this.currentCommand)) {
+      if (this.lastCommandInstructionIs(this.currentCommand)) {
         this.lastCommandControl.controls.parameters.push([new FormControl(c.y, { nonNullable: true })]);
       } else {
         this.formsService.dForm.push(this.createCommandFormWithParameters(this.currentCommand, [c.y]));
@@ -94,9 +94,9 @@ export class PathHost extends ShapeHost {
       if (this.parameterToEditIndex === -1 || (this.parameterToEditIndex - 4) % C_LENGTH === 0) {
         // create a new curve
 
-        const c = this.isRelativeInstruction(this.currentCommand) ? this.calculateRelativeCoord(coord) : coord;
+        const c = this.isRelativeInstruction(this.currentCommand) ? this.calculateRelativeCoordToLastOne(coord) : coord;
 
-        if (this.isLastCommandInstructionTheSame(this.currentCommand)) {
+        if (this.lastCommandInstructionIs(this.currentCommand)) {
           this.lastCommandControl.controls.parameters.push([
             new FormControl(c.x, { nonNullable: true }),
             new FormControl(c.y, { nonNullable: true }),
@@ -126,9 +126,9 @@ export class PathHost extends ShapeHost {
       if (this.parameterToEditIndex === -1 || (this.parameterToEditIndex - 2) % S_Q_LENGTH === 0) {
         // create a new curve
 
-        const c = this.isRelativeInstruction(this.currentCommand) ? this.calculateRelativeCoord(coord) : coord;
+        const c = this.isRelativeInstruction(this.currentCommand) ? this.calculateRelativeCoordToLastOne(coord) : coord;
 
-        if (this.isLastCommandInstructionTheSame(this.currentCommand)) {
+        if (this.lastCommandInstructionIs(this.currentCommand)) {
           this.lastCommandControl.controls.parameters.push([
             new FormControl(c.x, { nonNullable: true }),
             new FormControl(c.y, { nonNullable: true }),
@@ -155,9 +155,9 @@ export class PathHost extends ShapeHost {
 
     if (['A', 'a'].includes(this.currentCommand)) {
       // TODO think a way to set a size with the mouse instead of 2 and 4 by default and using the forms
-      const c = this.isRelativeInstruction(this.currentCommand) ? this.calculateRelativeCoord(coord) : coord;
+      const c = this.isRelativeInstruction(this.currentCommand) ? this.calculateRelativeCoordToLastOne(coord) : coord;
 
-      if (this.isLastCommandInstructionTheSame(this.currentCommand)) {
+      if (this.lastCommandInstructionIs(this.currentCommand)) {
         this.lastCommandControl.controls.parameters.push([
           new FormControl(2, { nonNullable: true }),
           new FormControl(4, { nonNullable: true }),
@@ -180,26 +180,26 @@ export class PathHost extends ShapeHost {
     const parameters = this.lastCommandControl.controls.parameters;
 
     if (['L', 'l', 'T', 't', 'A', 'a'].includes(this.currentCommand)) {
-      const c = this.isRelativeInstruction(this.currentCommand) ? this.calculateRelativeCoord(coord, 1) : coord;
+      const c = this.isRelativeInstruction(this.currentCommand) ? this.calculateRelativeCoordToLastOne(coord, 1) : coord;
       parameters.controls.at(-2)!.setValue(c.x);
       parameters.controls.at(-1)!.setValue(c.y);
       return;
     }
 
     if (['H', 'h'].includes(this.currentCommand)) {
-      const c = this.isRelativeInstruction(this.currentCommand) ? this.calculateRelativeCoord(coord, 1) : coord;
+      const c = this.isRelativeInstruction(this.currentCommand) ? this.calculateRelativeCoordToLastOne(coord, 1) : coord;
       parameters.controls.at(-1)!.setValue(c.x);
       return;
     }
 
     if (['V', 'v'].includes(this.currentCommand)) {
-      const c = this.isRelativeInstruction(this.currentCommand) ? this.calculateRelativeCoord(coord, 1) : coord;
+      const c = this.isRelativeInstruction(this.currentCommand) ? this.calculateRelativeCoordToLastOne(coord, 1) : coord;
       parameters.controls.at(-1)!.setValue(c.y);
       return;
     }
 
     if (['C', 'c'].includes(this.currentCommand)) {
-      const c = this.isRelativeInstruction(this.currentCommand) ? this.calculateRelativeCoord(coord, C_LENGTH / 2) : coord;
+      const c = this.isRelativeInstruction(this.currentCommand) ? this.calculateRelativeCoordToLastOne(coord, C_LENGTH / 2) : coord;
 
       if ((this.parameterToEditIndex - 4) % C_LENGTH === 0) {
         // dragging end of the curve
@@ -231,7 +231,7 @@ export class PathHost extends ShapeHost {
     }
 
     if (['S', 's', 'Q', 'q'].includes(this.currentCommand)) {
-      const c = this.isRelativeInstruction(this.currentCommand) ? this.calculateRelativeCoord(coord, S_Q_LENGTH / 2) : coord;
+      const c = this.isRelativeInstruction(this.currentCommand) ? this.calculateRelativeCoordToLastOne(coord, S_Q_LENGTH / 2) : coord;
 
       if ((this.parameterToEditIndex - 2) % S_Q_LENGTH === 0) {
         // dragging end of the curve
@@ -555,6 +555,7 @@ export class PathHost extends ShapeHost {
         // if the command is an Arc, apply transformation only to end point
         // A  rx  ry  x-axis-rotation  large-arc-flag  sweep-flag  x  y
         command.parameters[5] -= amount;
+        // TODO move also furter parameters!
         return command;
       }
 
@@ -634,17 +635,15 @@ export class PathHost extends ShapeHost {
   //#endregion
 
   //#region path host
-  private isLastCommandInstructionTheSame(i: PathInstruction): boolean {
-    const commandControls = this.formsService.dForm;
-    const lastCommandControl = commandControls.controls.at(-1)!;
-    return lastCommandControl.value.instruction === i;
+  private lastCommandInstructionIs(i: PathInstruction): boolean {
+    return this.lastCommandControl.value.instruction === i;
   }
 
   private get lastCommandControl(): ToFormType<Command> {
     return this.formsService.dForm.controls.at(-1)!;
   }
 
-  private calculateRelativeCoord(coord: Coord, offset: number = 0): Coord {
+  private calculateRelativeCoordToLastOne(coord: Coord, offset: number = 0): Coord {
     const coords = this.getEditPointCoords();
     const lastCoord = coords[coords.length - offset - 1];
     return { x: coord.x - lastCoord.x, y: coord.y - lastCoord.y };
@@ -766,6 +765,132 @@ export class PathHost extends ShapeHost {
     // reset color of all points and highlight only the one for the control
     this.svgEditPoints.forEach((p) => p.setAttribute('stroke', EDIT_POINT_COLORS.STROKE_NORMAL));
     this.svgEditPoints[index]?.setAttribute('stroke', EDIT_POINT_COLORS.STROKE_HOVER_FORM);
+  }
+
+  private decomposeCommands(commands: Command[]): Command[] {
+    const result: Command[] = [];
+
+    for (const command of commands) {
+      const commandSpec = COMMAND_SPECS[command.instruction];
+
+      if (['Z', 'z'].includes(command.instruction)) {
+        // Z does not iterate in the for loop because does not have parameters length
+        result.push({ instruction: command.instruction, parameters: [] });
+        continue;
+      }
+
+      for (let p = 0; p < command.parameters.length; p += commandSpec.arity) {
+        result.push({
+          instruction: command.instruction,
+          parameters: command.parameters.slice(p, p + commandSpec.arity),
+        });
+      }
+    }
+
+    return result;
+  }
+
+  private composeCommands(commands: Command[]): Command[] {
+    if (commands.length <= 1) return commands;
+
+    const result: Command[] = [];
+
+    let currentCommand: Command = commands[0];
+    for (let c = 1; c < commands.length; c++) {
+      if (commands[c].instruction === currentCommand.instruction) {
+        currentCommand.parameters.push(...commands[c].parameters);
+      } else {
+        result.push(currentCommand);
+        currentCommand = commands[c];
+      }
+    }
+
+    result.push(currentCommand);
+
+    return result;
+  }
+
+  public insertNewCommandAt(instruction: PathInstruction, parameters: number[], cmdi: number, parmi: number): void {
+    // list of decomposed commands:
+    // [{ instruction: 'M', parameters: [0, 0]}, { instruction: 'L', parameters: [1, 1]}, { instruction: 'L', parameters: [2, 2]}]
+    const decomposed = this.decomposeCommands(this.d);
+
+    // calculate the new offset for cmdi and parmi
+    let offset = 0;
+    const commands = this.d;
+    for (let i = 0; i < cmdi; i++) {
+      const arity = COMMAND_SPECS[commands[i].instruction].arity;
+      if (arity === 0) {
+        // Z or z instructions
+        offset++;
+      } else {
+        offset += commands[i].parameters.length / arity;
+      }
+    }
+
+    const arity = COMMAND_SPECS[commands[cmdi].instruction].arity;
+    if (arity > 0 && parmi > 0) {
+      offset += parmi / arity;
+    }
+
+    // TODO clean up
+    const composed = [...this.composeCommands([...[...decomposed.slice(0, offset), { instruction, parameters }, ...decomposed.slice(offset)]])];
+    this.formsService.dForm.clear({ emitEvent: false });
+    composed.map((c) => this.createCommandFormWithParameters(c.instruction, c.parameters)).forEach((c) => this.formsService.dForm.push(c, { emitEvent: false }));
+    this.formsService.dForm.updateValueAndValidity({ emitEvent: true });
+  }
+
+  public getAbsolutePathCoords(): Coord[] {
+    const coords: Coord[] = [];
+
+    const decomposed = this.decomposeCommands(this.d);
+    let currentPosition: Coord = { x: 0, y: 0 };
+    let lastMPosition: Coord = currentPosition;
+    for (const command of decomposed) {
+      if (['Z', 'z'].includes(command.instruction)) {
+        currentPosition = lastMPosition;
+        coords.push(currentPosition);
+        continue;
+      }
+
+      const nextPosition = COMMAND_SPECS[command.instruction].getNewPositionAfterMove(command.parameters, currentPosition);
+      coords.push(nextPosition);
+      currentPosition = nextPosition;
+
+      if (['M', 'm'].includes(command.instruction)) {
+        lastMPosition = currentPosition;
+      }
+    }
+
+    return coords;
+  }
+
+  public getPreviousCoord(cmdi: number, parmi: number): Coord {
+    const absoluteCoords = this.getAbsolutePathCoords();
+    const convertedIndex = this.convertMergedIndexToDecomposedIndex(cmdi, parmi);
+    return absoluteCoords[convertedIndex - 1];
+  }
+
+  private convertMergedIndexToDecomposedIndex(cmdi: number, parmi: number): number {
+    const commands = this.d;
+    let index = 0;
+
+    // previous commands
+    for (let i = 0; i < cmdi; i++) {
+      if (['Z', 'z'].includes(commands[i].instruction)) {
+        index++;
+        continue;
+      }
+
+      const arity = COMMAND_SPECS[commands[i].instruction].arity;
+      index += commands[i].parameters.length / arity;
+    }
+
+    // current command
+    const arity = COMMAND_SPECS[commands[cmdi].instruction].arity;
+    const subCommandIndex = parmi / (arity || 1); // Z arity is 0, but parmi will be 0 too
+
+    return index + subCommandIndex;
   }
   //#endregion
 }
