@@ -253,9 +253,14 @@ export class AttributesComponent implements OnInit {
 
     this.overlayRef.detach();
 
-    const previousCoord = pathHost.getPreviousCoord(cmdi, parmi);
-    const parameters = COMMAND_SPECS[instruction].defaultParams(previousCoord);
+    const previousPosition = pathHost.getPreviousPosition(cmdi, parmi);
+    const parameters = COMMAND_SPECS[instruction].defaultParams(previousPosition);
     pathHost.insertNewCommandAt(instruction, parameters, cmdi, parmi);
+
+    if (pathHost.isShapeFinished) {
+      pathHost.clearEditPoints();
+      pathHost.createEditPoints();
+    }
   }
 
   public highlightInputPoint(cmdi: number, parmi: number): boolean {

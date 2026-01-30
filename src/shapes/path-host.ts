@@ -325,103 +325,17 @@ export class PathHost extends ShapeHost {
 
   //#region edit point
   protected override getEditPointCoords(): Coord[] {
-    const coords: Coord[] = [];
-    const commands: Command[] = this.d;
+    // init with mock coord in case first command is relative: 'm', and remove it before return
+    const coords: Coord[] = [{ x: 0, y: 0 }];
 
+    const commands: Command[] = this.decomposedCommands;
     for (let c = 0; c < commands.length; c++) {
-      const instruction = commands[c].instruction;
-      const parameters = commands[c].parameters;
-
-      if (['M', 'L', 'C', 'S', 'Q', 'T'].includes(instruction)) {
-        for (let p = 0; p < parameters.length; p += 2) {
-          coords.push({ x: parameters[p], y: parameters[p + 1] });
-        }
-        continue;
-      }
-
-      if (['m', 'l', 't'].includes(instruction)) {
-        for (let p = 0; p < parameters.length; p += 2) {
-          // TODO: fix when converting to relative first command and there is not previoous coord
-          const lastCoord = coords.at(-1)!;
-          coords.push({ x: lastCoord.x + parameters[p], y: lastCoord.y + parameters[p + 1] });
-        }
-        continue;
-      }
-
-      if (instruction === 'H') {
-        for (let p = 0; p < parameters.length; p++) {
-          const lastCoord = coords.at(-1)!;
-          coords.push({ x: parameters[p], y: lastCoord.y });
-        }
-        continue;
-      }
-
-      if (instruction === 'h') {
-        for (let p = 0; p < parameters.length; p++) {
-          const lastCoord = coords.at(-1)!;
-          coords.push({ x: lastCoord.x + parameters[p], y: lastCoord.y });
-        }
-        continue;
-      }
-
-      if (instruction === 'V') {
-        for (let p = 0; p < parameters.length; p++) {
-          const lastCoord = coords.at(-1)!;
-          coords.push({ x: lastCoord.x, y: parameters[p] });
-        }
-        continue;
-      }
-
-      if (instruction === 'v') {
-        for (let p = 0; p < parameters.length; p++) {
-          const lastCoord = coords.at(-1)!;
-          coords.push({ x: lastCoord.x, y: lastCoord.y + parameters[p] });
-        }
-        continue;
-      }
-
-      if (instruction === 'c') {
-        for (let s = 0; s < parameters.length / C_LENGTH; s++) {
-          const lastCoord = coords.at(-1)!;
-          for (let p = 0; p < C_LENGTH; p += 2) {
-            coords.push({
-              x: lastCoord.x + parameters[s * C_LENGTH + p],
-              y: lastCoord.y + parameters[s * C_LENGTH + p + 1],
-            });
-          }
-        }
-        continue;
-      }
-
-      if (['s', 'q'].includes(instruction)) {
-        for (let s = 0; s < parameters.length / S_Q_LENGTH; s++) {
-          const lastCoord = coords.at(-1)!;
-          for (let p = 0; p < S_Q_LENGTH; p += 2) {
-            coords.push({
-              x: lastCoord.x + parameters[s * S_Q_LENGTH + p],
-              y: lastCoord.y + parameters[s * S_Q_LENGTH + p + 1],
-            });
-          }
-        }
-        continue;
-      }
-
-      if (instruction === 'A') {
-        for (let p = 0; p < parameters.length; p += 7) {
-          coords.push({ x: parameters[p + 5], y: parameters[p + 6] });
-        }
-        continue;
-      }
-
-      if (instruction === 'a') {
-        for (let p = 0; p < parameters.length; p += 7) {
-          const lastCoord = coords.at(-1)!;
-          coords.push({ x: lastCoord.x + parameters[p + 5], y: lastCoord.y + parameters[p + 6] });
-        }
-        continue;
-      }
+      const { instruction, parameters } = commands[c];
+      const editPointCoords = COMMAND_SPECS[instruction].getEditPointPositions(parameters, coords.at(-1)!);
+      coords.push(...editPointCoords);
     }
 
+    coords.shift(); // remove the initial mock coord (0, 0)
     return coords;
   }
 
@@ -767,22 +681,22 @@ export class PathHost extends ShapeHost {
     this.svgEditPoints[index]?.setAttribute('stroke', EDIT_POINT_COLORS.STROKE_HOVER_FORM);
   }
 
-  private decomposeCommands(commands: Command[]): Command[] {
+  private get decomposedCommands(): Command[] {
     const result: Command[] = [];
+    const commands = this.d;
 
     for (const command of commands) {
-      const commandSpec = COMMAND_SPECS[command.instruction];
-
       if (['Z', 'z'].includes(command.instruction)) {
         // Z does not iterate in the for loop because does not have parameters length
         result.push({ instruction: command.instruction, parameters: [] });
         continue;
       }
 
-      for (let p = 0; p < command.parameters.length; p += commandSpec.arity) {
+      const commandArity = COMMAND_SPECS[command.instruction].arity;
+      for (let p = 0; p < command.parameters.length; p += commandArity) {
         result.push({
           instruction: command.instruction,
-          parameters: command.parameters.slice(p, p + commandSpec.arity),
+          parameters: command.parameters.slice(p, p + commandArity),
         });
       }
     }
@@ -811,39 +725,20 @@ export class PathHost extends ShapeHost {
   }
 
   public insertNewCommandAt(instruction: PathInstruction, parameters: number[], cmdi: number, parmi: number): void {
-    // list of decomposed commands:
-    // [{ instruction: 'M', parameters: [0, 0]}, { instruction: 'L', parameters: [1, 1]}, { instruction: 'L', parameters: [2, 2]}]
-    const decomposed = this.decomposeCommands(this.d);
+    const decomposed = this.decomposedCommands;
+    const decomposedIndex = this.resolveDecomposedIndex(cmdi, parmi);
+    const composed = this.composeCommands([...decomposed.slice(0, decomposedIndex), { instruction, parameters }, ...decomposed.slice(decomposedIndex)]);
 
-    // calculate the new offset for cmdi and parmi
-    let offset = 0;
-    const commands = this.d;
-    for (let i = 0; i < cmdi; i++) {
-      const arity = COMMAND_SPECS[commands[i].instruction].arity;
-      if (arity === 0) {
-        // Z or z instructions
-        offset++;
-      } else {
-        offset += commands[i].parameters.length / arity;
-      }
-    }
-
-    const arity = COMMAND_SPECS[commands[cmdi].instruction].arity;
-    if (arity > 0 && parmi > 0) {
-      offset += parmi / arity;
-    }
-
-    // TODO clean up
-    const composed = [...this.composeCommands([...[...decomposed.slice(0, offset), { instruction, parameters }, ...decomposed.slice(offset)]])];
+    // clear the form array, create new controls, add them without emitEvent and finally emit all at once
     this.formsService.dForm.clear({ emitEvent: false });
     composed.map((c) => this.createCommandFormWithParameters(c.instruction, c.parameters)).forEach((c) => this.formsService.dForm.push(c, { emitEvent: false }));
     this.formsService.dForm.updateValueAndValidity({ emitEvent: true });
   }
 
-  public getAbsolutePathCoords(): Coord[] {
+  private getAbsolutePathPositions(): Coord[] {
     const coords: Coord[] = [];
 
-    const decomposed = this.decomposeCommands(this.d);
+    const decomposed = this.decomposedCommands;
     let currentPosition: Coord = { x: 0, y: 0 };
     let lastMPosition: Coord = currentPosition;
     for (const command of decomposed) {
@@ -865,32 +760,31 @@ export class PathHost extends ShapeHost {
     return coords;
   }
 
-  public getPreviousCoord(cmdi: number, parmi: number): Coord {
-    const absoluteCoords = this.getAbsolutePathCoords();
-    const convertedIndex = this.convertMergedIndexToDecomposedIndex(cmdi, parmi);
-    return absoluteCoords[convertedIndex - 1];
+  public getPreviousPosition(cmdi: number, parmi: number): Coord {
+    const absoluteCoords = this.getAbsolutePathPositions();
+    const decomposedIndex = this.resolveDecomposedIndex(cmdi, parmi);
+    return absoluteCoords[decomposedIndex - 1];
   }
 
-  private convertMergedIndexToDecomposedIndex(cmdi: number, parmi: number): number {
+  private resolveDecomposedIndex(cmdi: number, parmi: number): number {
+    let offset = 0;
     const commands = this.d;
-    let index = 0;
-
-    // previous commands
     for (let i = 0; i < cmdi; i++) {
-      if (['Z', 'z'].includes(commands[i].instruction)) {
-        index++;
-        continue;
-      }
-
       const arity = COMMAND_SPECS[commands[i].instruction].arity;
-      index += commands[i].parameters.length / arity;
+      if (arity === 0) {
+        // Z or z instructions
+        offset++;
+      } else {
+        offset += commands[i].parameters.length / arity;
+      }
     }
 
-    // current command
     const arity = COMMAND_SPECS[commands[cmdi].instruction].arity;
-    const subCommandIndex = parmi / (arity || 1); // Z arity is 0, but parmi will be 0 too
+    if (arity > 0 && parmi > 0) {
+      offset += parmi / arity;
+    }
 
-    return index + subCommandIndex;
+    return offset;
   }
   //#endregion
 }
