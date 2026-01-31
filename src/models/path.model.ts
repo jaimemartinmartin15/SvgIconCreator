@@ -15,6 +15,7 @@ export interface Command {
 
 interface CommandSpec {
   arity: number;
+  drawingStepsIndexes: number[][];
   parametersPerRow: number;
   defaultParams: (c: Coord) => number[];
   getNewPositionAfterMove: (params: number[], currentPosition: Coord) => Coord;
@@ -24,6 +25,7 @@ interface CommandSpec {
 export const COMMAND_SPECS: { [K in PathInstruction]: CommandSpec } = {
   M: {
     arity: 2,
+    drawingStepsIndexes: [[0, 1]],
     parametersPerRow: 6,
     defaultParams: (c: Coord) => [c.x, c.y],
     getNewPositionAfterMove: (params: number[]) => ({ x: params[0], y: params[1] }),
@@ -31,6 +33,7 @@ export const COMMAND_SPECS: { [K in PathInstruction]: CommandSpec } = {
   },
   m: {
     arity: 2,
+    drawingStepsIndexes: [[0, 1]],
     parametersPerRow: 6,
     defaultParams: (c: Coord) => [c.x, c.y],
     getNewPositionAfterMove: (params: number[], currentPosition: Coord) => ({ x: currentPosition.x + params[0], y: currentPosition.y + params[1] }),
@@ -38,6 +41,7 @@ export const COMMAND_SPECS: { [K in PathInstruction]: CommandSpec } = {
   },
   L: {
     arity: 2,
+    drawingStepsIndexes: [[0, 1]],
     parametersPerRow: 6,
     defaultParams: (c: Coord) => [c.x, c.y],
     getNewPositionAfterMove: (params: number[]) => ({ x: params[0], y: params[1] }),
@@ -45,6 +49,7 @@ export const COMMAND_SPECS: { [K in PathInstruction]: CommandSpec } = {
   },
   l: {
     arity: 2,
+    drawingStepsIndexes: [[0, 1]],
     parametersPerRow: 6,
     defaultParams: (c: Coord) => [c.x, c.y],
     getNewPositionAfterMove: (params: number[], currentPosition: Coord) => ({ x: currentPosition.x + params[0], y: currentPosition.y + params[1] }),
@@ -52,6 +57,7 @@ export const COMMAND_SPECS: { [K in PathInstruction]: CommandSpec } = {
   },
   H: {
     arity: 1,
+    drawingStepsIndexes: [[0]],
     parametersPerRow: 5,
     defaultParams: (c: Coord) => [c.x],
     getNewPositionAfterMove: (params: number[], currentPosition: Coord) => ({ x: params[0], y: currentPosition.y }),
@@ -59,6 +65,7 @@ export const COMMAND_SPECS: { [K in PathInstruction]: CommandSpec } = {
   },
   h: {
     arity: 1,
+    drawingStepsIndexes: [[0]],
     parametersPerRow: 5,
     defaultParams: (c: Coord) => [c.x],
     getNewPositionAfterMove: (params: number[], currentPosition: Coord) => ({ x: currentPosition.x + params[0], y: currentPosition.y }),
@@ -66,6 +73,7 @@ export const COMMAND_SPECS: { [K in PathInstruction]: CommandSpec } = {
   },
   V: {
     arity: 1,
+    drawingStepsIndexes: [[0]],
     parametersPerRow: 5,
     defaultParams: (c: Coord) => [c.y],
     getNewPositionAfterMove: (params: number[], currentPosition: Coord) => ({ x: currentPosition.x, y: params[0] }),
@@ -73,6 +81,7 @@ export const COMMAND_SPECS: { [K in PathInstruction]: CommandSpec } = {
   },
   v: {
     arity: 1,
+    drawingStepsIndexes: [[0]],
     parametersPerRow: 5,
     defaultParams: (c: Coord) => [c.y],
     getNewPositionAfterMove: (params: number[], currentPosition: Coord) => ({ x: currentPosition.x, y: currentPosition.y + params[0] }),
@@ -80,6 +89,11 @@ export const COMMAND_SPECS: { [K in PathInstruction]: CommandSpec } = {
   },
   C: {
     arity: 6,
+    drawingStepsIndexes: [
+      [4, 5],
+      [0, 1],
+      [2, 3],
+    ],
     parametersPerRow: 6,
     defaultParams: (c: Coord) => [c.x, c.y, c.x, c.y, c.x, c.y],
     getNewPositionAfterMove: (params: number[]) => ({ x: params[4], y: params[5] }),
@@ -91,6 +105,11 @@ export const COMMAND_SPECS: { [K in PathInstruction]: CommandSpec } = {
   },
   c: {
     arity: 6,
+    drawingStepsIndexes: [
+      [4, 5],
+      [0, 1],
+      [2, 3],
+    ],
     parametersPerRow: 6,
     defaultParams: (c: Coord) => [c.x, c.y, c.x, c.y, c.x, c.y],
     getNewPositionAfterMove: (params: number[], currentPosition: Coord) => ({
@@ -105,6 +124,10 @@ export const COMMAND_SPECS: { [K in PathInstruction]: CommandSpec } = {
   },
   S: {
     arity: 4,
+    drawingStepsIndexes: [
+      [2, 3],
+      [0, 1],
+    ],
     parametersPerRow: 4,
     defaultParams: (c: Coord) => [c.x, c.y, c.x, c.y],
     getNewPositionAfterMove: (params: number[]) => ({ x: params[2], y: params[3] }),
@@ -115,6 +138,10 @@ export const COMMAND_SPECS: { [K in PathInstruction]: CommandSpec } = {
   },
   s: {
     arity: 4,
+    drawingStepsIndexes: [
+      [2, 3],
+      [0, 1],
+    ],
     parametersPerRow: 4,
     defaultParams: (c: Coord) => [c.x, c.y, c.x, c.y],
     getNewPositionAfterMove: (params: number[], currentPosition: Coord) => ({ x: currentPosition.x + params[2], y: currentPosition.y + params[3] }),
@@ -125,6 +152,10 @@ export const COMMAND_SPECS: { [K in PathInstruction]: CommandSpec } = {
   },
   Q: {
     arity: 4,
+    drawingStepsIndexes: [
+      [2, 3],
+      [0, 1],
+    ],
     parametersPerRow: 4,
     defaultParams: (c: Coord) => [c.x, c.y, c.x, c.y],
     getNewPositionAfterMove: (params: number[]) => ({ x: params[2], y: params[3] }),
@@ -135,6 +166,10 @@ export const COMMAND_SPECS: { [K in PathInstruction]: CommandSpec } = {
   },
   q: {
     arity: 4,
+    drawingStepsIndexes: [
+      [2, 3],
+      [0, 1],
+    ],
     parametersPerRow: 4,
     defaultParams: (c: Coord) => [c.x, c.y, c.x, c.y],
     getNewPositionAfterMove: (params: number[], currentPosition: Coord) => ({ x: currentPosition.x + params[2], y: currentPosition.y + params[3] }),
@@ -145,6 +180,7 @@ export const COMMAND_SPECS: { [K in PathInstruction]: CommandSpec } = {
   },
   T: {
     arity: 2,
+    drawingStepsIndexes: [[0, 1]],
     parametersPerRow: 6,
     defaultParams: (c: Coord) => [c.x, c.y],
     getNewPositionAfterMove: (params: number[]) => ({ x: params[0], y: params[1] }),
@@ -152,6 +188,7 @@ export const COMMAND_SPECS: { [K in PathInstruction]: CommandSpec } = {
   },
   t: {
     arity: 2,
+    drawingStepsIndexes: [[0, 1]],
     parametersPerRow: 6,
     defaultParams: (c: Coord) => [c.x, c.y],
     getNewPositionAfterMove: (params: number[], currentPosition: Coord) => ({ x: currentPosition.x + params[0], y: currentPosition.y + params[1] }),
@@ -159,6 +196,7 @@ export const COMMAND_SPECS: { [K in PathInstruction]: CommandSpec } = {
   },
   A: {
     arity: 7,
+    drawingStepsIndexes: [[5, 6]],
     parametersPerRow: 7,
     defaultParams: (c: Coord) => [4, 2, 0, 0, 0, c.x, c.y],
     getNewPositionAfterMove: (params: number[]) => ({ x: params[5], y: params[6] }),
@@ -166,6 +204,7 @@ export const COMMAND_SPECS: { [K in PathInstruction]: CommandSpec } = {
   },
   a: {
     arity: 7,
+    drawingStepsIndexes: [[5, 6]],
     parametersPerRow: 7,
     defaultParams: (c: Coord) => [4, 2, 0, 0, 0, c.x, c.y],
     getNewPositionAfterMove: (params: number[], currentPosition: Coord) => ({
@@ -176,6 +215,7 @@ export const COMMAND_SPECS: { [K in PathInstruction]: CommandSpec } = {
   },
   Z: {
     arity: 0,
+    drawingStepsIndexes: [],
     parametersPerRow: 0,
     defaultParams: () => [],
     getNewPositionAfterMove: (_: number[], currentPosition: Coord) => currentPosition,
@@ -183,6 +223,7 @@ export const COMMAND_SPECS: { [K in PathInstruction]: CommandSpec } = {
   },
   z: {
     arity: 0,
+    drawingStepsIndexes: [],
     parametersPerRow: 0,
     defaultParams: () => [],
     getNewPositionAfterMove: (_: number[], currentPosition: Coord) => currentPosition,

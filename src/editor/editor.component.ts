@@ -141,7 +141,7 @@ export class EditorComponent {
     } else if (key === 'Z' || key === 'z') {
       this.shapeListService.selectedShape.closePath();
     } else if (isPathInstruction(key)) {
-      this.shapeListService.selectedShape.currentCommand = key;
+      this.shapeListService.selectedShape.currentInstruction = key;
     }
   }
 
