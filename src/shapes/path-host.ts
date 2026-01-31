@@ -97,7 +97,7 @@ export class PathHost extends ShapeHost {
       }
     }
 
-    this.resetDForm(this.composeCommands(decomposed));
+    this.formsService.dForm.setValue(this.composeCommands(decomposed));
   }
   //#endregion
 
