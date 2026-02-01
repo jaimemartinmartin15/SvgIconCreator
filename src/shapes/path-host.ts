@@ -167,34 +167,12 @@ export class PathHost extends ShapeHost {
 
   //#region move shape
   public override moveShapeUp(amount: number): void {
-    this.d = this.d.map((command) => {
-      if (command.instruction === command.instruction.toLowerCase()) {
-        // if the command is relative, do not apply transformation
-        return command;
-      }
+    const decomposed = this.decomposedCommands;
+    for (const command of decomposed) {
+      COMMAND_SPECS[command.instruction].moveY(command.parameters, -amount);
+    }
 
-      if (command.instruction === 'A') {
-        // if the command is an Arc, apply transformation only to end point
-        // A  rx  ry  x-axis-rotation  large-arc-flag  sweep-flag  x  y
-        command.parameters[6] -= amount;
-        return command;
-      }
-
-      if (command.instruction === 'H') {
-        return command;
-      }
-
-      if (command.instruction === 'V') {
-        command.parameters = command.parameters.map((v) => v - amount);
-        return command;
-      }
-
-      command.parameters = command.parameters.map((v, i) => {
-        if (i % 2 === 1) return v - amount;
-        return v;
-      });
-      return command;
-    });
+    this.d = this.composeCommands(decomposed);
 
     if (this.shapeListService.selectedShape === this) {
       this.formsService.dForm.setValue(this.d);
@@ -203,34 +181,12 @@ export class PathHost extends ShapeHost {
   }
 
   public override moveShapeRight(amount: number): void {
-    this.d = this.d.map((command) => {
-      if (command.instruction === command.instruction.toLowerCase()) {
-        // if the command is relative, do not apply transformation
-        return command;
-      }
+    const decomposed = this.decomposedCommands;
+    for (const command of decomposed) {
+      COMMAND_SPECS[command.instruction].moveX(command.parameters, amount);
+    }
 
-      if (command.instruction === 'A') {
-        // if the command is an Arc, apply transformation only to end point
-        // A  rx  ry  x-axis-rotation  large-arc-flag  sweep-flag  x  y
-        command.parameters[5] += amount;
-        return command;
-      }
-
-      if (command.instruction === 'H') {
-        command.parameters = command.parameters.map((v) => v + amount);
-        return command;
-      }
-
-      if (command.instruction === 'V') {
-        return command;
-      }
-
-      command.parameters = command.parameters.map((v, i) => {
-        if (i % 2 === 0) return v + amount;
-        return v;
-      });
-      return command;
-    });
+    this.d = this.composeCommands(decomposed);
 
     if (this.shapeListService.selectedShape === this) {
       this.formsService.dForm.setValue(this.d);
@@ -239,34 +195,12 @@ export class PathHost extends ShapeHost {
   }
 
   public override moveShapeDown(amount: number): void {
-    this.d = this.d.map((command) => {
-      if (command.instruction === command.instruction.toLowerCase()) {
-        // if the command is relative, do not apply transformation
-        return command;
-      }
+    const decomposed = this.decomposedCommands;
+    for (const command of decomposed) {
+      COMMAND_SPECS[command.instruction].moveY(command.parameters, amount);
+    }
 
-      if (command.instruction === 'A') {
-        // if the command is an Arc, apply transformation only to end point
-        // A  rx  ry  x-axis-rotation  large-arc-flag  sweep-flag  x  y
-        command.parameters[6] += amount;
-        return command;
-      }
-
-      if (command.instruction === 'H') {
-        return command;
-      }
-
-      if (command.instruction === 'V') {
-        command.parameters = command.parameters.map((v) => v + amount);
-        return command;
-      }
-
-      command.parameters = command.parameters.map((v, i) => {
-        if (i % 2 === 1) return v + amount;
-        return v;
-      });
-      return command;
-    });
+    this.d = this.composeCommands(decomposed);
 
     if (this.shapeListService.selectedShape === this) {
       this.formsService.dForm.setValue(this.d);
@@ -275,35 +209,12 @@ export class PathHost extends ShapeHost {
   }
 
   public override moveShapeLeft(amount: number): void {
-    this.d = this.d.map((command) => {
-      if (command.instruction === command.instruction.toLowerCase()) {
-        // if the command is relative, do not apply transformation
-        return command;
-      }
+    const decomposed = this.decomposedCommands;
+    for (const command of decomposed) {
+      COMMAND_SPECS[command.instruction].moveX(command.parameters, -amount);
+    }
 
-      if (command.instruction === 'A') {
-        // if the command is an Arc, apply transformation only to end point
-        // A  rx  ry  x-axis-rotation  large-arc-flag  sweep-flag  x  y
-        command.parameters[5] -= amount;
-        // TODO move also furter parameters!
-        return command;
-      }
-
-      if (command.instruction === 'H') {
-        command.parameters = command.parameters.map((v) => v - amount);
-        return command;
-      }
-
-      if (command.instruction === 'V') {
-        return command;
-      }
-
-      command.parameters = command.parameters.map((v, i) => {
-        if (i % 2 === 0) return v - amount;
-        return v;
-      });
-      return command;
-    });
+    this.d = this.composeCommands(decomposed);
 
     if (this.shapeListService.selectedShape === this) {
       this.formsService.dForm.setValue(this.d);
@@ -336,8 +247,7 @@ export class PathHost extends ShapeHost {
     this.strokeDasharray.forEach((d) => this.formsService.strokeDasharrayForm.push(new FormControl<number>(d, { nonNullable: true })));
     // this method is called when an existing shape is selected
     // reset the dForm to show the coords of the selected path
-    this.formsService.dForm.clear({ emitEvent: false });
-    this.d.map((c) => this.createCommandFormWithParameters(c.instruction, c.parameters)).forEach((c) => this.formsService.dForm.push(c));
+    this.resetDForm(this.d);
   }
   //#endregion
 
@@ -365,20 +275,6 @@ export class PathHost extends ShapeHost {
   //#endregion
 
   //#region path host
-  private lastCommandInstructionIs(i: PathInstruction): boolean {
-    return this.lastCommandControl.value.instruction === i;
-  }
-
-  private get lastCommandControl(): ToFormType<Command> {
-    return this.formsService.dForm.controls.at(-1)!;
-  }
-
-  private calculateRelativeCoordToLastOne(coord: Coord, offset: number = 0): Coord {
-    const coords = this.getEditPointCoords();
-    const lastCoord = coords[coords.length - offset - 1];
-    return { x: coord.x - lastCoord.x, y: coord.y - lastCoord.y };
-  }
-
   private getFormControlsForSelectedEditPointIndex(): [FormControl<number>, FormControl<number>] {
     const commandControls = this.formsService.dForm.controls;
     const mockFormControl = new FormControl<number>(0, { nonNullable: true });
@@ -447,7 +343,7 @@ export class PathHost extends ShapeHost {
 
   public closePath() {
     if (this.formsService.dForm.controls.length === 0) return;
-    if (['Z', 'z'].includes(this.lastCommandControl.value.instruction!)) return;
+    if (['Z', 'z'].includes(this.formsService.dForm.controls.at(-1)!.value.instruction!)) return;
     this.formsService.dForm.push(this.createCommandFormWithParameters('Z', []));
     this.currentInstruction = 'M';
   }
