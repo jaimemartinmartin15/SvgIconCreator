@@ -153,11 +153,9 @@
         <div class="option" (click)="convertoToAbsolute(cmdi)">Convertir a absoluta</div>
       }
 
-      <!-- TODO opcion fusionar: si se elimina un comando, pueden quedar dos iguales seguidos como separados  -->
-
       <!-- delete -->
       @if (cmdi !== 0) {
-        <div class="option" (click)="deleteCommand(cmdi)">Eliminar</div>
+        <div class="option" (click)="deleteComposedCommand(cmdi)">Eliminar</div>
       }
     </div>
   </ng-template>
@@ -208,15 +206,19 @@
               }
             }
 
-            <input
-              type="text"
-              jeiInputNumber
-              [formControlName]="parmi"
-              [class.point-highlighted]="highlightInputPoint(cmdi, parmi)"
-              [ngClass]="'shape-' + commandControl.value.instruction?.toLowerCase()"
-              (mouseenter)="mouseEnterInputPoint(cmdi, parmi)"
-              (mouseleave)="mouseLeaveInputPoint()"
-            />
+            <div class="input-wrapper" (mouseenter)="mouseEnterInputPoint(cmdi, parmi)" (mouseleave)="mouseLeaveInputPoint()">
+              <input
+                type="text"
+                jeiInputNumber
+                [formControlName]="parmi"
+                [class.point-highlighted]="highlightInputPoint(cmdi, parmi)"
+                [ngClass]="'shape-' + commandControl.value.instruction?.toLowerCase()"
+              />
+
+              @if (showDeleteButton(cmdi, parmi)) {
+                <svg appPlusSvg color="red" class="delete-icon" (click)="deleteDecomposedCommand(cmdi, parmi)"></svg>
+              }
+            </div>
 
             @if ((parmi + 1) % COMMAND_ARITY[commandControl.controls.instruction.value] === 0) {
               <!-- after each arity of parameters for the instruction -->

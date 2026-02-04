@@ -455,10 +455,27 @@ export class PathHost extends ShapeHost {
     const decomposedIndex = this.resolveDecomposedIndex(cmdi, parmi);
     const composed = this.composeCommands([...decomposed.slice(0, decomposedIndex), { instruction, parameters }, ...decomposed.slice(decomposedIndex)]);
 
-    // clear the form array, create new controls, add them without emitEvent and finally emit all at once
-    this.formsService.dForm.clear({ emitEvent: false });
-    composed.map((c) => this.createCommandFormWithParameters(c.instruction, c.parameters)).forEach((c) => this.formsService.dForm.push(c, { emitEvent: false }));
-    this.formsService.dForm.updateValueAndValidity({ emitEvent: true });
+    this.resetDForm(composed);
+  }
+
+  public deleteDecomposedCommand(cmdi: number, parmi: number): void {
+    const decomposedIndex = this.resolveDecomposedIndex(cmdi, parmi);
+    const decomposed = this.decomposedCommands;
+    decomposed.splice(decomposedIndex, 1);
+
+    this.resetDForm(this.composeCommands(decomposed));
+    this.clearEditPoints();
+    this.createEditPoints();
+  }
+
+  public deleteComposedCommand(cmdi: number) {
+    const commands = this.d;
+    commands.splice(cmdi, 1);
+
+    this.resetDForm(this.composeCommands(commands));
+
+    this.clearEditPoints();
+    this.createEditPoints();
   }
 
   private getAbsolutePathPositions(): Coord[] {

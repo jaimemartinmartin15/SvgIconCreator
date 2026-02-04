@@ -110,19 +110,35 @@
           }
         }
 
-        input[jeiInputNumber] {
-          width: 45px;
-          padding: 0;
-          outline: none;
+        .input-wrapper {
+          position: relative;
 
-          &.point-highlighted {
-            border-color: #0f0;
-            border-width: 2px;
+          input[jeiInputNumber] {
+            width: 45px;
+            padding: 0;
+            outline: none;
 
-            &:focus {
-              border-color: #0e0;
-              border-width: 3px;
+            &.point-highlighted {
+              border-color: #0f0;
+              border-width: 2px;
+
+              &:focus {
+                border-color: #0e0;
+                border-width: 3px;
+              }
             }
+          }
+
+          .delete-icon {
+            width: 15px;
+            padding: 1px;
+            border-radius: 50%;
+            position: absolute;
+            bottom: 100%;
+            left: 100%;
+            transform: translate(-50%, 50%) rotate(45deg);
+            transform-origin: center center;
+            cursor: pointer;
           }
         }
       }

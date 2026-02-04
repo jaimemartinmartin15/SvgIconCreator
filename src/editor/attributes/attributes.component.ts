@@ -236,15 +236,22 @@ export class AttributesComponent implements OnInit {
 
   public mouseOverInstruction = -1;
 
-  public deleteCommand(i: number) {
-    this.formsService.dForm.removeAt(i);
-    if (this.shapeListService.selectedShape?.isShapeFinished) {
-      this.shapeListService.selectedShape.clearEditPoints();
-      this.shapeListService.selectedShape.createEditPoints();
-    }
+  public deleteComposedCommand(cmdi: number) {
+    const pathHost = this.shapeListService.selectedShape;
+    if (!(pathHost instanceof PathHost)) return;
+
+    pathHost.deleteComposedCommand(cmdi);
+
     this.mouseOverInstruction = -1;
 
     this.overlayRef.detach();
+  }
+
+  public deleteDecomposedCommand(cmdi: number, parmi: number): void {
+    const pathHost = this.shapeListService.selectedShape;
+    if (!(pathHost instanceof PathHost)) return;
+
+    pathHost.deleteDecomposedCommand(cmdi, parmi);
   }
 
   public addNewCommandInPosition(instruction: PathInstruction, cmdi: number, parmi: number) {
@@ -312,6 +319,15 @@ export class AttributesComponent implements OnInit {
     this.indexOfParamWithMouseOver = -1;
     // this methods resets all svg edit points before highligting the selected one
     this.shapeListService.selectedShape.highlightSvgEditPointAtIndex(-1);
+  }
+
+  public showDeleteButton(cmdi: number, parmi: number): boolean {
+    const instruction = this.formsService.dForm.controls[cmdi].controls.instruction.value;
+    const arity = COMMAND_SPECS[instruction].arity;
+    const initRowIndexParam = Math.floor(this.indexOfParamWithMouseOver / arity) * arity;
+    const mouseIsOverTheSegment = initRowIndexParam + arity - 1 === parmi;
+
+    return this.indexOfCommandWithMouseOver === cmdi && mouseIsOverTheSegment;
   }
 
   public convertoToRelative(cmdi: number): void {
