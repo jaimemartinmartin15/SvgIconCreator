@@ -1,9 +1,10 @@
 # CHANGELOG
 
-## unreleased
+## 3.2.0
 
 Features:
 
+- Allow to add and remove commands to a path after it is created.
 - Allow to move dialogs around the screen.
 - Update experience of color picker.
 - Allow to add any number of data-attribute-binding.
