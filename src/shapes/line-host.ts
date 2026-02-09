@@ -57,7 +57,7 @@ export class LineHost extends ShapeHost {
   //#endregion
 
   //#region edit point
-  protected override getEditPointCoordsFromSvgShapeAttributes(): Coord[] {
+  protected override getEditPointCoords(): Coord[] {
     const p1: Coord = { x: this.x1, y: this.y1 }; // start point
     const p2: Coord = { x: this.x2, y: this.y2 }; // end point
     return [p1, p2];

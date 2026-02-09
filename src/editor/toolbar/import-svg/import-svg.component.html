@@ -4,9 +4,13 @@
 
 <span class="app-control-label">IMPORTAR</span>
 
-<dialog class="dialog" #importSvgDialog>
+<dialog class="dialog" #importSvgDialog cdkDrag>
   <div class="content">
-    <button class="close-dialog-button" (click)="importSvgDialog.close()"></button>
+    <div class="header">
+      <svg appBurgerSvg color="black" class="drag-dialog-handler" cdkDragHandle></svg>
+      <span class="title">IMPORTAR</span>
+      <svg appPlusSvg class="close-dialog-button" (click)="importSvgDialog.close()"></svg>
+    </div>
 
     <form>
       <div class="app-label-and-input texto-svg">

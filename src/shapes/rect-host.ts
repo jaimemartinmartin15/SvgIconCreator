@@ -85,7 +85,7 @@ export class RectHost extends ShapeHost {
   //#endregion
 
   //#region edit point
-  protected override getEditPointCoordsFromSvgShapeAttributes(): Coord[] {
+  protected override getEditPointCoords(): Coord[] {
     const p1: Coord = { x: this.x, y: this.y }; // top left
     const p2: Coord = { x: this.x + this.width, y: this.y }; // top right
     const p3: Coord = { x: this.x + this.width, y: this.y + this.height }; // bottom right

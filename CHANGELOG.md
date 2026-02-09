@@ -1,6 +1,16 @@
 # CHANGELOG
 
-## unreleased
+## 3.2.0
+
+Features:
+
+- Allow to add and remove commands to a path after it is created.
+- Allow to move dialogs around the screen.
+- Update experience of color picker.
+- Allow to add any number of data-attribute-binding.
+- Highlight svg edit point control and form point when mouse over them for path shapes.
+
+Fixes:
 
 - Avoid adding path commands (mainly Z) when typing in other inputs of the app and the shape is already finished.
 - Avoid navigating back and forward when moving a shape left or right using alt key.

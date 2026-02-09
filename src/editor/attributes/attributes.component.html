@@ -1,4 +1,5 @@
 <form class="attribute-group" (submit)="$event.preventDefault()">
+  <!-- MARK: colorpicker -->
   <label class="label-and-control" (click)="showColorPickerDialog(colorPickerDialog, 'stroke')">
     <span class="label">STROKE</span>
     <div class="color-picker-invoker" [style]="{ backgroundColor: formsService.strokeForm.value }"></div>
@@ -11,14 +12,22 @@
     </label>
   }
 
-  <dialog class="color-picker-dialog" #colorPickerDialog>
+  <dialog class="color-picker-dialog" [class.backdrop-transparent]="isUsingEyeDropper" #colorPickerDialog cdkDrag>
     <div class="content">
-      <button class="close-dialog-button" (click)="colorPickerDialog.close()"></button>
+      <div class="header">
+        <svg appBurgerSvg color="black" class="drag-dialog-handler" cdkDragHandle></svg>
+        <div class="title">
+          <button [class.selected]="colorPickerForm === this.formsService.strokeForm" (click)="showColorPickerDialog(colorPickerDialog, 'stroke')">STROKE</button>
+          <button [class.selected]="colorPickerForm === this.formsService.fillForm" (click)="showColorPickerDialog(colorPickerDialog, 'fill')">FILL</button>
+        </div>
+        <svg appPlusSvg class="close-dialog-button" (click)="colorPickerDialog.close()"></svg>
+      </div>
 
-      <jei-color-picker [formControl]="colorPickerForm"></jei-color-picker>
+      <jei-color-picker [formControl]="colorPickerForm" (eyeDropperStart)="isUsingEyeDropper = true" (eyeDropperEnd)="isUsingEyeDropper = false"></jei-color-picker>
     </div>
   </dialog>
 
+  <!-- MARK: strokewidth -->
   <label class="label-and-control">
     <span class="label">STROKE-WIDTH</span>
     <div class="stroke-width-control">
@@ -30,6 +39,7 @@
     </div>
   </label>
 
+  <!-- MARK: linecap -->
   @if (shapeSelectorIsLine || shapeSelectorIsPath || shapeSelectorIsText || selectedShapeIsLine || selectedShapeIsPath || selectedShapeIsText) {
     <label class="label-and-control">
       <span class="label">STROKE-LINECAP</span>
@@ -43,6 +53,7 @@
     </label>
   }
 
+  <!-- MARK: linejoin -->
   @if (shapeSelectorIsRect || shapeSelectorIsPath || shapeSelectorIsText || selectedShapeIsRect || selectedShapeIsPath || selectedShapeIsText) {
     <label class="label-and-control">
       <span class="label">STROKE-LINEJOIN</span>
@@ -56,6 +67,7 @@
     </label>
   }
 
+  <!-- MARK: dasharray -->
   <label class="label-and-control">
     <span class="label">STROKE-DASHARRAY</span>
     <div class="stroke-dasharray-control">
@@ -70,6 +82,7 @@
   </label>
 </form>
 
+<!-- MARK: Rect -->
 @if (selectedShapeIsRect) {
   <form class="attribute-group" (submit)="$event.preventDefault()">
     <label class="label-and-control">
@@ -104,6 +117,7 @@
   </form>
 }
 
+<!-- MARK: Line -->
 @if (selectedShapeIsLine) {
   <form class="attribute-group" (submit)="$event.preventDefault()">
     <label class="label-and-control">
@@ -128,24 +142,78 @@
   </form>
 }
 
+<!-- MARK: Path -->
 @if (selectedShapeIsPath) {
+  <ng-template #commandOptionsMenuTpl let-instruction="instruction" let-cmdi="cmdi">
+    <div class="menu">
+      <!-- convert to relative/absolute -->
+      @if (instruction.toUpperCase() === instruction) {
+        <div class="option" (click)="convertoToRelative(cmdi)">Convertir a relativa</div>
+      } @else {
+        <div class="option" (click)="convertoToAbsolute(cmdi)">Convertir a absoluta</div>
+      }
+
+      <!-- delete -->
+      @if (cmdi !== 0) {
+        <div class="option" (click)="deleteComposedCommand(cmdi)">Eliminar</div>
+      }
+    </div>
+  </ng-template>
+
+  <ng-template #newCommandMenuTpl let-cmdi="cmdi" let-parmi="parmi">
+    <div class="menu">
+      @for (instruction of addInstructionsList; track instruction) {
+        <div class="option" (click)="addNewCommandInPosition(instruction, cmdi, parmi)">Add {{ instruction }}</div>
+      }
+    </div>
+  </ng-template>
+
   <form class="attribute-group attribute-group--path" (submit)="$event.preventDefault()">
-    @for (commandControl of formsService.dForm.controls; track commandControl; let i = $index) {
-      <label [formGroup]="commandControl" class="command" (mouseenter)="mouseHoverIndex = i" (mouseleave)="mouseHoverIndex = -i">
-        <div class="command-type">
-          @if (mouseHoverIndex !== i || mouseHoverIndex === 0) {
+    @for (commandControl of formsService.dForm.controls; track commandControl; let cmdi = $index) {
+      <label [formGroup]="commandControl" class="command" (mouseenter)="indexOfCommandWithMouseOver = cmdi" (mouseleave)="indexOfCommandWithMouseOver = -1">
+        <div class="instruction" (mouseenter)="mouseOverInstruction = cmdi" (mouseleave)="mouseOverInstruction = -1">
+          @if (mouseOverInstruction === cmdi) {
+            <svg appBurgerSvg class="burger-icon" (click)="showCommandOptionsMenu($event, cmdi, commandControl.controls.instruction.value)"></svg>
+          } @else {
             <span>{{ commandControl.value.instruction }}</span>
           }
-          @if (mouseHoverIndex === i && mouseHoverIndex !== 0) {
-            <span (click)="deleteCommand(i, $event)">🗑️</span>
-          }
         </div>
-        <div formArrayName="coords" class="coords-list">
-          @for (p of commandControl.controls.coords.controls; track p; let i = $index) {
-            <div class="point-coords-input" formGroupName="{{ i }}">
-              <input type="text" jeiInputNumber formControlName="x" />
-              <input type="text" jeiInputNumber formControlName="y" />
+
+        <div formArrayName="parameters" class="parameters-list" [ngClass]="'parameters-list-' + commandControl.value.instruction?.toLowerCase()">
+          @if (['Z', 'z'].includes(commandControl.controls.instruction.value)) {
+            <!-- z does not have parameters -->
+            <svg appPlusSvg color="red" class="add-icon add-icon--z" (click)="showNewCommandMenu($event, cmdi, 0)"></svg>
+          }
+
+          @for (p of commandControl.controls.parameters.controls; track p; let parmi = $index) {
+            @if (parmi % NUMBER_OF_PARAMETERS_PER_ROW[commandControl.controls.instruction.value] === 0) {
+              <!-- first item of each line -->
+              @if (cmdi === 0) {
+                <!-- do not allow adding anything before first M command -->
+                <svg appPlusSvg class="add-icon add-icon--hidden"></svg>
+              } @else {
+                <svg appPlusSvg color="red" class="add-icon" (click)="showNewCommandMenu($event, cmdi, parmi)"></svg>
+              }
+            }
+
+            <div class="input-wrapper" (mouseenter)="mouseEnterInputPoint(cmdi, parmi)" (mouseleave)="mouseLeaveInputPoint()">
+              <input
+                type="text"
+                jeiInputNumber
+                [formControlName]="parmi"
+                [class.point-highlighted]="highlightInputPoint(cmdi, parmi)"
+                [ngClass]="'shape-' + commandControl.value.instruction?.toLowerCase()"
+              />
+
+              @if (showDeleteButton(cmdi, parmi)) {
+                <svg appPlusSvg color="red" class="delete-icon" (click)="deleteDecomposedCommand(cmdi, parmi)"></svg>
+              }
             </div>
+
+            @if ((parmi + 1) % COMMAND_ARITY[commandControl.controls.instruction.value] === 0) {
+              <!-- after each arity of parameters for the instruction -->
+              <svg appPlusSvg color="red" class="add-icon" (click)="showNewCommandMenu($event, cmdi, parmi + 1)"></svg>
+            }
           }
         </div>
       </label>
@@ -153,6 +221,7 @@
   </form>
 }
 
+<!-- MARK: Circle -->
 @if (selectedShapeIsCircle) {
   <form class="attribute-group" (submit)="$event.preventDefault()">
     <label class="label-and-control">
@@ -172,6 +241,7 @@
   </form>
 }
 
+<!-- MARK: Text -->
 @if (selectedShapeIsText) {
   <form class="attribute-group" (submit)="$event.preventDefault()">
     <label class="label-and-control">

@@ -8,6 +8,7 @@ export const EDIT_POINT_COLORS = {
   FILL_NORMAL: '#FFF5',
   STROKE_NORMAL: '#00f5',
   STROKE_HOVER: '#ffa50055',
+  STROKE_HOVER_FORM: '#0f0',
   STROKE_DRAGGING: '#f005',
 } as const;
 
@@ -52,11 +53,11 @@ export abstract class ShapeHost {
   public svgEditPoints: SVGCircleElement[] = [];
   protected selectedEditPointIndex: number = -1;
 
-  protected abstract getEditPointCoordsFromSvgShapeAttributes(): Coord[];
+  protected abstract getEditPointCoords(): Coord[];
   public abstract updatePositionSvgEditPoints(): void;
 
   public createEditPoints(): void {
-    const editPointsCoords = this.getEditPointCoordsFromSvgShapeAttributes();
+    const editPointsCoords = this.getEditPointCoords();
     editPointsCoords.forEach((epc) => {
       const editPointEl = this.createEditPoint(epc);
       this.svgEditPoints.push(editPointEl);
@@ -85,9 +86,7 @@ export abstract class ShapeHost {
   }
 
   protected getEditPointIndexUnderCoord(coord: Coord): number {
-    return this.getEditPointCoordsFromSvgShapeAttributes().findIndex(
-      (c) => Math.abs(c.x - coord.x) < this.getEditPointWidth() && Math.abs(c.y - coord.y) < this.getEditPointWidth(),
-    );
+    return this.getEditPointCoords().findIndex((c) => Math.abs(c.x - coord.x) < this.getEditPointWidth() && Math.abs(c.y - coord.y) < this.getEditPointWidth());
   }
 
   public getEditPointUnderMousePoint(mousePoint: Coord): SVGCircleElement | undefined {
@@ -179,21 +178,8 @@ export abstract class ShapeHost {
 
     let parsedShape = `<${this.tag}`;
 
-    if (this.svg.dataset['strokeBinding']) {
-      parsedShape += ` data-stroke-binding="${this.svg.dataset['strokeBinding']}"`;
-    }
-
-    if (this.svg.dataset['fillBinding']) {
-      parsedShape += ` data-fill-binding="${this.svg.dataset['fillBinding']}"`;
-    }
-
-    if (this.svg.dataset['strokeWidthBinding']) {
-      parsedShape += ` data-stroke-width-binding="${this.svg.dataset['strokeWidthBinding']}"`;
-    }
-
-    if (this.svg.dataset['strokeDasharrayBinding']) {
-      parsedShape += ` data-stroke-dasharray-binding="${this.svg.dataset['strokeDasharrayBinding']}"`;
-    }
+    // parse data-* attributes
+    this.getBindingProperties().forEach(({ attribute, binding }) => (parsedShape += ` data-${attribute}-binding="${binding}"`));
 
     // if stroke-width is 1, do not add it (it is the default)
     // if the stroke is transparent, do not add it neither
@@ -261,16 +247,18 @@ export abstract class ShapeHost {
   //#endregion
 
   //#region animation
-  public onBindingChanged(attribute: string, bindingName: string): void {
-    if (!bindingName?.trim()) {
-      delete this.svg.dataset[attribute];
-    } else {
-      this.svg.dataset[attribute] = bindingName;
-    }
+  public onBindingChanged(bindings: Partial<{ attribute: string; binding: string }>[]): void {
+    // delete all existing data-*-binding attributes
+    [...this.svg.attributes].filter((a) => a.name.startsWith('data-') && a.name.endsWith('-binding')).forEach((attr) => this.svg.removeAttribute(attr.name));
+
+    // add new data-*-binding attributes
+    bindings.filter((b) => b.attribute?.trim() && b.binding?.trim()).forEach((binding) => (this.svg.dataset[`${binding.attribute}Binding`] = binding.binding));
   }
 
-  public getBindingProperty(attribute: string): string {
-    return this.svg.dataset[attribute] ?? '';
+  public getBindingProperties(): { attribute: string; binding: string }[] {
+    return [...this.svg.attributes]
+      .filter((a) => a.name.startsWith('data-') && a.name.endsWith('-binding'))
+      .map((a) => ({ attribute: a.name.replace('data-', '').replace('-binding', ''), binding: a.value }));
   }
   //#endregion
 
@@ -420,24 +408,25 @@ export abstract class ShapeHost {
   public get d(): Command[] {
     const commands: Command[] = [];
     const d = this.getSvgAttributeAsString('d');
+
     for (let i = 0; i < d.length; i++) {
       const c = d.charAt(i);
       if (isPathInstruction(c)) {
-        // find the start and the end indexes of the command "M1,3" - "C1,3 4,5 6,7" - "L1,3"
+        // find the start and the end indexes of the command
         const init = i;
         let end = i + 1;
-        for (let j = i + 1; !['M', 'L', 'C', 'Z'].includes(d.charAt(j)) && j < d.length; j++) {
-          end = j + 1;
+        while (!isPathInstruction(d.charAt(end)) && end < d.length) {
+          end++;
         }
+        i = end - 1;
 
         commands.push({
           instruction: c,
-          coords: d
+          parameters: d
             .substring(init + 1, end)
-            .split(' ') // split coords
+            .split(/ |,/) // split numbers
             .filter((c) => c !== '')
-            .map((coords) => coords.split(',')) // split x and y
-            .map(([x, y]) => ({ x: +x, y: +y })),
+            .map((v) => +v),
         });
       }
     }
@@ -446,7 +435,7 @@ export abstract class ShapeHost {
   }
 
   public set d(value: Command[]) {
-    const d = value.map((c) => `${c.instruction}${c.coords.map((c) => `${c.x},${c.y}`).join(' ')}`).join('');
+    const d = value.map((c) => `${c.instruction}${c.parameters.join(' ')}`).join('');
     this.setSvgAttribute('d', d);
   }
 

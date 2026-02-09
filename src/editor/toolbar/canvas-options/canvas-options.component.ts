@@ -1,3 +1,4 @@
+import { CdkDrag, CdkDragHandle } from '@angular/cdk/drag-drop';
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { ElementRefDirective, ElementsRefService, InputNumberDirective } from '@jaimemartinmartin15/jei-devkit-angular-shared';
@@ -5,13 +6,15 @@ import { debounceTime } from 'rxjs';
 import { ViewBoxModel } from '../../../models/view-box.model';
 import { FormsService } from '../../../services/forms.service';
 import { ShapeListService } from '../../../services/shape-list.service';
+import { BurgerSvgComponent } from '../../../svg-output/burger.component';
 import { IconsSvgModule } from '../../../svg-output/icons-svg.module';
+import { PlusSvgComponent } from '../../../svg-output/plus.component';
 
 @Component({
   selector: 'app-canvas-options',
   templateUrl: './canvas-options.component.html',
   styleUrls: ['./canvas-options.component.scss'],
-  imports: [ReactiveFormsModule, ElementRefDirective, IconsSvgModule, InputNumberDirective],
+  imports: [ReactiveFormsModule, ElementRefDirective, IconsSvgModule, InputNumberDirective, CdkDrag, CdkDragHandle, PlusSvgComponent, BurgerSvgComponent],
 })
 export class CanvasOptionsComponent implements OnInit {
   @ViewChild('canvasOptionsDialog')

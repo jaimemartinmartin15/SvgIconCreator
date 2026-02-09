@@ -4,9 +4,13 @@
 
 <span class="app-control-label">EXPORTAR</span>
 
-<dialog class="dialog" #exportSvgDialog>
+<dialog class="dialog" #exportSvgDialog cdkDrag>
   <div class="content">
-    <button class="close-dialog-button" (click)="exportSvgDialog.close()"></button>
+    <div class="header">
+      <svg appBurgerSvg color="black" class="drag-dialog-handler" cdkDragHandle></svg>
+      <span class="title">EXPORTAR</span>
+      <svg appPlusSvg class="close-dialog-button" (click)="exportSvgDialog.close()"></svg>
+    </div>
 
     <form [formGroup]="exportSvgForm">
       <div class="form-element format">
