@@ -222,8 +222,6 @@ export class AttributesComponent implements OnInit {
   //#endregion
 
   //#region path helpers
-  // TODO review all TODOs in the project and this section region path helpers
-  public PATH_INSTRUCTIONS = PATH_INSTRUCTIONS;
   public COMMAND_ARITY: { [K in PathInstruction]: number } = Object.fromEntries(Object.entries(COMMAND_SPECS).map(([key, value]) => [key, value.arity])) as {
     [K in PathInstruction]: number;
   };
@@ -233,13 +231,12 @@ export class AttributesComponent implements OnInit {
     [K in PathInstruction]: number;
   };
 
-  public get instructions(): PathInstruction[] {
+  public get addInstructionsList(): PathInstruction[] {
     return this.keyboardService.useMayus ? PATH_INSTRUCTIONS.filter((i) => i.toUpperCase() === i) : PATH_INSTRUCTIONS.filter((i) => i.toLowerCase() === i);
   }
 
   public indexOfCommandWithMouseOver = -1;
   private indexOfParamWithMouseOver = -1;
-
   public mouseOverInstruction = -1;
 
   public deleteComposedCommand(cmdi: number) {
@@ -269,11 +266,6 @@ export class AttributesComponent implements OnInit {
     const previousPosition = pathHost.getPreviousPosition(cmdi, parmi);
     const parameters = COMMAND_SPECS[instruction].defaultParams(previousPosition);
     pathHost.insertNewCommandAt(instruction, parameters, cmdi, parmi);
-
-    if (pathHost.isShapeFinished) {
-      pathHost.clearEditPoints();
-      pathHost.createEditPoints();
-    }
   }
 
   public highlightInputPoint(cmdi: number, parmi: number): boolean {

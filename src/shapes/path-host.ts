@@ -456,6 +456,10 @@ export class PathHost extends ShapeHost {
     const composed = this.composeCommands([...decomposed.slice(0, decomposedIndex), { instruction, parameters }, ...decomposed.slice(decomposedIndex)]);
 
     this.resetDForm(composed);
+    if (this.isShapeFinished) {
+      this.clearEditPoints();
+      this.createEditPoints();
+    }
   }
 
   public deleteDecomposedCommand(cmdi: number, parmi: number): void {

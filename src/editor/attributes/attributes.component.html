@@ -162,7 +162,7 @@
 
   <ng-template #newCommandMenuTpl let-cmdi="cmdi" let-parmi="parmi">
     <div class="menu">
-      @for (instruction of instructions; track instruction) {
+      @for (instruction of addInstructionsList; track instruction) {
         <div class="option" (click)="addNewCommandInPosition(instruction, cmdi, parmi)">Add {{ instruction }}</div>
       }
     </div>
