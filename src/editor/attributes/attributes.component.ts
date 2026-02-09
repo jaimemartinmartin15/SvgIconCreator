@@ -9,6 +9,7 @@ import { Command, COMMAND_SPECS, PATH_INSTRUCTIONS, PathInstruction } from '../.
 import { Shape } from '../../models/shape';
 import { AppEventsService } from '../../services/app-events.service';
 import { FormsService } from '../../services/forms.service';
+import { KeyboardService } from '../../services/keyboard.service';
 import { ShapeListService } from '../../services/shape-list.service';
 import { CircleHost } from '../../shapes/circle-host';
 import { LineHost } from '../../shapes/line-host';
@@ -43,6 +44,7 @@ export class AttributesComponent implements OnInit {
   constructor(
     public readonly shapeListService: ShapeListService,
     public readonly formsService: FormsService,
+    public readonly keyboardService: KeyboardService,
     private readonly overlay: Overlay,
     private readonly viewContainerRef: ViewContainerRef,
   ) {
@@ -230,6 +232,10 @@ export class AttributesComponent implements OnInit {
   ) as {
     [K in PathInstruction]: number;
   };
+
+  public get instructions(): PathInstruction[] {
+    return this.keyboardService.useMayus ? PATH_INSTRUCTIONS.filter((i) => i.toUpperCase() === i) : PATH_INSTRUCTIONS.filter((i) => i.toLowerCase() === i);
+  }
 
   public indexOfCommandWithMouseOver = -1;
   private indexOfParamWithMouseOver = -1;

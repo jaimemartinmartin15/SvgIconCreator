@@ -1,5 +1,6 @@
 import { Component, HostListener } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
+import { KeyboardService } from '../services/keyboard.service';
 import { ShapeListService } from '../services/shape-list.service';
 
 @Component({
@@ -17,7 +18,10 @@ import { ShapeListService } from '../services/shape-list.service';
   ],
 })
 export class App {
-  constructor(private readonly shapeListService: ShapeListService) {}
+  constructor(
+    private readonly shapeListService: ShapeListService,
+    private readonly keyboardService: KeyboardService,
+  ) {}
 
   @HostListener('window:beforeunload', ['$event'])
   onBeforeunload(event: BeforeUnloadEvent) {
@@ -26,5 +30,15 @@ export class App {
       event.preventDefault();
       event.returnValue = ''; // For legacy browsers
     }
+  }
+
+  @HostListener('window:keydown', ['$event'])
+  protected onKeyDown(event: KeyboardEvent) {
+    this.keyboardService.windowKeyDown(event);
+  }
+
+  @HostListener('window:keyup', ['$event'])
+  protected onKeyUp(event: KeyboardEvent) {
+    this.keyboardService.windowKeyUp(event);
   }
 }

@@ -162,19 +162,9 @@
 
   <ng-template #newCommandMenuTpl let-cmdi="cmdi" let-parmi="parmi">
     <div class="menu">
-      <!-- TODO allow to add relative commands if shift is pressed, or block mayus? -->
-      <!-- TODO do not allow S or T if previous command is not C or Q ? -->
-      <!-- TODO optimice this using a loop -->
-      <div class="option" (click)="addNewCommandInPosition('M', cmdi, parmi)">Add M</div>
-      <div class="option" (click)="addNewCommandInPosition('L', cmdi, parmi)">Add L</div>
-      <div class="option" (click)="addNewCommandInPosition('H', cmdi, parmi)">Add H</div>
-      <div class="option" (click)="addNewCommandInPosition('V', cmdi, parmi)">Add V</div>
-      <div class="option" (click)="addNewCommandInPosition('C', cmdi, parmi)">Add C</div>
-      <div class="option" (click)="addNewCommandInPosition('S', cmdi, parmi)">Add S</div>
-      <div class="option" (click)="addNewCommandInPosition('Q', cmdi, parmi)">Add Q</div>
-      <div class="option" (click)="addNewCommandInPosition('T', cmdi, parmi)">Add T</div>
-      <div class="option" (click)="addNewCommandInPosition('A', cmdi, parmi)">Add A</div>
-      <div class="option" (click)="addNewCommandInPosition('Z', cmdi, parmi)">Add Z</div>
+      @for (instruction of instructions; track instruction) {
+        <div class="option" (click)="addNewCommandInPosition(instruction, cmdi, parmi)">Add {{ instruction }}</div>
+      }
     </div>
   </ng-template>
 
