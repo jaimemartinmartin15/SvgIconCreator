@@ -331,8 +331,8 @@ export class AttributesComponent implements OnInit {
   public convertoToRelative(cmdi: number): void {
     // TODO decide if shape should keep looking the same
     const commandControl: ToFormType<Command> = this.formsService.dForm.controls[cmdi];
-    const instruction = commandControl.controls.instruction.value.toLowerCase();
-    commandControl.controls.instruction.setValue(instruction as never); // TODO fix this in the library
+    const instruction = commandControl.controls.instruction.value.toLowerCase() as PathInstruction;
+    commandControl.controls.instruction.setValue(instruction);
 
     this.overlayRef.detach();
   }
@@ -340,8 +340,8 @@ export class AttributesComponent implements OnInit {
   public convertoToAbsolute(cmdi: number): void {
     // TODO decide if shape should keep looking the same
     const commandControl: ToFormType<Command> = this.formsService.dForm.controls[cmdi];
-    const instruction = commandControl.controls.instruction.value.toUpperCase();
-    commandControl.controls.instruction.setValue(instruction as never); // TODO fix this in the library
+    const instruction = commandControl.controls.instruction.value.toUpperCase() as PathInstruction;
+    commandControl.controls.instruction.setValue(instruction);
 
     this.overlayRef.detach();
   }
