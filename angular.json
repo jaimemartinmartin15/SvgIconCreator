@@ -109,6 +109,13 @@
           "options": {
             "configFile": "src/svg.json"
           }
+        },
+        "aws-checks": {
+          "builder": "@jaimemartinmartin15/jei-devkit-angular-builders:aws-checks",
+          "options": {
+            "distFolder": "dist/svgiconcreator/browser",
+            "serverPath": "creador-iconos-svg"
+          }
         }
       }
     }
