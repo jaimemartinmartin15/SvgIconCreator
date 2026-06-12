@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## Unreleased
+
+- Migration to angular 21.
+- Added aws checks to the workflow.
+
 ## 3.2.0
 
 Features:
