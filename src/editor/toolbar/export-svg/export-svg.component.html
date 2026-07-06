@@ -63,6 +63,24 @@
           <button class="download-button" (click)="downloadDrawing()">Descargar</button>
         </div>
       </div>
+
+      @if (exportSvgForm.controls.format.value === ExportTypes.Png) {
+        <div class="form-element predefined-sizes">
+          <span class="app-control-label">TAMAÑOS PREDETERMINADOS</span>
+
+          <div class="radio-buttons-container" [formArray]="predefinedSizesForm">
+            @for (size of PREDEFINED_SIZES; track $index) {
+              <label>
+                <input type="checkbox" [formControlName]="$index" />
+                <div class="mock-radio-button"></div>
+                <span>{{ size.name }}</span>
+              </label>
+            }
+          </div>
+
+          <button class="download-button" (click)="downloadPredefinedSizes()">Descargar tamaños seleccionados</button>
+        </div>
+      }
     </form>
   </div>
 </dialog>
