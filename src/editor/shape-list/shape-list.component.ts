@@ -1,5 +1,5 @@
 import { CdkDrag, CdkDragDrop, CdkDragPlaceholder, CdkDropList, moveItemInArray } from '@angular/cdk/drag-drop';
-import { Component, EventEmitter, Output } from '@angular/core';
+import { Component, EventEmitter, Output, ChangeDetectionStrategy } from '@angular/core';
 import { ShapeListService } from '../../services/shape-list.service';
 import { ShapeHost } from '../../shapes/shape-host';
 import { ShapeElementComponent } from './shape-element/shape-element.component';
@@ -8,6 +8,7 @@ import { ShapeElementComponent } from './shape-element/shape-element.component';
   selector: 'app-shape-list',
   templateUrl: './shape-list.component.html',
   styleUrls: ['./shape-list.component.scss'],
+  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [CdkDrag, CdkDragPlaceholder, CdkDropList, ShapeElementComponent],
 })
 export class ShapeListComponent {

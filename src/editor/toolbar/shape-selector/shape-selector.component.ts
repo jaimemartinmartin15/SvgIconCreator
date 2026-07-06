@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { Shape } from '../../../models/shape';
 import { FormsService } from '../../../services/forms.service';
@@ -8,6 +8,7 @@ import { ShapeListService } from '../../../services/shape-list.service';
   selector: 'app-shape-selector',
   templateUrl: './shape-selector.component.html',
   styleUrls: ['./shape-selector.component.scss'],
+  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [ReactiveFormsModule],
 })
 export class ShapeSelectorComponent implements OnInit {
