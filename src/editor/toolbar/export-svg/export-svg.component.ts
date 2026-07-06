@@ -1,6 +1,6 @@
 import { CdkDrag, CdkDragHandle } from '@angular/cdk/drag-drop';
 import { Component, ElementRef, ViewChild } from '@angular/core';
-import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
+import { FormArray, FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { CollapsibleModule, ElementsRefService, InputNumberDirective } from '@jaimemartinmartin15/jei-devkit-angular-shared';
 import { ShapeListService } from '../../../services/shape-list.service';
 import { BurgerSvgComponent } from '../../../svg-output/burger.component';
@@ -33,6 +33,18 @@ export class ExportSvgComponent {
       height: new FormControl(100, { nonNullable: true }),
     }),
   });
+  public PREDEFINED_SIZES: { name: `${number}x${number}`; selectedByDefault: boolean }[] = [
+    { name: '16x16', selectedByDefault: true },
+    { name: '32x32', selectedByDefault: true },
+    { name: '48x48', selectedByDefault: false },
+    { name: '96x96', selectedByDefault: true },
+    { name: '144x144', selectedByDefault: true },
+    { name: '180x180', selectedByDefault: false },
+    { name: '192x192', selectedByDefault: false },
+    { name: '194x194', selectedByDefault: true },
+    { name: '512x512', selectedByDefault: false },
+  ];
+  public predefinedSizesForm = new FormArray(this.PREDEFINED_SIZES.map((size) => new FormControl<boolean>(size.selectedByDefault, { nonNullable: true })));
 
   private get canvas(): SVGSVGElement {
     return this.elementsRefService.getNativeElement('canvas');
@@ -125,6 +137,44 @@ export class ExportSvgComponent {
       downloadLink.click();
 
       // after it is exported, select the shape again
+      this.shapeListService.selectedShape?.createEditPoints();
+    };
+    img.src = `data:image/svg+xml;base64,${btoa(svgString)}`;
+  }
+
+  public downloadPredefinedSizes(): void {
+    // no checkboxes selected
+    if (this.predefinedSizesForm.value.every((v) => v === false)) return;
+
+    // avoid exporting circles of selected shape
+    this.shapeListService.selectedShape?.clearEditPoints();
+
+    // convert the svg element to string (remove the background image)
+    let svgString = new XMLSerializer().serializeToString(this.canvas);
+    if (svgString.includes('<image ')) {
+      svgString = svgString.slice(0, svgString.indexOf('<image ')) + svgString.slice(svgString.indexOf('/>') + 2);
+    }
+
+    // create and image, and attach a listener to download ALL SIZES it when it is loaded
+    const img = new Image();
+    img.onload = () => {
+      this.PREDEFINED_SIZES.forEach((size, i) => {
+        if (!this.predefinedSizesForm.value[i]) return;
+
+        // load the image into a canvas
+        const canvas = document.createElement('canvas');
+        const ctx = canvas.getContext('2d')!;
+        canvas.width = +size.name.split('x')[0];
+        canvas.height = +size.name.split('x')[1];
+        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+
+        // download the file
+        const downloadLink = document.createElement('a');
+        downloadLink.href = canvas.toDataURL('image/png');
+        downloadLink.download = `favicon-${size.name}.png`;
+        downloadLink.click();
+      });
+
       this.shapeListService.selectedShape?.createEditPoints();
     };
     img.src = `data:image/svg+xml;base64,${btoa(svgString)}`;

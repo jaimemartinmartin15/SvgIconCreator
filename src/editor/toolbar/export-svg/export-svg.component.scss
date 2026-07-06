@@ -111,7 +111,7 @@ dialog {
         align-items: center;
         gap: 15px;
 
-        input[type='text'] {
+        input[type="text"] {
           flex-grow: 1;
           text-align: start;
         }
@@ -125,6 +125,52 @@ dialog {
           font-size: 1rem;
           cursor: pointer;
         }
+      }
+    }
+
+    .predefined-sizes {
+      .radio-buttons-container {
+        display: grid;
+        gap: 15px;
+        grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+        padding: 4px 0;
+
+        label {
+          display: flex;
+          gap: 10px;
+          align-items: center;
+          cursor: pointer;
+          font-size: 1.025rem;
+
+          .mock-radio-button {
+            width: 15px;
+            height: 15px;
+            border-radius: 4px;
+            border: 2px solid black;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+          }
+
+          &:has(:checked) .mock-radio-button::before {
+            content: "";
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background-color: #d8a72c;
+          }
+        }
+      }
+
+      .download-button {
+        border: none;
+        padding: 10px 15px;
+        border-radius: 5px;
+        background-color: #d8a72c;
+        color: white;
+        font-size: 1rem;
+        cursor: pointer;
+        align-self: start;
       }
     }
   }
