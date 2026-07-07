@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## Unreleased
+
+- Update exports dialog and options.
+- Added text-anchor to text shape.
+- Show file name bellow predefined png size.
+
 ## 3.3.0
 
 - Allow to download png images with predefined sizes.
