@@ -442,5 +442,13 @@ export abstract class ShapeHost {
   public set fontFamily(value: string) {
     this.setSvgAttribute('font-family', value);
   }
+
+  public get textAnchor(): string {
+    return this.getSvgAttributeAsString('text-anchor');
+  }
+
+  public set textAnchor(value: string) {
+    this.setSvgAttribute('text-anchor', value);
+  }
   //#endregion
 }
