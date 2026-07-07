@@ -119,34 +119,23 @@ export class TextHost extends ShapeHost {
   //#endregion
 
   //#region export
-  protected override isShapeVisible(): boolean {
-    const isVisible = super.isShapeVisible();
-    const hasSize = this.text.trim() !== '' && this.fontSize > 0;
+  public override parseShapeToString(): string {
+    let textToString = '<text';
 
-    return isVisible && hasSize;
-  }
+    textToString += ` x="${this.x}"`;
+    textToString += ` y="${this.y}"`;
+    textToString += ` font-size="${this.fontSize}"`;
+    textToString += ` font-family="${this.fontFamily}"`;
+    textToString += ` fill="${this.fill}"`;
+    textToString += ` stroke="${this.stroke}"`;
+    textToString += ` stroke-width="${this.strokeWidth}"`;
+    textToString += ` stroke-linecap="${this.strokeLinecap}"`;
+    textToString += ` stroke-linejoin="${this.strokeLinejoin}"`;
+    textToString += ` stroke-dasharray="${this.strokeDasharray}"`;
 
-  public override parseCustomOptimizedStringAndCloseShape(): string {
-    let textAttr = '';
-
-    // add if they are not the default value
-    if (this.x !== 0) textAttr += ` x="${this.x}"`;
-    if (this.y !== 0) textAttr += ` y="${this.y}"`;
-
-    // always present, otherwise not visible
-    textAttr += ` font-size="${this.fontSize}"`;
-
-    if (this.strokeLinecap !== 'butt') {
-      textAttr += ` stroke-linecap="${this.strokeLinecap}"`;
-    }
-
-    if (this.strokeLinejoin !== 'miter') {
-      textAttr += ` stroke-linejoin="${this.strokeLinejoin}"`;
-    }
-
-    textAttr += ` font-family="${this.fontFamily}"`;
-
-    return `${textAttr} >${this.text}</text>`;
+    return `${textToString}>
+    ${this.text}
+  </text>`;
   }
   //#endregion
 }

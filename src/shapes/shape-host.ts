@@ -171,51 +171,7 @@ export abstract class ShapeHost {
   //#endregion
 
   //#region export
-  protected abstract parseCustomOptimizedStringAndCloseShape(): string;
-
-  public parseOptimizedString(): string {
-    if (!this.isShapeVisible()) return '';
-
-    let parsedShape = `<${this.tag}`;
-
-    // parse data-* attributes
-    this.getBindingProperties().forEach(({ attribute, binding }) => (parsedShape += ` data-${attribute}-binding="${binding}"`));
-
-    // if stroke-width is 1, do not add it (it is the default)
-    // if the stroke is transparent, do not add it neither
-    if (this.strokeWidth !== 1 && !this.stroke.endsWith('00')) {
-      parsedShape += ` stroke-width="${this.strokeWidth}"`;
-    }
-
-    // if stroke-width is 0, do not add it
-    // if the stroke is transparent, do not add it neither
-    if (this.strokeWidth !== 0 && !this.stroke.endsWith('00')) {
-      parsedShape += ` stroke="${this.stroke}"`;
-    }
-
-    // if the shape is a line, do not add it
-    // if the fill is black, do not add it (it is the default)
-    if (!(this.tag === Shape.LINE) && !(this.fill.toLowerCase() === '#000000ff')) {
-      parsedShape += ` fill="${this.fill}"`;
-    }
-
-    // if the attribute is not 'none'
-    if (this.strokeDasharray.length > 0) {
-      parsedShape += ` stroke-dasharray="${this.strokeDasharray.join(' ')}"`;
-    }
-
-    parsedShape += this.parseCustomOptimizedStringAndCloseShape();
-
-    return parsedShape
-      .replaceAll(/(#[0-9a-fA-F]{6})(ff|FF)/g, '$1') // remove transparency from colors value when it is ff
-      .replaceAll(/\s{2,}/g, ' ') // reduce two or more spaces between the attributes or path points to one space
-      .replaceAll(/(\.\d*?)0+(,| |")/g, '$1$2') // Remove 0 at the end behind the dot
-      .replaceAll(/\.(,| |")/g, '$1'); // Remove the dot if necessary
-  }
-
-  protected isShapeVisible(): boolean {
-    return !this.fill.endsWith('00') || (!this.stroke.endsWith('00') && this.strokeWidth !== 0);
-  }
+  public abstract parseShapeToString(): string;
   //#endregion
 
   //#region utils
