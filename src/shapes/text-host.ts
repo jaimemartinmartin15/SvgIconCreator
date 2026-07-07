@@ -100,6 +100,7 @@ export class TextHost extends ShapeHost {
     this.text = this.formsService.textForm.value;
     this.fontSize = this.formsService.fontSizeForm.value;
     this.fontFamily = this.formsService.fontFamilyForm.value;
+    this.textAnchor = this.formsService.textAnchorForm.value;
   }
 
   public override onEditingExistingShape(): void {
@@ -115,6 +116,7 @@ export class TextHost extends ShapeHost {
     this.formsService.textForm.setValue(this.text);
     this.formsService.fontSizeForm.setValue(this.fontSize);
     this.formsService.fontFamilyForm.setValue(this.fontFamily);
+    this.formsService.textAnchorForm.setValue(this.textAnchor);
   }
   //#endregion
 

@@ -181,6 +181,16 @@ export class AttributesComponent implements OnInit {
         this.shapeListService.selectedShape.fontFamily = value;
       }
     });
+    this.formsService.textAnchorForm.valueChanges.subscribe((value) => {
+      if (this.shapeListService.selectedShape) {
+        this.shapeListService.selectedShape.textAnchor = value;
+      }
+    });
+    this.formsService.textAnchorForm.valueChanges.subscribe((value) => {
+      if (this.shapeListService.selectedShape) {
+        this.shapeListService.selectedShape.textAnchor = value;
+      }
+    });
     //#endregion
 
     this.shapeListService.selectedShape$.subscribe((selectedShape) => {

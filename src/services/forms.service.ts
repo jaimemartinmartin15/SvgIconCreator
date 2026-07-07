@@ -59,6 +59,7 @@ export class FormsService {
   public textForm = new FormControl<string>('text', { nonNullable: true });
   public fontSizeForm = new FormControl<number>(15, { nonNullable: true });
   public fontFamilyForm = new FormControl<string>('Arial', { nonNullable: true });
+  public textAnchorForm = new FormControl<string>('start', { nonNullable: true });
   //#endregion
   //#endregion
 }
