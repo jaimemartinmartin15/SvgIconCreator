@@ -130,6 +130,7 @@ export class CircleHost extends ShapeHost {
   public override parseShapeToString(): string {
     let circleToString = '<circle';
 
+    circleToString += ` name="${this.name}"`;
     circleToString += ` cx="${this.cx}"`;
     circleToString += ` cy="${this.cy}"`;
     circleToString += ` r="${this.r}"`;

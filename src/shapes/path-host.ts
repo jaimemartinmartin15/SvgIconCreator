@@ -255,6 +255,7 @@ export class PathHost extends ShapeHost {
   public override parseShapeToString(): string {
     let pathToString = '<path';
 
+    pathToString += ` name="${this.name}"`;
     pathToString += ` d="${this.d.map((command) => `${command.instruction}${command.parameters.join(' ')}`).join('')}"`;
     pathToString += ` fill="${this.fill}"`;
     pathToString += ` stroke="${this.stroke}"`;

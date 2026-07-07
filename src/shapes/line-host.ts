@@ -149,6 +149,7 @@ export class LineHost extends ShapeHost {
   public override parseShapeToString(): string {
     let lineToString = '<line';
 
+    lineToString += ` name="${this.name}"`;
     lineToString += ` x1="${this.x1}"`;
     lineToString += ` y1="${this.y1}"`;
     lineToString += ` x2="${this.x2}"`;

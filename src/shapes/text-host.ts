@@ -122,6 +122,7 @@ export class TextHost extends ShapeHost {
   public override parseShapeToString(): string {
     let textToString = '<text';
 
+    textToString += ` name="${this.name}"`;
     textToString += ` x="${this.x}"`;
     textToString += ` y="${this.y}"`;
     textToString += ` font-size="${this.fontSize}"`;

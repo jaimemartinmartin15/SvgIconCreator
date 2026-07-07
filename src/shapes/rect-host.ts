@@ -182,6 +182,7 @@ export class RectHost extends ShapeHost {
   public override parseShapeToString(): string {
     let rectToString = '<rect';
 
+    rectToString += ` name="${this.name}"`;
     rectToString += ` x="${this.x}"`;
     rectToString += ` y="${this.y}"`;
     rectToString += ` width="${this.width}"`;
