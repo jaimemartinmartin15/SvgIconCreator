@@ -1,4 +1,4 @@
-import { Component, HostListener } from '@angular/core';
+import { Component, HostListener, ChangeDetectionStrategy } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { KeyboardService } from '../services/keyboard.service';
 import { ShapeListService } from '../services/shape-list.service';
@@ -7,6 +7,7 @@ import { ShapeListService } from '../services/shape-list.service';
   selector: 'app-root',
   imports: [RouterOutlet],
   template: `<router-outlet />`,
+  changeDetection: ChangeDetectionStrategy.Eager,
   styles: [
     `
       :host {

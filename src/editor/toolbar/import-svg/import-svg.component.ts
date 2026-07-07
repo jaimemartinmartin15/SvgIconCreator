@@ -1,5 +1,5 @@
 import { CdkDrag, CdkDragHandle } from '@angular/cdk/drag-drop';
-import { Component, ElementRef, ViewChild } from '@angular/core';
+import { Component, ElementRef, ViewChild, ChangeDetectionStrategy } from '@angular/core';
 import { CollapsibleModule, ElementsRefService } from '@jaimemartinmartin15/jei-devkit-angular-shared';
 import { FormsService } from '../../../services/forms.service';
 import { ShapeListService } from '../../../services/shape-list.service';
@@ -16,6 +16,7 @@ import { PlusSvgComponent } from '../../../svg-output/plus.component';
   selector: 'app-import-svg',
   templateUrl: './import-svg.component.html',
   styleUrls: ['./import-svg.component.scss'],
+  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [CollapsibleModule, IconsSvgModule, PlusSvgComponent, BurgerSvgComponent, CdkDrag, CdkDragHandle],
 })
 export class ImportSvgComponent {

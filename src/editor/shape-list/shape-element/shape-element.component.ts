@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, ElementRef, EventEmitter, HostBinding, HostListener, Input, OnInit, Output, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, EventEmitter, HostBinding, HostListener, Input, OnInit, Output, ViewChild, ChangeDetectionStrategy } from '@angular/core';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { adaptWidthOfInputToWidthOfText } from '@jaimemartinmartin15/jei-devkit-angular-shared';
 import { ShapeListService } from '../../../services/shape-list.service';
@@ -8,6 +8,7 @@ import { ShapeHost } from '../../../shapes/shape-host';
   selector: 'app-shape-element',
   templateUrl: './shape-element.component.html',
   styleUrls: ['./shape-element.component.scss'],
+  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [ReactiveFormsModule],
 })
 export class ShapeElementComponent implements OnInit, AfterViewInit {

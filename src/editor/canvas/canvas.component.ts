@@ -1,4 +1,4 @@
-import { Component, HostListener } from '@angular/core';
+import { Component, HostListener, ChangeDetectionStrategy } from '@angular/core';
 import {
   Coord,
   CoordWithDelta,
@@ -15,6 +15,7 @@ import { FormsService } from '../../services/forms.service';
   selector: 'app-canvas',
   templateUrl: './canvas.component.html',
   styleUrls: ['./canvas.component.scss'],
+  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [ElementRefDirective, SvgMouseEventsDirective],
 })
 export class CanvasComponent {

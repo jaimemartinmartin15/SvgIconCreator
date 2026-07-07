@@ -1,5 +1,5 @@
 import { CdkDrag, CdkDragHandle } from '@angular/cdk/drag-drop';
-import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { Component, ElementRef, OnInit, ViewChild, ChangeDetectionStrategy } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { ElementRefDirective, ElementsRefService, InputNumberDirective } from '@jaimemartinmartin15/jei-devkit-angular-shared';
 import { debounceTime } from 'rxjs';
@@ -14,6 +14,7 @@ import { PlusSvgComponent } from '../../../svg-output/plus.component';
   selector: 'app-canvas-options',
   templateUrl: './canvas-options.component.html',
   styleUrls: ['./canvas-options.component.scss'],
+  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [ReactiveFormsModule, ElementRefDirective, IconsSvgModule, InputNumberDirective, CdkDrag, CdkDragHandle, PlusSvgComponent, BurgerSvgComponent],
 })
 export class CanvasOptionsComponent implements OnInit {
