@@ -127,24 +127,19 @@ export class CircleHost extends ShapeHost {
   //#endregion
 
   //#region export
-  protected override isShapeVisible(): boolean {
-    const isVisible = super.isShapeVisible();
-    const hasSize = this.r > 0;
+  public override parseShapeToString(): string {
+    let circleToString = '<circle';
 
-    return isVisible && hasSize;
-  }
+    circleToString += ` name="${this.name}"`;
+    circleToString += ` cx="${this.cx}"`;
+    circleToString += ` cy="${this.cy}"`;
+    circleToString += ` r="${this.r}"`;
+    circleToString += ` fill="${this.fill}"`;
+    circleToString += ` stroke="${this.stroke}"`;
+    circleToString += ` stroke-width="${this.strokeWidth}"`;
+    circleToString += ` stroke-dasharray="${this.strokeDasharray}"`;
 
-  public override parseCustomOptimizedStringAndCloseShape(): string {
-    let circleAttr = '';
-
-    // add if they are not the default value
-    if (this.cx !== 0) circleAttr += ` cx="${this.cx}"`;
-    if (this.cy !== 0) circleAttr += ` cy="${this.cy}"`;
-
-    // always present, otherwise not visible
-    circleAttr += ` r="${this.r}"`;
-
-    return `${circleAttr} />`;
+    return `${circleToString} />`;
   }
   //#endregion
 

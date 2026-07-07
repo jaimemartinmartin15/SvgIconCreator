@@ -97,9 +97,10 @@ export class TextHost extends ShapeHost {
     this.strokeDasharray = this.formsService.strokeDasharrayForm.value;
     this.x = this.formsService.xForm.value;
     this.y = this.formsService.yForm.value;
-    this.text = this.formsService.textForm.value;
+    this.text = this.formsService.textForm.value.trim();
     this.fontSize = this.formsService.fontSizeForm.value;
     this.fontFamily = this.formsService.fontFamilyForm.value;
+    this.textAnchor = this.formsService.textAnchorForm.value;
   }
 
   public override onEditingExistingShape(): void {
@@ -112,41 +113,33 @@ export class TextHost extends ShapeHost {
     this.strokeDasharray.forEach((d) => this.formsService.strokeDasharrayForm.push(new FormControl<number>(d, { nonNullable: true })));
     this.formsService.xForm.setValue(this.x);
     this.formsService.yForm.setValue(this.y);
-    this.formsService.textForm.setValue(this.text);
+    this.formsService.textForm.setValue(this.text.trim());
     this.formsService.fontSizeForm.setValue(this.fontSize);
     this.formsService.fontFamilyForm.setValue(this.fontFamily);
+    this.formsService.textAnchorForm.setValue(this.textAnchor);
   }
   //#endregion
 
   //#region export
-  protected override isShapeVisible(): boolean {
-    const isVisible = super.isShapeVisible();
-    const hasSize = this.text.trim() !== '' && this.fontSize > 0;
+  public override parseShapeToString(): string {
+    let textToString = '<text';
 
-    return isVisible && hasSize;
-  }
+    textToString += ` name="${this.name}"`;
+    textToString += ` x="${this.x}"`;
+    textToString += ` y="${this.y}"`;
+    textToString += ` font-size="${this.fontSize}"`;
+    textToString += ` font-family="${this.fontFamily}"`;
+    textToString += ` fill="${this.fill}"`;
+    textToString += ` text-anchor="${this.textAnchor}"`; // TODO allow to edit it in attributes panel
+    textToString += ` stroke="${this.stroke}"`;
+    textToString += ` stroke-width="${this.strokeWidth}"`;
+    textToString += ` stroke-linecap="${this.strokeLinecap}"`;
+    textToString += ` stroke-linejoin="${this.strokeLinejoin}"`;
+    textToString += ` stroke-dasharray="${this.strokeDasharray}"`;
 
-  public override parseCustomOptimizedStringAndCloseShape(): string {
-    let textAttr = '';
-
-    // add if they are not the default value
-    if (this.x !== 0) textAttr += ` x="${this.x}"`;
-    if (this.y !== 0) textAttr += ` y="${this.y}"`;
-
-    // always present, otherwise not visible
-    textAttr += ` font-size="${this.fontSize}"`;
-
-    if (this.strokeLinecap !== 'butt') {
-      textAttr += ` stroke-linecap="${this.strokeLinecap}"`;
-    }
-
-    if (this.strokeLinejoin !== 'miter') {
-      textAttr += ` stroke-linejoin="${this.strokeLinejoin}"`;
-    }
-
-    textAttr += ` font-family="${this.fontFamily}"`;
-
-    return `${textAttr} >${this.text}</text>`;
+    return `${textToString}>
+    ${this.text}
+  </text>`;
   }
   //#endregion
 }

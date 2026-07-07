@@ -80,6 +80,20 @@
       <button class="add-dasharray-button" (click)="addNewStrokeDasharray()">+</button>
     </div>
   </label>
+
+  <!-- MARK: textanchor -->
+  @if (shapeSelectorIsText || selectedShapeIsText) {
+    <label class="label-and-control">
+      <span class="label">TEXT-ANCHOR</span>
+      <div class="text-anchor-control">
+        <select [formControl]="formsService.textAnchorForm">
+          <option value="start">start</option>
+          <option value="middle">middle</option>
+          <option value="end">end</option>
+        </select>
+      </div>
+    </label>
+  }
 </form>
 
 <!-- MARK: Rect -->

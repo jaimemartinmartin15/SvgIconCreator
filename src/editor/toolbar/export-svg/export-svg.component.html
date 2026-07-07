@@ -18,11 +18,6 @@
 
         <div class="export-radio-buttons-container">
           <label class="mock-radio-button">
-            <input type="radio" formControlName="format" [value]="ExportTypes.SvgOptimized" />
-            <span>SVG Optimizado</span>
-          </label>
-
-          <label class="mock-radio-button">
             <input type="radio" formControlName="format" [value]="ExportTypes.Svg" />
             <span>SVG</span>
           </label>
@@ -33,14 +28,8 @@
           </label>
         </div>
 
-        @if (exportSvgForm.controls.format.value === ExportTypes.SvgOptimized) {
-          <p class="info-message">Descarga un fichero .svg con las figuras optimizadas, es decir, con las figuras visibles y con los atributos mínimos.</p>
-        }
-
         @if (exportSvgForm.controls.format.value === ExportTypes.Svg) {
-          <p class="info-message">
-            Descarga un fichero .svg con las figuras tal y como están en el DOM. Mantiene todos los atributos y permite importalo más adelante para continuar.
-          </p>
+          <p class="info-message">Descarga un fichero .svg con las figuras para seguir editándolas en otro momento.</p>
         }
 
         @if (exportSvgForm.controls.format.value === ExportTypes.Png) {
@@ -68,12 +57,17 @@
         <div class="form-element predefined-sizes">
           <span class="app-control-label">TAMAÑOS PREDETERMINADOS</span>
 
-          <div class="radio-buttons-container" [formArray]="predefinedSizesForm">
+          <div class="radio-buttons-container" formArrayName="predefinedSizes">
             @for (size of PREDEFINED_SIZES; track $index) {
               <label>
                 <input type="checkbox" [formControlName]="$index" />
                 <div class="mock-radio-button"></div>
-                <span>{{ size.name }}</span>
+                <div>
+                  <div>{{ size.name }}</div>
+                  @if (exportSvgForm.controls.predefinedSizes.value[$index]) {
+                    <div class="full-name jei-no-break">{{ exportSvgForm.controls.fileName.value || DEFAULT_DOWNLOAD_FILE_NAME }}{{ size.name }}.png</div>
+                  }
+                </div>
               </label>
             }
           </div>

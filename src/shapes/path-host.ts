@@ -252,25 +252,19 @@ export class PathHost extends ShapeHost {
   //#endregion
 
   //#region export
-  protected override isShapeVisible(): boolean {
-    const isVisible = super.isShapeVisible();
-    const hasSize = this.d.length > 1;
+  public override parseShapeToString(): string {
+    let pathToString = '<path';
 
-    return isVisible && hasSize;
-  }
+    pathToString += ` name="${this.name}"`;
+    pathToString += ` d="${this.d.map((command) => `${command.instruction}${command.parameters.join(' ')}`).join('')}"`;
+    pathToString += ` fill="${this.fill}"`;
+    pathToString += ` stroke="${this.stroke}"`;
+    pathToString += ` stroke-width="${this.strokeWidth}"`;
+    pathToString += ` stroke-linecap="${this.strokeLinecap}"`;
+    pathToString += ` stroke-linejoin="${this.strokeLinejoin}"`;
+    pathToString += ` stroke-dasharray="${this.strokeDasharray}"`;
 
-  protected override parseCustomOptimizedStringAndCloseShape(): string {
-    let pathAttr = ` d="${this.d.map((command) => `${command.instruction}${command.parameters.join(' ')}`).join('')}"`;
-
-    if (this.strokeLinecap !== 'butt') {
-      pathAttr += ` stroke-linecap="${this.strokeLinecap}"`;
-    }
-
-    if (this.strokeLinejoin !== 'miter') {
-      pathAttr += ` stroke-linejoin="${this.strokeLinejoin}"`;
-    }
-
-    return `${pathAttr} />`;
+    return `${pathToString} />`;
   }
   //#endregion
 

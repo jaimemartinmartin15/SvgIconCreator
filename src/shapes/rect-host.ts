@@ -179,33 +179,23 @@ export class RectHost extends ShapeHost {
   //#endregion
 
   //#region export
-  protected override isShapeVisible(): boolean {
-    const isVisible = super.isShapeVisible();
-    const hasSize = this.width > 0 && this.height > 0;
+  public override parseShapeToString(): string {
+    let rectToString = '<rect';
 
-    return isVisible && hasSize;
-  }
+    rectToString += ` name="${this.name}"`;
+    rectToString += ` x="${this.x}"`;
+    rectToString += ` y="${this.y}"`;
+    rectToString += ` width="${this.width}"`;
+    rectToString += ` height="${this.height}"`;
+    rectToString += ` rx="${this.rx}"`;
+    rectToString += ` ry="${this.ry}"`;
+    rectToString += ` fill="${this.fill}"`;
+    rectToString += ` stroke="${this.stroke}"`;
+    rectToString += ` stroke-width="${this.strokeWidth}"`;
+    rectToString += ` stroke-linejoin="${this.strokeLinejoin}"`;
+    rectToString += ` stroke-dasharray="${this.strokeDasharray}"`;
 
-  public override parseCustomOptimizedStringAndCloseShape(): string {
-    let rectAttr = '';
-
-    // add if they are not the default value
-    if (this.x !== 0) rectAttr += ` x="${this.x}"`;
-    if (this.y !== 0) rectAttr += ` y="${this.y}"`;
-
-    // always present, otherwise not visible
-    rectAttr += ` width="${this.width}"`;
-    rectAttr += ` height="${this.height}"`;
-
-    // rx and ry both have to be different than 0, and if they are the same, add only one of both
-    if (this.rx === this.ry && this.rx !== 0) rectAttr += ` rx="${this.rx}"`;
-    else if (this.rx !== 0 && this.ry !== 0) rectAttr += ` rx="${this.rx}" ry="${this.ry}"`;
-
-    if (this.strokeLinejoin !== 'miter') {
-      rectAttr += ` stroke-linejoin="${this.strokeLinejoin}"`;
-    }
-
-    return `${rectAttr} />`;
+    return `${rectToString} />`;
   }
   //#endregion
 

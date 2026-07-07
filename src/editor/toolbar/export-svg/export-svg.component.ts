@@ -1,5 +1,5 @@
 import { CdkDrag, CdkDragHandle } from '@angular/cdk/drag-drop';
-import { Component, ElementRef, ViewChild, ChangeDetectionStrategy } from '@angular/core';
+import { ChangeDetectionStrategy, Component, ElementRef, ViewChild } from '@angular/core';
 import { FormArray, FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { CollapsibleModule, ElementsRefService, InputNumberDirective } from '@jaimemartinmartin15/jei-devkit-angular-shared';
 import { ShapeListService } from '../../../services/shape-list.service';
@@ -8,9 +8,14 @@ import { IconsSvgModule } from '../../../svg-output/icons-svg.module';
 import { PlusSvgComponent } from '../../../svg-output/plus.component';
 
 enum ExportTypes {
-  SvgOptimized,
   Svg,
   Png,
+}
+
+interface DownloablePng {
+  width: number;
+  height: number;
+  fileName: string;
 }
 
 @Component({
@@ -26,14 +31,6 @@ export class ExportSvgComponent {
 
   public ExportTypes = ExportTypes;
   public DEFAULT_DOWNLOAD_FILE_NAME = 'mi_svg';
-  public exportSvgForm = new FormGroup({
-    fileName: new FormControl('', { nonNullable: true }),
-    format: new FormControl(ExportTypes.SvgOptimized, { nonNullable: true }),
-    pngSize: new FormGroup({
-      width: new FormControl(100, { nonNullable: true }),
-      height: new FormControl(100, { nonNullable: true }),
-    }),
-  });
   public PREDEFINED_SIZES: { name: `${number}x${number}`; selectedByDefault: boolean }[] = [
     { name: '16x16', selectedByDefault: true },
     { name: '32x32', selectedByDefault: true },
@@ -45,7 +42,15 @@ export class ExportSvgComponent {
     { name: '194x194', selectedByDefault: true },
     { name: '512x512', selectedByDefault: false },
   ];
-  public predefinedSizesForm = new FormArray(this.PREDEFINED_SIZES.map((size) => new FormControl<boolean>(size.selectedByDefault, { nonNullable: true })));
+  public exportSvgForm = new FormGroup({
+    fileName: new FormControl('', { nonNullable: true }),
+    format: new FormControl(ExportTypes.Svg, { nonNullable: true }),
+    pngSize: new FormGroup({
+      width: new FormControl(100, { nonNullable: true }),
+      height: new FormControl(100, { nonNullable: true }),
+    }),
+    predefinedSizes: new FormArray(this.PREDEFINED_SIZES.map((size) => new FormControl<boolean>(size.selectedByDefault, { nonNullable: true }))),
+  });
 
   private get canvas(): SVGSVGElement {
     return this.elementsRefService.getNativeElement('canvas');
@@ -66,19 +71,30 @@ export class ExportSvgComponent {
 
   public downloadDrawing(): void {
     const format = this.exportSvgForm.controls.format.value;
-    if (format === ExportTypes.SvgOptimized) return this.downloadOptimizedSvg();
-    if (format === ExportTypes.Svg) return this.downloadSvg();
-    if (format === ExportTypes.Png) return this.downloadPng();
+    if (format === ExportTypes.Svg) {
+      this.downloadSvg();
+    } else if (format === ExportTypes.Png) {
+      this.downloadSinglePng();
+    }
   }
 
-  public downloadOptimizedSvg() {
+  public downloadPredefinedSizes(): void {
+    // no checkboxes selected
+    if (this.exportSvgForm.controls.predefinedSizes.value.every((v) => v === false)) return;
+
+    const pngListToDownload: DownloablePng[] = this.PREDEFINED_SIZES.filter((_, i) => this.exportSvgForm.controls.predefinedSizes.value[i]).map((size) => ({
+      width: +size.name.split('x')[0],
+      height: +size.name.split('x')[1],
+      fileName: `${this.parseDownloadFileName('png').replaceAll(/\.png$/g, '')}${size.name}.png`,
+    }));
+    this.downloadPngs(pngListToDownload);
+  }
+
+  private downloadSvg() {
     // create a svg string from shapeList
     const svgVb = this.canvas.viewBox.baseVal;
     const svgTemplate = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="${svgVb.x} ${svgVb.y} ${svgVb.width} ${svgVb.height}">
-  ${this.shapeListService.shapeList
-    .map((sp) => sp.parseOptimizedString())
-    .filter((s) => s !== '')
-    .join('\n  ')}
+  ${this.shapeListService.shapeList.map((sp) => sp.parseShapeToString()).join('\n  ')}
 </svg>`;
 
     // download the file
@@ -89,93 +105,45 @@ export class ExportSvgComponent {
     downloadLink.click();
   }
 
-  public downloadSvg() {
-    // avoid exporting circles of selected shape
-    this.shapeListService.selectedShape?.clearEditPoints();
-
-    // convert the svg element to string (remove the background image)
-    let svgString = new XMLSerializer().serializeToString(this.canvas);
-    if (svgString.includes('<image ')) {
-      // the first closing (/>) is always the image
-      svgString = svgString.slice(0, svgString.indexOf('<image ')) + svgString.slice(svgString.indexOf('/>') + 2);
-    }
-
-    // download the file
-    const downloadLink = document.createElement('a');
-    downloadLink.download = this.parseDownloadFileName('svg');
-    const svgFileAsBlob = new Blob([svgString], { type: 'text/plain' });
-    downloadLink.href = window.webkitURL.createObjectURL(svgFileAsBlob);
-    downloadLink.click();
-
-    // after it is exported, select the shape again
-    this.shapeListService.selectedShape?.createEditPoints();
-  }
-
-  public downloadPng() {
-    // avoid exporting circles of selected shape
-    this.shapeListService.selectedShape?.clearEditPoints();
-
-    // convert the svg element to string (remove the background image)
-    let svgString = new XMLSerializer().serializeToString(this.canvas);
-    if (svgString.includes('<image ')) {
-      svgString = svgString.slice(0, svgString.indexOf('<image ')) + svgString.slice(svgString.indexOf('/>') + 2);
-    }
-
-    // create and image, and attach a listener to download it when it is loaded
-    const img = new Image();
-    img.onload = () => {
-      // load the image into a canvas
-      const canvas = document.createElement('canvas');
-      const ctx = canvas.getContext('2d')!;
-      canvas.width = this.exportSvgForm.controls['pngSize'].controls['width'].value ?? 0;
-      canvas.height = this.exportSvgForm.controls['pngSize'].controls['height'].value ?? 0;
-      ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-
-      // download the file
-      const downloadLink = document.createElement('a');
-      downloadLink.href = canvas.toDataURL('image/png');
-      downloadLink.download = this.parseDownloadFileName('png');
-      downloadLink.click();
-
-      // after it is exported, select the shape again
-      this.shapeListService.selectedShape?.createEditPoints();
+  private downloadSinglePng() {
+    const pngToDownload: DownloablePng = {
+      width: this.exportSvgForm.controls['pngSize'].controls['width'].value,
+      height: this.exportSvgForm.controls['pngSize'].controls['height'].value,
+      fileName: this.parseDownloadFileName('png'),
     };
-    img.src = `data:image/svg+xml;base64,${btoa(svgString)}`;
+    this.downloadPngs([pngToDownload]);
   }
 
-  public downloadPredefinedSizes(): void {
-    // no checkboxes selected
-    if (this.predefinedSizesForm.value.every((v) => v === false)) return;
-
+  private downloadPngs(pngListToDownload: DownloablePng[]): void {
     // avoid exporting circles of selected shape
     this.shapeListService.selectedShape?.clearEditPoints();
 
     // convert the svg element to string (remove the background image)
     let svgString = new XMLSerializer().serializeToString(this.canvas);
     if (svgString.includes('<image ')) {
+      // Note: the '<image />' is always the first child, thus first index of '/>' corresponds always to the self-closing image tag
       svgString = svgString.slice(0, svgString.indexOf('<image ')) + svgString.slice(svgString.indexOf('/>') + 2);
     }
 
     // create and image, and attach a listener to download ALL SIZES it when it is loaded
     const img = new Image();
     img.onload = () => {
-      this.PREDEFINED_SIZES.forEach((size, i) => {
-        if (!this.predefinedSizesForm.value[i]) return;
-
-        // load the image into a canvas
+      pngListToDownload.forEach((pngToDownload) => {
+        // load the image into a canvas of the requested size
         const canvas = document.createElement('canvas');
         const ctx = canvas.getContext('2d')!;
-        canvas.width = +size.name.split('x')[0];
-        canvas.height = +size.name.split('x')[1];
+        canvas.width = pngToDownload.width;
+        canvas.height = pngToDownload.height;
         ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
 
         // download the file
         const downloadLink = document.createElement('a');
         downloadLink.href = canvas.toDataURL('image/png');
-        downloadLink.download = `favicon-${size.name}.png`;
+        downloadLink.download = pngToDownload.fileName;
         downloadLink.click();
       });
 
+      // after images are exported, select the shape again (above loop is sync)
       this.shapeListService.selectedShape?.createEditPoints();
     };
     img.src = `data:image/svg+xml;base64,${btoa(svgString)}`;

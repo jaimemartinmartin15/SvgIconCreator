@@ -146,27 +146,20 @@ export class LineHost extends ShapeHost {
   //#endregion
 
   //#region export
-  protected override isShapeVisible(): boolean {
-    const isVisible = !this.stroke.endsWith('00') && this.strokeWidth !== 0;
-    const hasSize = this.x1 !== this.x2 || this.x2 !== this.y1 || this.y1 !== this.y2;
+  public override parseShapeToString(): string {
+    let lineToString = '<line';
 
-    return isVisible && hasSize;
-  }
+    lineToString += ` name="${this.name}"`;
+    lineToString += ` x1="${this.x1}"`;
+    lineToString += ` y1="${this.y1}"`;
+    lineToString += ` x2="${this.x2}"`;
+    lineToString += ` y2="${this.y2}"`;
+    lineToString += ` stroke="${this.stroke}"`;
+    lineToString += ` stroke-width="${this.strokeWidth}"`;
+    lineToString += ` stroke-linecap="${this.strokeLinecap}"`;
+    lineToString += ` stroke-dasharray="${this.strokeDasharray}"`;
 
-  public override parseCustomOptimizedStringAndCloseShape(): string {
-    let lineAttrs = '';
-
-    // add if they are not the default value
-    if (this.x1 !== 0) lineAttrs += ` x1="${this.x1}"`;
-    if (this.y1 !== 0) lineAttrs += ` y1="${this.y1}"`;
-    if (this.x2 !== 0) lineAttrs += ` x2="${this.x2}"`;
-    if (this.y2 !== 0) lineAttrs += ` y2="${this.y2}"`;
-
-    if (this.strokeLinecap !== 'butt') {
-      lineAttrs += ` stroke-linecap="${this.strokeLinecap}"`;
-    }
-
-    return `${lineAttrs} />`;
+    return `${lineToString} />`;
   }
   //#endregion
 
