@@ -1,6 +1,7 @@
-import { AfterViewInit, Component, ElementRef, EventEmitter, HostBinding, HostListener, Input, OnInit, Output, ViewChild, ChangeDetectionStrategy } from '@angular/core';
+import { AfterViewInit, ChangeDetectionStrategy, Component, ElementRef, EventEmitter, HostBinding, HostListener, Input, OnInit, Output, ViewChild } from '@angular/core';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { adaptWidthOfInputToWidthOfText } from '@jaimemartinmartin15/jei-devkit-angular-shared';
+import { Shape } from '../../../models/shape';
 import { ShapeListService } from '../../../services/shape-list.service';
 import { ShapeHost } from '../../../shapes/shape-host';
 
@@ -12,6 +13,7 @@ import { ShapeHost } from '../../../shapes/shape-host';
   imports: [ReactiveFormsModule],
 })
 export class ShapeElementComponent implements OnInit, AfterViewInit {
+  public Shape = Shape;
   public nameForm = new FormControl<string>('', { nonNullable: true });
 
   @ViewChild('shapeName')
