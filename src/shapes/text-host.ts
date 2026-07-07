@@ -97,7 +97,7 @@ export class TextHost extends ShapeHost {
     this.strokeDasharray = this.formsService.strokeDasharrayForm.value;
     this.x = this.formsService.xForm.value;
     this.y = this.formsService.yForm.value;
-    this.text = this.formsService.textForm.value;
+    this.text = this.formsService.textForm.value.trim();
     this.fontSize = this.formsService.fontSizeForm.value;
     this.fontFamily = this.formsService.fontFamilyForm.value;
     this.textAnchor = this.formsService.textAnchorForm.value;
@@ -113,7 +113,7 @@ export class TextHost extends ShapeHost {
     this.strokeDasharray.forEach((d) => this.formsService.strokeDasharrayForm.push(new FormControl<number>(d, { nonNullable: true })));
     this.formsService.xForm.setValue(this.x);
     this.formsService.yForm.setValue(this.y);
-    this.formsService.textForm.setValue(this.text);
+    this.formsService.textForm.setValue(this.text.trim());
     this.formsService.fontSizeForm.setValue(this.fontSize);
     this.formsService.fontFamilyForm.setValue(this.fontFamily);
     this.formsService.textAnchorForm.setValue(this.textAnchor);

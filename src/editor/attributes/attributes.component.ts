@@ -168,7 +168,7 @@ export class AttributesComponent implements OnInit {
     });
     this.formsService.textForm.valueChanges.subscribe((value) => {
       if (this.shapeListService.selectedShape) {
-        this.shapeListService.selectedShape.text = value;
+        this.shapeListService.selectedShape.text = value.trim();
       }
     });
     this.formsService.fontSizeForm.valueChanges.subscribe((value) => {
@@ -179,11 +179,6 @@ export class AttributesComponent implements OnInit {
     this.formsService.fontFamilyForm.valueChanges.subscribe((value) => {
       if (this.shapeListService.selectedShape) {
         this.shapeListService.selectedShape.fontFamily = value;
-      }
-    });
-    this.formsService.textAnchorForm.valueChanges.subscribe((value) => {
-      if (this.shapeListService.selectedShape) {
-        this.shapeListService.selectedShape.textAnchor = value;
       }
     });
     this.formsService.textAnchorForm.valueChanges.subscribe((value) => {
