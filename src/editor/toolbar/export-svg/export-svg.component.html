@@ -62,7 +62,12 @@
               <label>
                 <input type="checkbox" [formControlName]="$index" />
                 <div class="mock-radio-button"></div>
-                <span>{{ size.name }}</span>
+                <div>
+                  <div>{{ size.name }}</div>
+                  @if (exportSvgForm.controls.predefinedSizes.value[$index]) {
+                    <div class="full-name jei-no-break">{{ exportSvgForm.controls.fileName.value || DEFAULT_DOWNLOAD_FILE_NAME }}{{ size.name }}.png</div>
+                  }
+                </div>
               </label>
             }
           </div>
