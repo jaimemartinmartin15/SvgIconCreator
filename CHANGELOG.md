@@ -1,8 +1,9 @@
 # CHANGELOG
 
-## Unreleased
+## 3.3.0
 
-- Migration to angular 21.
+- Allow to download png images with predefined sizes.
+- Migration to angular 22.
 - Added aws checks to the workflow.
 
 ## 3.2.0
