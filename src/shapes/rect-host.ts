@@ -152,6 +152,7 @@ export class RectHost extends ShapeHost {
     this.stroke = this.formsService.strokeForm.value;
     this.fill = this.formsService.fillForm.value;
     this.strokeWidth = this.formsService.strokeWidthForm.value;
+    this.strokeLinecap = this.formsService.strokeLinecapForm.value;
     this.strokeLinejoin = this.formsService.strokeLinejoinForm.value;
     this.strokeDasharray = this.formsService.strokeDasharrayForm.value;
     this.x = this.formsService.xForm.value;
@@ -166,6 +167,7 @@ export class RectHost extends ShapeHost {
     this.formsService.strokeForm.setValue(this.stroke);
     this.formsService.fillForm.setValue(this.fill);
     this.formsService.strokeWidthForm.setValue(this.strokeWidth);
+    this.formsService.strokeLinecapForm.setValue(this.strokeLinecap);
     this.formsService.strokeLinejoinForm.setValue(this.strokeLinejoin);
     this.formsService.strokeDasharrayForm.clear({ emitEvent: false });
     this.strokeDasharray.forEach((d) => this.formsService.strokeDasharrayForm.push(new FormControl<number>(d, { nonNullable: true })));
@@ -192,6 +194,7 @@ export class RectHost extends ShapeHost {
     rectToString += ` fill="${this.fill}"`;
     rectToString += ` stroke="${this.stroke}"`;
     rectToString += ` stroke-width="${this.strokeWidth}"`;
+    rectToString += ` stroke-linecap="${this.strokeLinecap}"`;
     rectToString += ` stroke-linejoin="${this.strokeLinejoin}"`;
     rectToString += ` stroke-dasharray="${this.strokeDasharray}"`;
 

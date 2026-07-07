@@ -130,7 +130,7 @@ export class TextHost extends ShapeHost {
     textToString += ` font-size="${this.fontSize}"`;
     textToString += ` font-family="${this.fontFamily}"`;
     textToString += ` fill="${this.fill}"`;
-    textToString += ` text-anchor="${this.textAnchor}"`; // TODO allow to edit it in attributes panel
+    textToString += ` text-anchor="${this.textAnchor}"`;
     textToString += ` stroke="${this.stroke}"`;
     textToString += ` stroke-width="${this.strokeWidth}"`;
     textToString += ` stroke-linecap="${this.strokeLinecap}"`;

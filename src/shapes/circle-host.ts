@@ -108,6 +108,7 @@ export class CircleHost extends ShapeHost {
     this.stroke = this.formsService.strokeForm.value;
     this.fill = this.formsService.fillForm.value;
     this.strokeWidth = this.formsService.strokeWidthForm.value;
+    this.strokeLinecap = this.formsService.strokeLinecapForm.value;
     this.strokeDasharray = this.formsService.strokeDasharrayForm.value;
     this.cx = this.formsService.cxForm.value;
     this.cy = this.formsService.cyForm.value;
@@ -118,6 +119,7 @@ export class CircleHost extends ShapeHost {
     this.formsService.strokeForm.setValue(this.stroke);
     this.formsService.fillForm.setValue(this.fill);
     this.formsService.strokeWidthForm.setValue(this.strokeWidth);
+    this.formsService.strokeLinecapForm.setValue(this.strokeLinecap);
     this.formsService.strokeDasharrayForm.clear({ emitEvent: false });
     this.strokeDasharray.forEach((d) => this.formsService.strokeDasharrayForm.push(new FormControl<number>(d, { nonNullable: true })));
     this.formsService.cxForm.setValue(this.cx);
@@ -137,6 +139,7 @@ export class CircleHost extends ShapeHost {
     circleToString += ` fill="${this.fill}"`;
     circleToString += ` stroke="${this.stroke}"`;
     circleToString += ` stroke-width="${this.strokeWidth}"`;
+    circleToString += ` stroke-linecap="${this.strokeLinecap}"`;
     circleToString += ` stroke-dasharray="${this.strokeDasharray}"`;
 
     return `${circleToString} />`;

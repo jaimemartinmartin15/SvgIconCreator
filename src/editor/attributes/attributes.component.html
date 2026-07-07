@@ -40,18 +40,16 @@
   </label>
 
   <!-- MARK: linecap -->
-  @if (shapeSelectorIsLine || shapeSelectorIsPath || shapeSelectorIsText || selectedShapeIsLine || selectedShapeIsPath || selectedShapeIsText) {
-    <label class="label-and-control">
-      <span class="label">STROKE-LINECAP</span>
-      <div class="stroke-linecap-control">
-        <select [formControl]="formsService.strokeLinecapForm">
-          <option value="butt">butt</option>
-          <option value="round">round</option>
-          <option value="square">square</option>
-        </select>
-      </div>
-    </label>
-  }
+  <label class="label-and-control">
+    <span class="label">STROKE-LINECAP</span>
+    <div class="stroke-linecap-control">
+      <select [formControl]="formsService.strokeLinecapForm">
+        <option value="butt">butt</option>
+        <option value="round">round</option>
+        <option value="square">square</option>
+      </select>
+    </div>
+  </label>
 
   <!-- MARK: linejoin -->
   @if (shapeSelectorIsRect || shapeSelectorIsPath || shapeSelectorIsText || selectedShapeIsRect || selectedShapeIsPath || selectedShapeIsText) {
