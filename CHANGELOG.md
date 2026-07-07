@@ -3,8 +3,9 @@
 ## Unreleased
 
 - Update exports dialog and options.
-- Added text-anchor to text shape.
 - Show file name bellow predefined png size.
+- Added text-anchor to text shape.
+- Added stroke-linecap to rect and host.
 
 ## 3.3.0
 
