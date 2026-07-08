@@ -1,6 +1,6 @@
 # CHANGELOG
 
-## Unreleased
+## 3.4.0
 
 - Allow to show or hide grid lines in the canvas.
 - Show shape type on shape list elements.
