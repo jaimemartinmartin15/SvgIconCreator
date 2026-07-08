@@ -1,5 +1,5 @@
 import { CdkDrag, CdkDragHandle } from '@angular/cdk/drag-drop';
-import { Component, ElementRef, OnInit, ViewChild, ChangeDetectionStrategy } from '@angular/core';
+import { ChangeDetectionStrategy, Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { ElementRefDirective, ElementsRefService, InputNumberDirective } from '@jaimemartinmartin15/jei-devkit-angular-shared';
 import { debounceTime } from 'rxjs';
@@ -23,6 +23,7 @@ export class CanvasOptionsComponent implements OnInit {
 
   private svgImageEl: SVGImageElement = document.createElementNS('http://www.w3.org/2000/svg', 'image');
   private isImageVisible = true;
+  private isGridVisible = false;
 
   public constructor(
     private readonly elementsRefService: ElementsRefService,
@@ -101,6 +102,45 @@ export class CanvasOptionsComponent implements OnInit {
       // remove/hide image
       this.svgImageEl.remove();
     }
+  }
+  //#endregion
+
+  //#region grid
+  public toggleGrid(): void {
+    this.isGridVisible = !this.isGridVisible;
+
+    if (!this.isGridVisible) {
+      this.canvasEl.querySelectorAll('.grid-line').forEach((gridLine) => gridLine.remove());
+      return;
+    }
+
+    // TODO update also grid lines when viewport changes (form or zoom)
+    // TODO show / hide grid line pressing the 'G' key
+    const viewBox = this.canvasOptionsViewBoxForm.value as ViewBoxModel;
+    const biggerSide = Math.max(viewBox.width, viewBox.height);
+    const interval = 10 ** Math.floor(Math.log10(biggerSide) - 1);
+
+    // add vertical lines
+    for (let i = Math.ceil(viewBox.x / interval) * interval; i < viewBox.x + viewBox.width; i += interval) {
+      this.createGridLine(i, viewBox.y, i, viewBox.y + viewBox.height);
+    }
+    // add horizontal lines
+    for (let i = Math.ceil(viewBox.y / interval) * interval; i < viewBox.y + viewBox.height; i += interval) {
+      this.createGridLine(viewBox.x, i, viewBox.x + viewBox.width, i);
+    }
+  }
+
+  private createGridLine(x1: number, y1: number, x2: number, y2: number): void {
+    const viewBox = this.canvasOptionsViewBoxForm.value as ViewBoxModel;
+    const vLine = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+    vLine.classList.add('grid-line');
+    vLine.setAttribute('stroke', 'gainsboro');
+    vLine.setAttribute('stroke-width', `${(viewBox.width / 100) * 0.05}`);
+    vLine.setAttribute('x1', `${x1}`);
+    vLine.setAttribute('y1', `${y1}`);
+    vLine.setAttribute('x2', `${x2}`);
+    vLine.setAttribute('y2', `${y2}`);
+    this.canvasEl.append(vLine);
   }
   //#endregion
 }
