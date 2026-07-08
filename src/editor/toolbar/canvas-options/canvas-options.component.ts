@@ -25,7 +25,6 @@ export class CanvasOptionsComponent implements OnInit {
 
   private svgImageEl: SVGImageElement = document.createElementNS('http://www.w3.org/2000/svg', 'image');
   private isImageVisible = true;
-  private isGridVisible = false;
 
   public constructor(
     private readonly elementsRefService: ElementsRefService,
@@ -47,6 +46,7 @@ export class CanvasOptionsComponent implements OnInit {
       this.updateCanvasSize(v);
       this.updateGridLines();
     });
+    this.showGridForm.valueChanges.subscribe((v) => this.toggleGrid(v));
     AppEventsService.zoomUpdated$.subscribe(() => this.updateGridLines());
     this.keyboardService.windowKeyUp$
       .pipe(
@@ -57,12 +57,16 @@ export class CanvasOptionsComponent implements OnInit {
           return isToggleGridKey && !isTypingInsideInputElement && !isTypingInsideTextAreaElement;
         }),
       )
-      .subscribe(() => this.toggleGrid());
+      .subscribe(() => this.showGridForm.setValue(!this.showGridForm.value));
   }
 
   //#region getters
   public get canvasOptionsViewBoxForm() {
     return this.formsService.canvasOptionsViewBoxForm;
+  }
+
+  public get showGridForm() {
+    return this.formsService.showGridForm;
   }
 
   private get canvasEl(): SVGSVGElement {
@@ -127,7 +131,7 @@ export class CanvasOptionsComponent implements OnInit {
     const viewBox = this.canvasEl.viewBox.baseVal as ViewBoxModel;
     const vLine = document.createElementNS('http://www.w3.org/2000/svg', 'line');
     vLine.classList.add('grid-line');
-    vLine.setAttribute('stroke', 'gainsboro');
+    vLine.setAttribute('stroke', 'gray');
     vLine.setAttribute('stroke-width', `${(Math.max(viewBox.width, viewBox.height) / 100) * 0.05}`);
     vLine.setAttribute('x1', `${x1}`);
     vLine.setAttribute('y1', `${y1}`);
@@ -136,11 +140,8 @@ export class CanvasOptionsComponent implements OnInit {
     this.canvasEl.append(vLine);
   }
 
-  public toggleGrid(): void {
-    // TODO update view for the toggle when toggled with the 'G' key event
-    this.isGridVisible = !this.isGridVisible;
-
-    if (!this.isGridVisible) {
+  private toggleGrid(isVisible: boolean): void {
+    if (!isVisible) {
       this.canvasEl.querySelectorAll('.grid-line').forEach((gridLine) => gridLine.remove());
       return;
     }
@@ -164,7 +165,7 @@ export class CanvasOptionsComponent implements OnInit {
   }
 
   private updateGridLines(): void {
-    if (!this.isGridVisible) return;
+    if (!this.showGridForm.value) return;
 
     // remove all lines to paint them again
     this.canvasEl.querySelectorAll('.grid-line').forEach((gridLine) => gridLine.remove());

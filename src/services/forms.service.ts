@@ -17,6 +17,7 @@ export class FormsService {
     width: new FormControl(100, { nonNullable: true }),
     height: new FormControl(100, { nonNullable: true }),
   });
+  public readonly showGridForm = new FormControl<boolean>(false, { nonNullable: true });
   //#endregion
 
   //#region svg attributes forms
