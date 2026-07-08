@@ -1,5 +1,5 @@
 import { CdkDrag, CdkDragHandle } from '@angular/cdk/drag-drop';
-import { Component, ChangeDetectionStrategy } from '@angular/core';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { FormArray, FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { ElementsRefService, ToFormType } from '@jaimemartinmartin15/jei-devkit-angular-shared';
 import { fromEvent } from 'rxjs';
@@ -150,9 +150,9 @@ export class EditorComponent {
     const key = event.key.toUpperCase();
 
     // if the arrow is pressed when editing the input form, avoid moving the shape
-    if (!isArrowKey(key) || event.target instanceof HTMLInputElement) return;
+    if (!isArrowKey(key) || event.target instanceof HTMLInputElement || event.target instanceof HTMLTextAreaElement) return;
 
-    // avoid navigating back when it is alt + left/right arrow, navigator tries to navigate previous/next page
+    // avoid navigating when it is alt + left/right arrow, navigator tries to navigate previous/next page
     event.preventDefault();
 
     if (this.shapeListService.selectedShape) {

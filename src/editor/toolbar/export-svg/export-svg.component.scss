@@ -1,4 +1,4 @@
-@use "@jaimemartinmartin15/jei-devkit-angular-shared/styles/_utils.scss";
+@use '@jaimemartinmartin15/jei-devkit-angular-shared/styles/_utils.scss';
 
 :host {
   display: flex;
@@ -113,7 +113,7 @@ dialog {
         align-items: center;
         gap: 15px;
 
-        input[type="text"] {
+        input[type='text'] {
           flex-grow: 1;
           text-align: start;
         }
@@ -156,7 +156,7 @@ dialog {
           }
 
           &:has(:checked) .mock-radio-button::before {
-            content: "";
+            content: '';
             width: 8px;
             height: 8px;
             border-radius: 50%;
