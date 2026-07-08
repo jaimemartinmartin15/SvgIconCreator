@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { Subject } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
@@ -6,6 +7,7 @@ import { Injectable } from '@angular/core';
 export class KeyboardService {
   private keysDown = new Set<string>();
   private _capsLockOn: boolean = false;
+  public windowKeyUp$ = new Subject<KeyboardEvent>();
 
   // invoked from app.ts
   public windowKeyDown(event: KeyboardEvent) {
@@ -17,6 +19,7 @@ export class KeyboardService {
   public windowKeyUp(event: KeyboardEvent) {
     this.keysDown.delete(event.key);
     this._capsLockOn = event.getModifierState('CapsLock');
+    this.windowKeyUp$.next(event);
   }
 
   public get shiftKey() {

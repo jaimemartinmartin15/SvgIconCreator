@@ -118,6 +118,10 @@ export class ExportSvgComponent {
     // avoid exporting circles of selected shape
     this.shapeListService.selectedShape?.clearEditPoints();
 
+    // avoid exporting lines of grid
+    const gridLines = this.canvas.querySelectorAll('.grid-line');
+    gridLines.forEach((gridLine) => gridLine.remove());
+
     // convert the svg element to string (remove the background image)
     let svgString = new XMLSerializer().serializeToString(this.canvas);
     if (svgString.includes('<image ')) {
@@ -145,6 +149,9 @@ export class ExportSvgComponent {
 
       // after images are exported, select the shape again (above loop is sync)
       this.shapeListService.selectedShape?.createEditPoints();
+
+      // and show the grid lines back
+      gridLines.forEach((gridLine) => this.canvas.append(gridLine));
     };
     img.src = `data:image/svg+xml;base64,${btoa(svgString)}`;
   }

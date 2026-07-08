@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Allow to show or hide grid lines in the canvas.
+- Show shape type on shape list elements.
 - Update exports dialog and options.
 - Show file name bellow predefined png size.
 - Added text-anchor to text shape.

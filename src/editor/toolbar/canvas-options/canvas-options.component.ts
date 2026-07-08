@@ -1,10 +1,12 @@
 import { CdkDrag, CdkDragHandle } from '@angular/cdk/drag-drop';
-import { Component, ElementRef, OnInit, ViewChild, ChangeDetectionStrategy } from '@angular/core';
+import { ChangeDetectionStrategy, Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { ElementRefDirective, ElementsRefService, InputNumberDirective } from '@jaimemartinmartin15/jei-devkit-angular-shared';
-import { debounceTime } from 'rxjs';
+import { debounceTime, filter } from 'rxjs';
 import { ViewBoxModel } from '../../../models/view-box.model';
+import { AppEventsService } from '../../../services/app-events.service';
 import { FormsService } from '../../../services/forms.service';
+import { KeyboardService } from '../../../services/keyboard.service';
 import { ShapeListService } from '../../../services/shape-list.service';
 import { BurgerSvgComponent } from '../../../svg-output/burger.component';
 import { IconsSvgModule } from '../../../svg-output/icons-svg.module';
@@ -28,6 +30,7 @@ export class CanvasOptionsComponent implements OnInit {
     private readonly elementsRefService: ElementsRefService,
     private readonly shapeListService: ShapeListService,
     private readonly formsService: FormsService,
+    private readonly keyboardService: KeyboardService,
   ) {}
 
   public showDialog() {
@@ -39,12 +42,31 @@ export class CanvasOptionsComponent implements OnInit {
   }
 
   public ngOnInit(): void {
-    this.canvasOptionsViewBoxForm.valueChanges.pipe(debounceTime(200)).subscribe((v) => this.updateCanvasSize(v));
+    this.canvasOptionsViewBoxForm.valueChanges.pipe(debounceTime(200)).subscribe((v) => {
+      this.updateCanvasSize(v);
+      this.updateGridLines();
+    });
+    this.showGridForm.valueChanges.subscribe((v) => this.toggleGrid(v));
+    AppEventsService.zoomUpdated$.subscribe(() => this.updateGridLines());
+    this.keyboardService.windowKeyUp$
+      .pipe(
+        filter((e) => {
+          const isToggleGridKey = e.key.toUpperCase() === 'G';
+          const isTypingInsideInputElement = e.target instanceof HTMLInputElement;
+          const isTypingInsideTextAreaElement = e.target instanceof HTMLTextAreaElement;
+          return isToggleGridKey && !isTypingInsideInputElement && !isTypingInsideTextAreaElement;
+        }),
+      )
+      .subscribe(() => this.showGridForm.setValue(!this.showGridForm.value));
   }
 
   //#region getters
   public get canvasOptionsViewBoxForm() {
     return this.formsService.canvasOptionsViewBoxForm;
+  }
+
+  public get showGridForm() {
+    return this.formsService.showGridForm;
   }
 
   private get canvasEl(): SVGSVGElement {
@@ -101,6 +123,53 @@ export class CanvasOptionsComponent implements OnInit {
       // remove/hide image
       this.svgImageEl.remove();
     }
+  }
+  //#endregion
+
+  //#region grid
+  private createGridLine(x1: number, y1: number, x2: number, y2: number): void {
+    const viewBox = this.canvasEl.viewBox.baseVal as ViewBoxModel;
+    const vLine = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+    vLine.classList.add('grid-line');
+    vLine.setAttribute('stroke', 'gray');
+    vLine.setAttribute('stroke-width', `${(Math.max(viewBox.width, viewBox.height) / 100) * 0.05}`);
+    vLine.setAttribute('x1', `${x1}`);
+    vLine.setAttribute('y1', `${y1}`);
+    vLine.setAttribute('x2', `${x2}`);
+    vLine.setAttribute('y2', `${y2}`);
+    this.canvasEl.append(vLine);
+  }
+
+  private toggleGrid(isVisible: boolean): void {
+    if (!isVisible) {
+      this.canvasEl.querySelectorAll('.grid-line').forEach((gridLine) => gridLine.remove());
+      return;
+    }
+
+    this.paintGridLines();
+  }
+
+  private paintGridLines(): void {
+    const viewBox = this.canvasEl.viewBox.baseVal as ViewBoxModel;
+    const biggest = Math.max(viewBox.width, viewBox.height);
+    const interval = 10 ** Math.floor(Math.log10(biggest) - 1);
+
+    // add vertical lines
+    for (let i = Math.ceil(viewBox.x / interval) * interval; i < viewBox.x + viewBox.width; i += interval) {
+      this.createGridLine(i, viewBox.y, i, viewBox.y + viewBox.height);
+    }
+    // add horizontal lines
+    for (let i = Math.ceil(viewBox.y / interval) * interval; i < viewBox.y + viewBox.height; i += interval) {
+      this.createGridLine(viewBox.x, i, viewBox.x + viewBox.width, i);
+    }
+  }
+
+  private updateGridLines(): void {
+    if (!this.showGridForm.value) return;
+
+    // remove all lines to paint them again
+    this.canvasEl.querySelectorAll('.grid-line').forEach((gridLine) => gridLine.remove());
+    this.paintGridLines();
   }
   //#endregion
 }

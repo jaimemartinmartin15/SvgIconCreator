@@ -55,6 +55,14 @@
           <input type="checkbox" checked (change)="toggleBackgroundImage()" />
         </label>
       </div>
+
+      <div class="form-element grid">
+        <span class="app-control-label">CUADRICULA - MOSTRAR / OCULTAR</span>
+
+        <label class="mock-input-checkbox">
+          <input type="checkbox" [formControl]="showGridForm" />
+        </label>
+      </div>
     </form>
   </div>
 </dialog>
