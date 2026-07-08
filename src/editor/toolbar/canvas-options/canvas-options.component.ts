@@ -2,9 +2,11 @@ import { CdkDrag, CdkDragHandle } from '@angular/cdk/drag-drop';
 import { ChangeDetectionStrategy, Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { ElementRefDirective, ElementsRefService, InputNumberDirective } from '@jaimemartinmartin15/jei-devkit-angular-shared';
-import { debounceTime } from 'rxjs';
+import { debounceTime, filter } from 'rxjs';
 import { ViewBoxModel } from '../../../models/view-box.model';
+import { AppEventsService } from '../../../services/app-events.service';
 import { FormsService } from '../../../services/forms.service';
+import { KeyboardService } from '../../../services/keyboard.service';
 import { ShapeListService } from '../../../services/shape-list.service';
 import { BurgerSvgComponent } from '../../../svg-output/burger.component';
 import { IconsSvgModule } from '../../../svg-output/icons-svg.module';
@@ -29,6 +31,7 @@ export class CanvasOptionsComponent implements OnInit {
     private readonly elementsRefService: ElementsRefService,
     private readonly shapeListService: ShapeListService,
     private readonly formsService: FormsService,
+    private readonly keyboardService: KeyboardService,
   ) {}
 
   public showDialog() {
@@ -40,7 +43,12 @@ export class CanvasOptionsComponent implements OnInit {
   }
 
   public ngOnInit(): void {
-    this.canvasOptionsViewBoxForm.valueChanges.pipe(debounceTime(200)).subscribe((v) => this.updateCanvasSize(v));
+    this.canvasOptionsViewBoxForm.valueChanges.pipe(debounceTime(200)).subscribe((v) => {
+      this.updateCanvasSize(v);
+      this.updateGridLines();
+    });
+    AppEventsService.zoomUpdated$.subscribe(() => this.updateGridLines());
+    this.keyboardService.windowKeyUp$.pipe(filter((e) => e.key.toUpperCase() === 'G')).subscribe(() => this.toggleGrid());
   }
 
   //#region getters
@@ -106,7 +114,21 @@ export class CanvasOptionsComponent implements OnInit {
   //#endregion
 
   //#region grid
+  private createGridLine(x1: number, y1: number, x2: number, y2: number): void {
+    const viewBox = this.canvasEl.viewBox.baseVal as ViewBoxModel;
+    const vLine = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+    vLine.classList.add('grid-line');
+    vLine.setAttribute('stroke', 'red');
+    vLine.setAttribute('stroke-width', `${(Math.max(viewBox.width, viewBox.height) / 100) * 0.05}`);
+    vLine.setAttribute('x1', `${x1}`);
+    vLine.setAttribute('y1', `${y1}`);
+    vLine.setAttribute('x2', `${x2}`);
+    vLine.setAttribute('y2', `${y2}`);
+    this.canvasEl.append(vLine);
+  }
+
   public toggleGrid(): void {
+    // TODO update view for the toggle when toggled with the 'G' key event
     this.isGridVisible = !this.isGridVisible;
 
     if (!this.isGridVisible) {
@@ -114,11 +136,13 @@ export class CanvasOptionsComponent implements OnInit {
       return;
     }
 
-    // TODO update also grid lines when viewport changes (form or zoom)
-    // TODO show / hide grid line pressing the 'G' key
-    const viewBox = this.canvasOptionsViewBoxForm.value as ViewBoxModel;
-    const biggerSide = Math.max(viewBox.width, viewBox.height);
-    const interval = 10 ** Math.floor(Math.log10(biggerSide) - 1);
+    this.paintGridLines();
+  }
+
+  private paintGridLines(): void {
+    const viewBox = this.canvasEl.viewBox.baseVal as ViewBoxModel;
+    const biggest = Math.max(viewBox.width, viewBox.height);
+    const interval = 10 ** Math.floor(Math.log10(biggest) - 1);
 
     // add vertical lines
     for (let i = Math.ceil(viewBox.x / interval) * interval; i < viewBox.x + viewBox.width; i += interval) {
@@ -130,17 +154,12 @@ export class CanvasOptionsComponent implements OnInit {
     }
   }
 
-  private createGridLine(x1: number, y1: number, x2: number, y2: number): void {
-    const viewBox = this.canvasOptionsViewBoxForm.value as ViewBoxModel;
-    const vLine = document.createElementNS('http://www.w3.org/2000/svg', 'line');
-    vLine.classList.add('grid-line');
-    vLine.setAttribute('stroke', 'gainsboro');
-    vLine.setAttribute('stroke-width', `${(viewBox.width / 100) * 0.05}`);
-    vLine.setAttribute('x1', `${x1}`);
-    vLine.setAttribute('y1', `${y1}`);
-    vLine.setAttribute('x2', `${x2}`);
-    vLine.setAttribute('y2', `${y2}`);
-    this.canvasEl.append(vLine);
+  private updateGridLines(): void {
+    if (!this.isGridVisible) return;
+
+    // remove all lines to paint them again
+    this.canvasEl.querySelectorAll('.grid-line').forEach((gridLine) => gridLine.remove());
+    this.paintGridLines();
   }
   //#endregion
 }

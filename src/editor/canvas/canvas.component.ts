@@ -1,4 +1,4 @@
-import { Component, HostListener, ChangeDetectionStrategy } from '@angular/core';
+import { ChangeDetectionStrategy, Component, HostListener } from '@angular/core';
 import {
   Coord,
   CoordWithDelta,
@@ -8,6 +8,7 @@ import {
   SvgMouseEventsDirective,
 } from '@jaimemartinmartin15/jei-devkit-angular-shared';
 import { ViewBoxModel } from '../../models/view-box.model';
+import { AppEventsService } from '../../services/app-events.service';
 import { CanvasEventsService } from '../../services/canvas-events.service';
 import { FormsService } from '../../services/forms.service';
 
@@ -82,7 +83,7 @@ export class CanvasComponent {
       viewBox.height === this.currentViewBox.height
     );
 
-    // update the values to make then nice to see in the screen
+    // update the values to make them nice to see in the screen
     this.currentViewBox = {
       x: +this.currentViewBox.x.toFixed(1),
       y: +this.currentViewBox.y.toFixed(1),
@@ -96,6 +97,7 @@ export class CanvasComponent {
   public resetViewBox() {
     const { x, y, width, height } = this.formsService.canvasOptionsViewBoxForm.value;
     this.canvasEl.setAttribute('viewBox', `${x} ${y} ${width} ${height}`);
+    AppEventsService.zoomUpdated$.next();
   }
   //#endregion
 
@@ -136,6 +138,7 @@ export class CanvasComponent {
 
   public onWheel(coord: CoordWithDirection) {
     this.updateZoomViewBox(coord);
+    AppEventsService.zoomUpdated$.next(coord);
   }
   //#endregion
 }
