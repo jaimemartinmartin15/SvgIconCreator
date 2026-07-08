@@ -197,6 +197,7 @@ export class RectHost extends ShapeHost {
     rectToString += ` stroke-linecap="${this.strokeLinecap}"`;
     rectToString += ` stroke-linejoin="${this.strokeLinejoin}"`;
     rectToString += ` stroke-dasharray="${this.strokeDasharray}"`;
+    rectToString += this.parseDataBindingAttributes();
 
     return `${rectToString} />`;
   }

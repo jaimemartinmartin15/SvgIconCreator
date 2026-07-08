@@ -136,6 +136,7 @@ export class TextHost extends ShapeHost {
     textToString += ` stroke-linecap="${this.strokeLinecap}"`;
     textToString += ` stroke-linejoin="${this.strokeLinejoin}"`;
     textToString += ` stroke-dasharray="${this.strokeDasharray}"`;
+    textToString += this.parseDataBindingAttributes();
 
     return `${textToString}>
     ${this.text}

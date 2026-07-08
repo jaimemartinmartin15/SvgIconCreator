@@ -263,6 +263,7 @@ export class PathHost extends ShapeHost {
     pathToString += ` stroke-linecap="${this.strokeLinecap}"`;
     pathToString += ` stroke-linejoin="${this.strokeLinejoin}"`;
     pathToString += ` stroke-dasharray="${this.strokeDasharray}"`;
+    pathToString += this.parseDataBindingAttributes();
 
     return `${pathToString} />`;
   }

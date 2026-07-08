@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 3.4.1
+
+- Fix export of data-*-binding attributes.
+
 ## 3.4.0
 
 - Allow to show or hide grid lines in the canvas.

@@ -141,6 +141,7 @@ export class CircleHost extends ShapeHost {
     circleToString += ` stroke-width="${this.strokeWidth}"`;
     circleToString += ` stroke-linecap="${this.strokeLinecap}"`;
     circleToString += ` stroke-dasharray="${this.strokeDasharray}"`;
+    circleToString += this.parseDataBindingAttributes();
 
     return `${circleToString} />`;
   }

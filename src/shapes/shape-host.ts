@@ -172,6 +172,13 @@ export abstract class ShapeHost {
 
   //#region export
   public abstract parseShapeToString(): string;
+
+  protected parseDataBindingAttributes(): string {
+    // parse data-* attributes
+    return this.getBindingProperties()
+      .map(({ attribute, binding }) => ` data-${attribute}-binding="${binding}"`)
+      .join(' ');
+  }
   //#endregion
 
   //#region utils

@@ -158,6 +158,7 @@ export class LineHost extends ShapeHost {
     lineToString += ` stroke-width="${this.strokeWidth}"`;
     lineToString += ` stroke-linecap="${this.strokeLinecap}"`;
     lineToString += ` stroke-dasharray="${this.strokeDasharray}"`;
+    lineToString += this.parseDataBindingAttributes();
 
     return `${lineToString} />`;
   }
