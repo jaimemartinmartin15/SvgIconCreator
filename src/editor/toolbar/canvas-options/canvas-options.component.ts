@@ -48,7 +48,16 @@ export class CanvasOptionsComponent implements OnInit {
       this.updateGridLines();
     });
     AppEventsService.zoomUpdated$.subscribe(() => this.updateGridLines());
-    this.keyboardService.windowKeyUp$.pipe(filter((e) => e.key.toUpperCase() === 'G')).subscribe(() => this.toggleGrid());
+    this.keyboardService.windowKeyUp$
+      .pipe(
+        filter((e) => {
+          const isToggleGridKey = e.key.toUpperCase() === 'G';
+          const isTypingInsideInputElement = e.target instanceof HTMLInputElement;
+          const isTypingInsideTextAreaElement = e.target instanceof HTMLTextAreaElement;
+          return isToggleGridKey && !isTypingInsideInputElement && !isTypingInsideTextAreaElement;
+        }),
+      )
+      .subscribe(() => this.toggleGrid());
   }
 
   //#region getters
@@ -118,7 +127,7 @@ export class CanvasOptionsComponent implements OnInit {
     const viewBox = this.canvasEl.viewBox.baseVal as ViewBoxModel;
     const vLine = document.createElementNS('http://www.w3.org/2000/svg', 'line');
     vLine.classList.add('grid-line');
-    vLine.setAttribute('stroke', 'red');
+    vLine.setAttribute('stroke', 'gainsboro');
     vLine.setAttribute('stroke-width', `${(Math.max(viewBox.width, viewBox.height) / 100) * 0.05}`);
     vLine.setAttribute('x1', `${x1}`);
     vLine.setAttribute('y1', `${y1}`);
