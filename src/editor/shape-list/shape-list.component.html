@@ -11,10 +11,10 @@
   </button>
 </div>
 
-<div cdkDropList [cdkDropListData]="groups" (cdkDropListDropped)="onReorderingGroups($event)">
+<div class="cdk-drag-boundary" cdkDropList [cdkDropListData]="groups" (cdkDropListDropped)="onReorderingGroups($event)">
   <ul cdkDropListGroup>
     @for (group of groups; track group) {
-      <li cdkDrag cdkDragPreviewContainer="parent" cdkDragLockAxis="y">
+      <li cdkDrag cdkDragBoundary=".cdk-drag-boundary" cdkDragPreviewContainer="parent" cdkDragLockAxis="y">
         <app-shape-group [group]="group"></app-shape-group>
       </li>
     }

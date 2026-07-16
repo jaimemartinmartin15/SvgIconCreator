@@ -32,6 +32,10 @@ ul {
   list-style: none;
   padding: 0;
   margin: 0;
+
+  li:not(:last-child) {
+    border-bottom: var(--border);
+  }
 }
 
 /* Animate the elements in the list while the placeholder moves between them */
