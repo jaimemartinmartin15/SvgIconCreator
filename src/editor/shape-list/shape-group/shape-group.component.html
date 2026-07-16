@@ -1,0 +1,22 @@
+<jei-collapsible [isOpen]="true" #collapsible>
+  <div class="header" jeiCollapsibleToggleAction>
+    <svg appBurgerSvg cdkDragHandle (click)="$event.stopPropagation()"></svg>
+
+    <!-- TODO put correct icon (chain or something like that) -->
+    <svg appCheckListSvg (click)="selectGroup()" (click)="$event.stopPropagation()"></svg>
+
+    <svg appChevronSvg [ngClass]="{ opened: collapsible.isOpen }"></svg>
+
+    <svg appTrashCanSvg color="black" (click)="deleteGroup($event)"></svg>
+
+    <input #shapeName class="shape-name" (input)="adaptShapeNameSize($event)" [formControl]="nameForm" (click)="$event.stopPropagation()" />
+  </div>
+
+  <ul jeiCollapsibleContent cdkDropList [cdkDropListData]="shapes" cdkDropListLockAxis="y" (cdkDropListDropped)="onReorderingShapes($event)">
+    @for (shape of shapes; track shape) {
+      <li cdkDrag cdkDragBoundary=".cdk-drag-boundary">
+        <app-shape-element [shapeHost]="shape"></app-shape-element>
+      </li>
+    }
+  </ul>
+</jei-collapsible>

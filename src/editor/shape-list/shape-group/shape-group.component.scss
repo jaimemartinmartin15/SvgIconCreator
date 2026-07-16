@@ -1,0 +1,70 @@
+:host {
+  display: block;
+  padding: 10px;
+  background-color: #ffffff;
+
+  &:hover {
+    .header .shape-name:not(:focus) {
+      border-bottom: 2px solid gainsboro;
+    }
+  }
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 10px;
+
+  svg {
+    width: 20px;
+
+    &[appBurgerSvg] {
+      cursor: grab;
+    }
+
+    &[appChevronSvg] {
+      transition: transform 0.5s cubic-bezier(0, 0, 0.2, 1);
+
+      &.opened {
+        transform: rotate(180deg);
+      }
+    }
+  }
+
+  .shape-name {
+    border: none;
+    border-bottom: 2px solid transparent;
+    outline: none;
+    font-size: 1rem;
+    margin: 0px 15px 0 0;
+
+    &:focus {
+      border-bottom: 2px solid black;
+    }
+  }
+}
+
+ul {
+  padding: 0 0 0 30px;
+  margin: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+/* Animate the elements in the list while the placeholder moves between them */
+.cdk-drop-list-dragging .cdk-drag {
+  transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
+}
+
+/* Animate an item that has been dropped */
+.cdk-drag-animating {
+  transition: transform 300ms cubic-bezier(0, 0, 0.2, 1);
+}
+
+/* The gap between the elements on the list where the element will be dropped */
+.cdk-drag-placeholder {
+  visibility: hidden;
+}
