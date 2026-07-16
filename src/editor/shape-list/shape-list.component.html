@@ -1,7 +1,22 @@
-<ul cdkDropList (cdkDropListDropped)="onReorderingShapes($event)">
-  @for (shape of shapes; track shape) {
-    <app-shape-element cdkDrag cdkDragPreviewContainer="parent" [shapeHost]="shape" (openBindingsDialog)="openBindingsDialog.emit()">
-      <div *cdkDragPlaceholder></div>
-    </app-shape-element>
-  }
-</ul>
+<div class="header">
+  <button (click)="newGroup()">
+    <svg appPlusSvg></svg>
+    Nuevo grupo
+  </button>
+
+  <button (click)="duplicateShape()">
+    <!-- TODO update icon -->
+    <svg appPlusSvg></svg>
+    Duplicar
+  </button>
+</div>
+
+<div cdkDropList [cdkDropListData]="groups" (cdkDropListDropped)="onReorderingGroups($event)">
+  <ul cdkDropListGroup>
+    @for (group of groups; track group) {
+      <li cdkDrag cdkDragPreviewContainer="parent" cdkDragLockAxis="y">
+        <app-shape-group [group]="group"></app-shape-group>
+      </li>
+    }
+  </ul>
+</div>
