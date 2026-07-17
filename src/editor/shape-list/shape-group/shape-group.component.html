@@ -7,7 +7,7 @@
 
     <svg appChevronSvg [ngClass]="{ opened: collapsible.isOpen }"></svg>
 
-    <svg appTrashCanSvg color="black" (click)="deleteGroup($event)"></svg>
+    <span (click)="deleteGroup($event)">🗑️</span>
 
     <input #shapeName class="shape-name" (input)="adaptShapeNameSize($event)" [formControl]="nameForm" (click)="$event.stopPropagation()" />
   </div>
@@ -15,7 +15,7 @@
   <ul jeiCollapsibleContent cdkDropList [cdkDropListData]="shapes" cdkDropListLockAxis="y" (cdkDropListDropped)="onReorderingShapes($event)">
     @for (shape of shapes; track shape) {
       <li cdkDrag cdkDragBoundary=".cdk-drag-boundary">
-        <app-shape-element [shapeHost]="shape"></app-shape-element>
+        <app-shape-element [shapeHost]="shape" (openBindingsDialog)="openBindingsDialog.next()"></app-shape-element>
       </li>
     }
   </ul>

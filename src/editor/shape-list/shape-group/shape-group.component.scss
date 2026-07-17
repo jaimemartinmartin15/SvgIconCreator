@@ -2,12 +2,6 @@
   display: block;
   padding: 10px;
   background-color: #ffffff;
-
-  &:hover {
-    .header .shape-name:not(:focus) {
-      border-bottom: 2px solid gainsboro;
-    }
-  }
 }
 
 .header {

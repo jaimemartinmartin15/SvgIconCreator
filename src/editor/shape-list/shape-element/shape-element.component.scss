@@ -14,6 +14,7 @@
 
 .handler {
   cursor: grab;
+  width: 18px;
 }
 
 .visibility,
@@ -37,17 +38,8 @@
   background-color: #bec7cf;
 }
 
-:host-context(.selected.cdk-drag-preview) .shape-name {
-  background-color: #bec7cf;
-}
-
-:host-context(.cdk-drag-preview) .shape-name {
-  background-color: #becfc3;
-}
-
 svg {
   max-width: 20px;
-  margin-right: 10px;
 }
 
 .remaining-space {

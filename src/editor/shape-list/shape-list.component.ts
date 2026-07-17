@@ -14,7 +14,6 @@ import { ShapeGroupComponent } from './shape-group/shape-group.component';
 })
 export class ShapeListComponent implements AfterViewInit {
   @Output()
-  // TODO check this emitter
   public openBindingsDialog = new EventEmitter<void>();
 
   public get groups(): GroupHost[] {

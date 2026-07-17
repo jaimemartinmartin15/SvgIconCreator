@@ -1,6 +1,6 @@
 import { CdkDrag, CdkDragDrop, CdkDragHandle, CdkDropList, moveItemInArray, transferArrayItem } from '@angular/cdk/drag-drop';
 import { NgClass } from '@angular/common';
-import { AfterViewInit, ChangeDetectionStrategy, Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
+import { AfterViewInit, ChangeDetectionStrategy, Component, ElementRef, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { adaptWidthOfInputToWidthOfText, CollapsibleModule } from '@jaimemartinmartin15/jei-devkit-angular-shared';
 import { ShapeListService } from '../../../services/shape-list.service';
@@ -9,7 +9,6 @@ import { ShapeHost } from '../../../shapes/shape-host';
 import { BurgerSvgComponent } from '../../../svg-output/burger.component';
 import { CheckListSvgComponent } from '../../../svg-output/check-list.component';
 import { ChevronSvgComponent } from '../../../svg-output/chevron.component';
-import { TrashCanSvgComponent } from '../../../svg-output/trash-can.component';
 import { ShapeElementComponent } from '../shape-element/shape-element.component';
 
 @Component({
@@ -28,12 +27,14 @@ import { ShapeElementComponent } from '../shape-element/shape-element.component'
     ChevronSvgComponent,
     BurgerSvgComponent,
     CheckListSvgComponent,
-    TrashCanSvgComponent,
   ],
 })
 export class ShapeGroupComponent implements OnInit, AfterViewInit {
   @Input()
   public group: GroupHost;
+
+  @Output()
+  public openBindingsDialog = new EventEmitter<void>();
 
   @ViewChild('shapeName')
   public shapeNameInput: ElementRef<HTMLInputElement>;

@@ -15,7 +15,7 @@
   <ul cdkDropListGroup>
     @for (group of groups; track group) {
       <li cdkDrag cdkDragBoundary=".cdk-drag-boundary" cdkDragPreviewContainer="parent" cdkDragLockAxis="y">
-        <app-shape-group [group]="group"></app-shape-group>
+        <app-shape-group [group]="group" (openBindingsDialog)="openBindingsDialog.next()"></app-shape-group>
       </li>
     }
   </ul>
