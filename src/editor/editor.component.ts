@@ -86,7 +86,6 @@ export class EditorComponent {
         this.shapeListService.selectedShape?.clearEditPoints();
         const newShape = this.instantiateNewShapeHost();
         this.shapeListService.selectedShape = newShape;
-        this.shapeListService.addShapeToSelectedGroup(newShape);
         this.shapeListService.selectedShape.mouseDown(coord);
       }
     });
