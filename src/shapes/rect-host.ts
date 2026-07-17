@@ -22,7 +22,7 @@ export class RectHost extends ShapeHost {
 
   //#region mouse
   public override mouseDown(coord: Coord): void {
-    this.canvas.append(this.svg);
+    this.shapeListService.addShapeToSelectedGroup(this);
     this.updateFormWithCoords([coord]);
   }
 

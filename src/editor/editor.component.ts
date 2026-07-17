@@ -86,7 +86,7 @@ export class EditorComponent {
         this.shapeListService.selectedShape?.clearEditPoints();
         const newShape = this.instantiateNewShapeHost();
         this.shapeListService.selectedShape = newShape;
-        this.shapeListService.shapeList.push(newShape);
+        this.shapeListService.addShapeToSelectedGroup(newShape);
         this.shapeListService.selectedShape.mouseDown(coord);
       }
     });
@@ -177,5 +177,7 @@ export class EditorComponent {
       case Shape.TEXT:
         return new TextHost(this.elementsRefService, this.formsService, this.shapeListService);
     }
+
+    throw new Error('Unknown shape to instantiate. You should not see this error.');
   }
 }

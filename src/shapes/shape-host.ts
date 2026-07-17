@@ -164,8 +164,7 @@ export abstract class ShapeHost {
   //#region import
   public loadFromElement(svg: SVGElement) {
     this.svg = svg;
-    this.shapeListService.shapeList.push(this);
-    this.addToCanvas();
+    this.shapeListService.addShapeToSelectedGroup(this);
     this.isShapeFinished = true;
   }
   //#endregion
@@ -209,7 +208,7 @@ export abstract class ShapeHost {
   public abstract onCreatingNewShape(): void;
   //#endregion
 
-  //#region animation
+  //#region data bindings
   public onBindingChanged(bindings: Partial<{ attribute: string; binding: string }>[]): void {
     // delete all existing data-*-binding attributes
     [...this.svg.attributes].filter((a) => a.name.startsWith('data-') && a.name.endsWith('-binding')).forEach((attr) => this.svg.removeAttribute(attr.name));
