@@ -114,6 +114,7 @@ export class CanvasComponent {
   public onMouseDrag(coord: CoordWithDelta) {
     if (this.isDraggingCanvas) {
       // update the position of the svg
+      // TODO update grid (G key)
       const actualViewbox = this.canvasEl.viewBox.baseVal;
       const newX = actualViewbox.x - coord.dx;
       const newY = actualViewbox.y - coord.dy;
