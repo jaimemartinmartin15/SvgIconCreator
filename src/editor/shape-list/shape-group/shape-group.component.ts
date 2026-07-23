@@ -7,7 +7,6 @@ import { ShapeListService } from '../../../services/shape-list.service';
 import { GroupHost } from '../../../shapes/group-host';
 import { ShapeHost } from '../../../shapes/shape-host';
 import { BurgerSvgComponent } from '../../../svg-output/burger.component';
-import { CheckListSvgComponent } from '../../../svg-output/check-list.component';
 import { ChevronSvgComponent } from '../../../svg-output/chevron.component';
 import { ShapeElementComponent } from '../shape-element/shape-element.component';
 
@@ -16,18 +15,7 @@ import { ShapeElementComponent } from '../shape-element/shape-element.component'
   templateUrl: './shape-group.component.html',
   styleUrls: ['./shape-group.component.scss'],
   changeDetection: ChangeDetectionStrategy.Eager,
-  imports: [
-    CdkDrag,
-    CdkDragHandle,
-    CdkDropList,
-    NgClass,
-    ReactiveFormsModule,
-    CollapsibleModule,
-    ShapeElementComponent,
-    ChevronSvgComponent,
-    BurgerSvgComponent,
-    CheckListSvgComponent,
-  ],
+  imports: [CdkDrag, CdkDragHandle, CdkDropList, NgClass, ReactiveFormsModule, CollapsibleModule, ShapeElementComponent, ChevronSvgComponent, BurgerSvgComponent],
 })
 export class ShapeGroupComponent implements OnInit, AfterViewInit {
   @Input()
@@ -54,6 +42,10 @@ export class ShapeGroupComponent implements OnInit, AfterViewInit {
 
   public adaptShapeNameSize(event: Event) {
     adaptWidthOfInputToWidthOfText(event.target as HTMLInputElement);
+  }
+
+  public get isThisSelectedGroup() {
+    return this.shapeListService.selectedGroup === this.groupHost;
   }
 
   public selectGroup(): void {

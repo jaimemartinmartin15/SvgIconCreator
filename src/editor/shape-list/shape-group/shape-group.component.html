@@ -1,11 +1,14 @@
 <jei-collapsible [isOpen]="true" #collapsible>
   <div class="header" jeiCollapsibleToggleAction>
     <svg appChevronSvg [ngClass]="{ opened: collapsible.isOpen }"></svg>
-    
+
     <svg appBurgerSvg cdkDragHandle (click)="$event.stopPropagation()"></svg>
 
-    <!-- TODO put correct icon (chain or something like that) -->
-    <svg appCheckListSvg (click)="selectGroup()" (click)="$event.stopPropagation()"></svg>
+    <div class="selected-group" (click)="selectGroup()" (click)="$event.stopPropagation()">
+      @if (isThisSelectedGroup) {
+        📍
+      }
+    </div>
 
     <span (click)="deleteGroup($event)">🗑️</span>
 

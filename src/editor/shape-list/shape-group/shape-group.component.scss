@@ -24,6 +24,13 @@
     }
   }
 
+  .selected-group {
+    border: var(--border);
+    border-radius: 5px;
+    min-width: 25px;
+    min-height: 25px;
+  }
+
   .shape-name {
     border: none;
     border-bottom: 2px solid transparent;
