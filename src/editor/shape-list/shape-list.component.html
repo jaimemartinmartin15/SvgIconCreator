@@ -1,22 +1,23 @@
 <div class="header">
-  <button (click)="newGroup()">
-    <svg appPlusSvg></svg>
-    Nuevo grupo
-  </button>
+  <span class="app-control-label">ESTRUCTURA SVG</span>
 
-  <button (click)="duplicateShape()">
-    <!-- TODO update icon -->
-    <svg appPlusSvg></svg>
-    Duplicar
-  </button>
+  <div class="buttons-container">
+    <button (click)="newGroup()">Nuevo grupo</button>
+
+    <button (click)="duplicateShape()">Duplicar</button>
+  </div>
 </div>
 
-<div class="cdk-drag-boundary" cdkDropList [cdkDropListData]="groups" (cdkDropListDropped)="onReorderingGroups($event)">
-  <ul cdkDropListGroup>
-    @for (group of groups; track group) {
-      <li cdkDrag cdkDragBoundary=".cdk-drag-boundary" cdkDragPreviewContainer="parent" cdkDragLockAxis="y">
-        <app-shape-group [group]="group" (openBindingsDialog)="openBindingsDialog.next()"></app-shape-group>
+<ul id="main-cdk-drop-list" cdkDropList [cdkDropListData]="shapes" (cdkDropListDropped)="onDroppedListElement($event)" [cdkDropListConnectedTo]="cdkListIds">
+  @for (shape of shapes; track shape) {
+    @if (shapeIsGroup(shape)) {
+      <li cdkDrag>
+        <app-shape-group [groupHost]="shape" (openBindingsDialog)="openBindingsDialog.next()"></app-shape-group>
+      </li>
+    } @else {
+      <li cdkDrag>
+        <app-shape-element [shapeHost]="shape" (openBindingsDialog)="openBindingsDialog.next()"></app-shape-element>
       </li>
     }
-  </ul>
-</div>
+  }
+</ul>

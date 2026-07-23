@@ -1,29 +1,31 @@
 :host {
   display: block;
   overflow: auto;
-  border: var(--border);
-  border-radius: 5px;
 }
 
 .header {
   display: flex;
-  justify-content: flex-end;
-  gap: 15px;
+  justify-content: space-between;
+  align-items: center;
   background-color: #f0f1f2;
-  padding: 10px;
+  padding: 10px 15px;
+  border-radius: 5px;
 
-  button {
+  .buttons-container {
     display: flex;
-    justify-content: center;
-    align-items: center;
-    background-color: white;
-    border: var(--border);
-    border-radius: 5px;
-    padding: 6px 9px;
+    gap: 15px;
 
-    svg {
-      width: 15px;
-      margin-right: 10px;
+    button {
+      background-color: white;
+      border: var(--border);
+      border-radius: 5px;
+      padding: 6px 9px;
+      font-size: 0.9rem;
+      cursor: pointer;
+
+      &:hover {
+        background-color: #fafafa;
+      }
     }
   }
 }
@@ -31,11 +33,9 @@
 ul {
   list-style: none;
   padding: 0;
-  margin: 0;
-
-  li:not(:last-child) {
-    border-bottom: var(--border);
-  }
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
 }
 
 /* Animate the elements in the list while the placeholder moves between them */
@@ -50,5 +50,11 @@ ul {
 
 /* The gap between the elements on the list where the element will be dropped */
 .cdk-drag-placeholder {
-  visibility: hidden;
+  border: 2px dashed #bbbfc5;
+  border-radius: 5px;
+
+  app-shape-group,
+  app-shape-element {
+    visibility: hidden;
+  }
 }
