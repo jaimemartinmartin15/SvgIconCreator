@@ -47,7 +47,7 @@ export class CanvasOptionsComponent implements OnInit {
       this.updateGridLines();
     });
     this.showGridForm.valueChanges.subscribe((v) => this.toggleGrid(v));
-    AppEventsService.zoomUpdated$.subscribe(() => this.updateGridLines());
+    AppEventsService.viewboxUpdated$.subscribe(() => this.updateGridLines());
     this.keyboardService.windowKeyUp$
       .pipe(
         filter((e) => {
