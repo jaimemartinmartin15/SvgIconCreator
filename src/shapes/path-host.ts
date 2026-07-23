@@ -39,7 +39,7 @@ export class PathHost extends ShapeHost {
   //#region mouse down
   public override mouseDown(coord: Coord): void {
     if (this.svg.parentElement === null) {
-      this.shapeListService.addShapeToSelectedGroup(this);
+      this.shapeListService.addShape(this);
     }
 
     if (this.drawingStep === 0) {

@@ -1,5 +1,7 @@
 import { CdkDrag, CdkDragDrop, CdkDropList, moveItemInArray, transferArrayItem } from '@angular/cdk/drag-drop';
 import { ChangeDetectionStrategy, Component, EventEmitter, Output } from '@angular/core';
+import { ElementsRefService } from '@jaimemartinmartin15/jei-devkit-angular-shared';
+import { FormsService } from '../../services/forms.service';
 import { ShapeListService } from '../../services/shape-list.service';
 import { GroupHost } from '../../shapes/group-host';
 import { ShapeHost } from '../../shapes/shape-host';
@@ -17,11 +19,15 @@ export class ShapeListComponent {
   @Output()
   public openBindingsDialog = new EventEmitter<void>();
 
-  public constructor(private readonly shapeListService: ShapeListService) {}
+  public constructor(
+    private readonly elementsRefService: ElementsRefService,
+    private readonly formsService: FormsService,
+    private readonly shapeListService: ShapeListService,
+  ) {}
 
   //#region header
   public newGroup(): void {
-    const group = this.shapeListService.createNewGroup();
+    const group = new GroupHost(this.elementsRefService, this.formsService, this.shapeListService);
     this.shapeListService.addShape(group);
     this.shapeListService.selectedGroup = group;
   }

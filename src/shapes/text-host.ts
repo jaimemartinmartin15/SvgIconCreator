@@ -17,7 +17,7 @@ export class TextHost extends ShapeHost {
 
   //#region mouse
   public override mouseDown(coord: Coord): void {
-    this.shapeListService.addShapeToSelectedGroup(this);
+    this.shapeListService.addShape(this);
     this.mouseDrag({ ...coord, dx: 0, dy: 0 });
   }
 

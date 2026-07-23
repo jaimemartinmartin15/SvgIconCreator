@@ -5,6 +5,11 @@ import { ShapeListService } from '../services/shape-list.service';
 import { ShapeHost } from './shape-host';
 
 export class GroupHost extends ShapeHost {
+  //#region path host vars
+  public readonly shapes: ShapeHost[] = [];
+  public readonly cdkDropListId = crypto.randomUUID();
+  //#endregion
+
   public override readonly tag = Shape.G;
   public override svg: SVGGElement = document.createElementNS('http://www.w3.org/2000/svg', Shape.G);
 
@@ -13,8 +18,6 @@ export class GroupHost extends ShapeHost {
 
     this.name = `group_${ShapeHost.shapeCounter++}`;
   }
-
-  public readonly shapes: ShapeHost[] = [];
 
   //#region mouse
   public override mouseDown(coord: Coord): void {

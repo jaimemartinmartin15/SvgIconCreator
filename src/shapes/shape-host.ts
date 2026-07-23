@@ -164,7 +164,7 @@ export abstract class ShapeHost {
   //#region import
   public loadFromElement(svg: SVGElement) {
     this.svg = svg;
-    this.shapeListService.addShapeToSelectedGroup(this);
+    this.shapeListService.addShape(this);
     this.isShapeFinished = true;
   }
   //#endregion

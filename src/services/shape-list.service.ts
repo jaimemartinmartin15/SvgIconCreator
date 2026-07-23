@@ -3,30 +3,20 @@ import { ElementsRefService } from '@jaimemartinmartin15/jei-devkit-angular-shar
 import { Subject } from 'rxjs';
 import { GroupHost } from '../shapes/group-host';
 import { ShapeHost } from '../shapes/shape-host';
-import { FormsService } from './forms.service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class ShapeListService {
-  public constructor(
-    private readonly elementsRefService: ElementsRefService,
-    private readonly formsService: FormsService,
-  ) {
-    (window as any).shapelistservice= this;
-  }
+  public constructor(private readonly elementsRefService: ElementsRefService) {}
 
-  public createNewGroup(): GroupHost {
-    const group = new GroupHost(this.elementsRefService, this.formsService, this);
-    this.groupsList.push(group);
-    group.addToCanvas();
-    return group;
+  private get canvas(): SVGSVGElement {
+    return this.elementsRefService.getNativeElement('canvas');
   }
-
-  public readonly groupsList: GroupHost[] = [];
-  public selectedGroup: GroupHost;
 
   public readonly shapeList: ShapeHost[] = [];
+
+  public selectedGroup?: GroupHost;
 
   public readonly selectedShape$ = new Subject<ShapeHost | undefined>();
 
@@ -39,8 +29,46 @@ export class ShapeListService {
     this.selectedShape$.next(this._selectedShape);
   }
 
-  public addShapeToSelectedGroup(shapeHost: ShapeHost): void {
-    this.selectedGroup.svg.append(shapeHost.svg);
-    this.selectedGroup.shapes.push(shapeHost);
+  public addShape(shapeHost: ShapeHost) {
+    if (this.selectedGroup) {
+      this.selectedGroup.svg.append(shapeHost.svg);
+      this.selectedGroup.shapes.push(shapeHost);
+      return;
+    }
+
+    this.canvas.append(shapeHost.svg);
+    this.shapeList.push(shapeHost);
+  }
+
+  public removeAllShapesFromCanvas(shapeList = this.shapeList): void {
+    shapeList.forEach((shape) => {
+      shape.removeFromCanvas();
+      if (shape instanceof GroupHost) {
+        this.removeAllShapesFromCanvas(shape.shapes);
+      }
+    });
+  }
+
+  public addAllShapesToCanvas(shapeList = this.shapeList, parentToAdd: SVGElement = this.canvas): void {
+    shapeList.forEach((shape) => {
+      parentToAdd.append(shape.svg);
+      if (shape instanceof GroupHost) {
+        this.addAllShapesToCanvas(shape.shapes, shape.svg);
+      }
+    });
+  }
+
+  public recursiveListIds(list: ShapeHost[] = this.shapeList): string[] {
+    const ids: string[] = [];
+
+    for (let i = 0; i < list.length; i++) {
+      const element = list[i];
+      if (element instanceof GroupHost) {
+        ids.push(element.cdkDropListId);
+        ids.push(...this.recursiveListIds(element.shapes));
+      }
+    }
+
+    return ids.sort((a, b) => b.length - a.length);
   }
 }
