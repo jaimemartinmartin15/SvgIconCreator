@@ -52,18 +52,17 @@ export class GroupHost extends ShapeHost {
   //#endregion
 
   //#region move shape
-  // TODO implement this region to move all the shapes of the group
   public override moveShapeUp(amount: number): void {
-    throw new Error('Method not implemented.');
+    this.shapes.forEach((shape) => shape.moveShapeUp(amount));
   }
   public override moveShapeRight(amount: number): void {
-    throw new Error('Method not implemented.');
+    this.shapes.forEach((shape) => shape.moveShapeRight(amount));
   }
   public override moveShapeDown(amount: number): void {
-    throw new Error('Method not implemented.');
+    this.shapes.forEach((shape) => shape.moveShapeDown(amount));
   }
   public override moveShapeLeft(amount: number): void {
-    throw new Error('Method not implemented.');
+    this.shapes.forEach((shape) => shape.moveShapeLeft(amount));
   }
   //#endregion
 
