@@ -2,7 +2,12 @@ import { Coord, CoordWithDelta, ElementsRefService } from '@jaimemartinmartin15/
 import { Shape } from '../models/shape';
 import { FormsService } from '../services/forms.service';
 import { ShapeListService } from '../services/shape-list.service';
+import { CircleHost } from './circle-host';
+import { LineHost } from './line-host';
+import { PathHost } from './path-host';
+import { RectHost } from './rect-host';
 import { ShapeHost } from './shape-host';
+import { TextHost } from './text-host';
 
 export class GroupHost extends ShapeHost {
   //#region path host vars
@@ -59,6 +64,41 @@ export class GroupHost extends ShapeHost {
   }
   public override moveShapeLeft(amount: number): void {
     throw new Error('Method not implemented.');
+  }
+  //#endregion
+
+  //#region import
+  public override loadFromElementIntoParent(svg: SVGElement, parent: SVGSVGElement | GroupHost): void {
+    super.loadFromElementIntoParent(svg, parent);
+
+    Array.from(svg.children).forEach((svgShape) => {
+      switch (svgShape.tagName) {
+        case 'rect':
+          const rectHost = new RectHost(this.elementsRefService, this.formsService, this.shapeListService);
+          rectHost.loadFromElementIntoParent(svgShape as SVGRectElement, parent);
+          break;
+        case 'line':
+          const lineHost = new LineHost(this.elementsRefService, this.formsService, this.shapeListService);
+          lineHost.loadFromElementIntoParent(svgShape as SVGLineElement, parent);
+          break;
+        case 'path':
+          const pathHost = new PathHost(this.elementsRefService, this.formsService, this.shapeListService);
+          pathHost.loadFromElementIntoParent(svgShape as SVGPathElement, parent);
+          break;
+        case 'circle':
+          const circleHost = new CircleHost(this.elementsRefService, this.formsService, this.shapeListService);
+          circleHost.loadFromElementIntoParent(svgShape as SVGCircleElement, parent);
+          break;
+        case 'text':
+          const textHost = new TextHost(this.elementsRefService, this.formsService, this.shapeListService);
+          textHost.loadFromElementIntoParent(svgShape as SVGTextElement, parent);
+          break;
+        case 'g':
+          const groupHost = new GroupHost(this.elementsRefService, this.formsService, this.shapeListService);
+          groupHost.loadFromElementIntoParent(svgShape as SVGGElement, this);
+          break;
+      }
+    });
   }
   //#endregion
 

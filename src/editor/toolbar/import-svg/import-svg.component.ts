@@ -1,9 +1,11 @@
 import { CdkDrag, CdkDragHandle } from '@angular/cdk/drag-drop';
-import { Component, ElementRef, ViewChild, ChangeDetectionStrategy } from '@angular/core';
-import { CollapsibleModule, ElementsRefService } from '@jaimemartinmartin15/jei-devkit-angular-shared';
+import { ChangeDetectionStrategy, Component, ElementRef, ViewChild } from '@angular/core';
+import { FormControl, ReactiveFormsModule } from '@angular/forms';
+import { ElementsRefService } from '@jaimemartinmartin15/jei-devkit-angular-shared';
 import { FormsService } from '../../../services/forms.service';
 import { ShapeListService } from '../../../services/shape-list.service';
 import { CircleHost } from '../../../shapes/circle-host';
+import { GroupHost } from '../../../shapes/group-host';
 import { LineHost } from '../../../shapes/line-host';
 import { PathHost } from '../../../shapes/path-host';
 import { RectHost } from '../../../shapes/rect-host';
@@ -17,11 +19,13 @@ import { PlusSvgComponent } from '../../../svg-output/plus.component';
   templateUrl: './import-svg.component.html',
   styleUrls: ['./import-svg.component.scss'],
   changeDetection: ChangeDetectionStrategy.Eager,
-  imports: [CollapsibleModule, IconsSvgModule, PlusSvgComponent, BurgerSvgComponent, CdkDrag, CdkDragHandle],
+  imports: [ReactiveFormsModule, IconsSvgModule, PlusSvgComponent, BurgerSvgComponent, CdkDrag, CdkDragHandle],
 })
 export class ImportSvgComponent {
   @ViewChild('importSvgDialog')
   public importSvgDialogElRef: ElementRef<HTMLDialogElement>;
+
+  public readonly createNewGroupForm = new FormControl<boolean>(false, { nonNullable: true });
 
   public loadedFile?: File;
 
@@ -30,6 +34,10 @@ export class ImportSvgComponent {
     private readonly shapeListService: ShapeListService,
     private readonly formsService: FormsService,
   ) {}
+
+  private get canvas(): SVGSVGElement {
+    return this.elementsRefService.getNativeElement('canvas');
+  }
 
   public showDialog() {
     this.importSvgDialogElRef.nativeElement.showModal();
@@ -50,36 +58,52 @@ export class ImportSvgComponent {
     mockDiv.innerHTML = svgText;
     const svg: SVGSVGElement = mockDiv.querySelector('svg') as SVGSVGElement;
 
-    // update viewBox size
-    const viewBox = svg.viewBox.baseVal;
-    this.formsService.canvasOptionsViewBoxForm.setValue({
-      x: viewBox.x,
-      y: viewBox.y,
-      width: viewBox.width,
-      height: viewBox.height,
-    });
+    // TODO update viewBox to fit all shapes
+    if (this.shapeListService.shapeList.length === 0) {
+      const viewBox = svg.viewBox.baseVal;
+      this.formsService.canvasOptionsViewBoxForm.setValue({
+        x: viewBox.x,
+        y: viewBox.y,
+        width: viewBox.width,
+        height: viewBox.height,
+      });
+    }
+
+    let parentSvg: SVGSVGElement | GroupHost;
+    if (this.createNewGroupForm.value) {
+      const groupHost = new GroupHost(this.elementsRefService, this.formsService, this.shapeListService);
+      this.canvas.append(groupHost.svg);
+      this.shapeListService.shapeList.push(groupHost);
+      parentSvg = groupHost;
+    } else {
+      parentSvg = this.canvas;
+    }
 
     Array.from(svg.children).forEach((svgShape) => {
       switch (svgShape.tagName) {
         case 'rect':
           const rectHost = new RectHost(this.elementsRefService, this.formsService, this.shapeListService);
-          rectHost.loadFromElement(svgShape as SVGRectElement);
+          rectHost.loadFromElementIntoParent(svgShape as SVGRectElement, parentSvg);
           break;
         case 'line':
           const lineHost = new LineHost(this.elementsRefService, this.formsService, this.shapeListService);
-          lineHost.loadFromElement(svgShape as SVGLineElement);
+          lineHost.loadFromElementIntoParent(svgShape as SVGLineElement, parentSvg);
           break;
         case 'path':
           const pathHost = new PathHost(this.elementsRefService, this.formsService, this.shapeListService);
-          pathHost.loadFromElement(svgShape as SVGPathElement);
+          pathHost.loadFromElementIntoParent(svgShape as SVGPathElement, parentSvg);
           break;
         case 'circle':
           const circleHost = new CircleHost(this.elementsRefService, this.formsService, this.shapeListService);
-          circleHost.loadFromElement(svgShape as SVGCircleElement);
+          circleHost.loadFromElementIntoParent(svgShape as SVGCircleElement, parentSvg);
           break;
         case 'text':
           const textHost = new TextHost(this.elementsRefService, this.formsService, this.shapeListService);
-          textHost.loadFromElement(svgShape as SVGTextElement);
+          textHost.loadFromElementIntoParent(svgShape as SVGTextElement, parentSvg);
+          break;
+        case 'g':
+          const groupHost = new GroupHost(this.elementsRefService, this.formsService, this.shapeListService);
+          groupHost.loadFromElementIntoParent(svgShape as SVGGElement, parentSvg);
           break;
       }
     });

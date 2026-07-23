@@ -1,0 +1,38 @@
+.mock-input-checkbox {
+  border: var(--border);
+  border-radius: 5px;
+  width: 80px;
+  height: 40px;
+  position: relative;
+  cursor: pointer;
+
+  &::after {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 36px;
+    height: 36px;
+    border-radius: 5px;
+    position: absolute;
+    box-sizing: border-box;
+    border: var(--border);
+    background-color: #fcfcfc;
+    top: 2px;
+    left: 2px;
+    transition: margin 0.3s;
+  }
+
+  &:has(:not(:checked)) {
+    &::after {
+      content: var(--not-checked-icon, "❌");
+      margin-left: 40px;
+    }
+  }
+
+  &:has(:checked) {
+    &::after {
+      content: var(--checked-icon, "✅");
+      margin-left: 0;
+    }
+  }
+}

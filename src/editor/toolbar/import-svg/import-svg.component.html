@@ -29,6 +29,16 @@
           <div class="mock-input-file">{{ loadedFile ? loadedFile.name : 'Cargar un fichero' }}</div>
         </label>
       </div>
+
+      <div class="app-label-and-input create-new-group">
+        <span class="app-control-label">CREATE NEW GROUP</span>
+
+        <span class="info-message">Al cargar el texto o el fichero, las figuras se añadirán a un grupo nuevo en lugar de la raíz del svg.</span>
+
+        <label class="mock-input-checkbox">
+          <input type="checkbox" [formControl]="createNewGroupForm" />
+        </label>
+      </div>
     </form>
   </div>
 </dialog>

@@ -3,6 +3,7 @@ import { Command, isPathInstruction } from '../models/path.model';
 import { Shape } from '../models/shape';
 import { FormsService } from '../services/forms.service';
 import { ShapeListService } from '../services/shape-list.service';
+import { GroupHost } from './group-host';
 
 export const EDIT_POINT_COLORS = {
   FILL_NORMAL: '#FFF5',
@@ -162,9 +163,15 @@ export abstract class ShapeHost {
   //#endregion
 
   //#region import
-  public loadFromElement(svg: SVGElement) {
+  public loadFromElementIntoParent(svg: SVGElement, parent: SVGSVGElement | GroupHost) {
     this.svg = svg;
-    this.shapeListService.addShape(this);
+    if (parent instanceof SVGSVGElement) {
+      parent.append(svg);
+      this.shapeListService.shapeList.push(this);
+    } else {
+      parent.svg.append(svg);
+      parent.shapes.push(this);
+    }
     this.isShapeFinished = true;
   }
   //#endregion
