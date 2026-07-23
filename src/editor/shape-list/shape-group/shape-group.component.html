@@ -1,22 +1,36 @@
 <jei-collapsible [isOpen]="true" #collapsible>
   <div class="header" jeiCollapsibleToggleAction>
+    <svg appChevronSvg [ngClass]="{ opened: collapsible.isOpen }"></svg>
+    
     <svg appBurgerSvg cdkDragHandle (click)="$event.stopPropagation()"></svg>
 
     <!-- TODO put correct icon (chain or something like that) -->
     <svg appCheckListSvg (click)="selectGroup()" (click)="$event.stopPropagation()"></svg>
-
-    <svg appChevronSvg [ngClass]="{ opened: collapsible.isOpen }"></svg>
 
     <span (click)="deleteGroup($event)">🗑️</span>
 
     <input #shapeName class="shape-name" (input)="adaptShapeNameSize($event)" [formControl]="nameForm" (click)="$event.stopPropagation()" />
   </div>
 
-  <ul jeiCollapsibleContent cdkDropList [cdkDropListData]="shapes" cdkDropListLockAxis="y" (cdkDropListDropped)="onReorderingShapes($event)">
-    @for (shape of shapes; track shape) {
-      <li cdkDrag cdkDragBoundary=".cdk-drag-boundary">
-        <app-shape-element [shapeHost]="shape" (openBindingsDialog)="openBindingsDialog.next()"></app-shape-element>
-      </li>
+  <ul
+    [id]="groupHost.cdkDropListId"
+    jeiCollapsibleContent
+    cdkDropList
+    cdkDropListLockAxis="y"
+    [cdkDropListData]="groupHost.shapes"
+    (cdkDropListDropped)="onDroppedListElement($event)"
+    [cdkDropListConnectedTo]="cdkListIds"
+  >
+    @for (shape of groupHost.shapes; track shape) {
+      @if (shapeIsGroup(shape)) {
+        <li cdkDrag>
+          <app-shape-group [groupHost]="shape" (openBindingsDialog)="openBindingsDialog.next()"></app-shape-group>
+        </li>
+      } @else {
+        <li cdkDrag>
+          <app-shape-element [shapeHost]="shape" (openBindingsDialog)="openBindingsDialog.next()"></app-shape-element>
+        </li>
+      }
     }
   </ul>
 </jei-collapsible>

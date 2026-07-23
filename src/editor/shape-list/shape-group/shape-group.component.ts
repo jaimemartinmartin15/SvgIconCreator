@@ -31,7 +31,7 @@ import { ShapeElementComponent } from '../shape-element/shape-element.component'
 })
 export class ShapeGroupComponent implements OnInit, AfterViewInit {
   @Input()
-  public group: GroupHost;
+  public groupHost: GroupHost;
 
   @Output()
   public openBindingsDialog = new EventEmitter<void>();
@@ -44,8 +44,8 @@ export class ShapeGroupComponent implements OnInit, AfterViewInit {
   public constructor(private readonly shapeListService: ShapeListService) {}
 
   public ngOnInit() {
-    this.nameForm.valueChanges.subscribe((v) => (this.group.name = v));
-    this.nameForm.setValue(this.group.name);
+    this.nameForm.valueChanges.subscribe((v) => (this.groupHost.name = v));
+    this.nameForm.setValue(this.groupHost.name);
   }
 
   public ngAfterViewInit(): void {
@@ -56,33 +56,40 @@ export class ShapeGroupComponent implements OnInit, AfterViewInit {
     adaptWidthOfInputToWidthOfText(event.target as HTMLInputElement);
   }
 
-  public get shapes(): ShapeHost[] {
-    return this.group.shapes;
-  }
-
-  public onReorderingShapes(event: CdkDragDrop<ShapeHost[]>) {
-    if (event.previousContainer === event.container) {
-      this.group.shapes.forEach((shape) => shape.removeFromCanvas());
-      moveItemInArray(event.container.data, event.previousIndex, event.currentIndex);
-      this.group.shapes.forEach((shape) => this.group.svg.append(shape.svg));
-    } else {
-      this.shapeListService.groupsList.forEach((group) => group.shapes.forEach((shape) => shape.removeFromCanvas()));
-      transferArrayItem(event.previousContainer.data, event.container.data, event.previousIndex, event.currentIndex);
-      this.shapeListService.groupsList.forEach((group) => {
-        group.addToCanvas();
-        group.shapes.forEach((shape) => group.svg.append(shape.svg));
-      });
-    }
-  }
-
   public selectGroup(): void {
-    this.shapeListService.selectedGroup = this.group;
+    if (this.shapeListService.selectedGroup === this.groupHost) {
+      this.shapeListService.selectedGroup = undefined;
+      return;
+    }
+
+    this.shapeListService.selectedGroup = this.groupHost;
   }
 
   public deleteGroup(event: MouseEvent): void {
     event.stopPropagation();
-    const answer = confirm(`¿Eliminar el grupo ${this.group.name}?`);
+    const answer = confirm(`¿Eliminar el grupo ${this.groupHost.name}?`);
     throw new Error('Method not implemented. Answer was: ' + answer);
     // TODO
+  }
+
+  public onDroppedListElement(event: CdkDragDrop<any, any, any>) {
+    this.shapeListService.removeAllShapesFromCanvas();
+
+    if (event.container === event.previousContainer) {
+      moveItemInArray(event.container.data, event.previousIndex, event.currentIndex);
+    } else {
+      transferArrayItem(event.previousContainer.data, event.container.data, event.previousIndex, event.currentIndex);
+    }
+
+    this.shapeListService.addAllShapesToCanvas();
+  }
+
+  public get cdkListIds(): string[] {
+    const ids = this.shapeListService.recursiveListIds();
+    return [...ids, 'main-cdk-drop-list'].filter((id) => id !== this.groupHost.cdkDropListId);
+  }
+
+  public shapeIsGroup(shape: ShapeHost): shape is GroupHost {
+    return shape instanceof GroupHost;
   }
 }

@@ -1,6 +1,5 @@
 :host {
   display: block;
-  padding: 10px;
   background-color: #ffffff;
 }
 
@@ -8,7 +7,6 @@
   display: flex;
   align-items: center;
   gap: 10px;
-  margin-bottom: 10px;
 
   svg {
     width: 20px;
@@ -40,12 +38,27 @@
 }
 
 ul {
-  padding: 0 0 0 30px;
+  padding: 0 0 0 20px;
   margin: 0;
   list-style: none;
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 5px;
+  position: relative;
+
+  &::before {
+    content: "";
+    position: absolute;
+    left: 9px;
+    top: 7px;
+    bottom: 0;
+    width: 2px;
+    background-color: #f0f1f2;
+  }
+
+  li:first-child {
+    margin-top: 7px;
+  }
 }
 
 /* Animate the elements in the list while the placeholder moves between them */
@@ -60,5 +73,11 @@ ul {
 
 /* The gap between the elements on the list where the element will be dropped */
 .cdk-drag-placeholder {
-  visibility: hidden;
+  border: 2px dashed #bbbfc5;
+  border-radius: 5px;
+
+  app-shape-group,
+  app-shape-element {
+    visibility: hidden;
+  }
 }
