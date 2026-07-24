@@ -3,7 +3,6 @@ import { Command, isPathInstruction } from '../models/path.model';
 import { Shape } from '../models/shape';
 import { FormsService } from '../services/forms.service';
 import { ShapeListService } from '../services/shape-list.service';
-import { GroupHost } from './group-host';
 
 export const EDIT_POINT_COLORS = {
   FILL_NORMAL: '#FFF5',
@@ -122,15 +121,14 @@ export abstract class ShapeHost {
   }
 
   public delete(): void {
-    const index = this.shapeListService.shapeList.indexOf(this);
-    this.shapeListService.shapeList.splice(index, 1);
+    this.removeFromCanvas();
+
+    const { shapeList, index } = this.shapeListService.findListAndIndexOfShape(this);
+    shapeList.splice(index, 1);
 
     if (this.shapeListService.selectedShape === this) {
       this.shapeListService.selectedShape = undefined;
     }
-
-    this.svg.remove();
-    this.clearEditPoints();
   }
   //#endregion
 
@@ -160,20 +158,6 @@ export abstract class ShapeHost {
   public abstract moveShapeRight(amount: number): void;
   public abstract moveShapeDown(amount: number): void;
   public abstract moveShapeLeft(amount: number): void;
-  //#endregion
-
-  //#region import
-  public loadFromElementIntoParent(svg: SVGElement, parent: SVGSVGElement | GroupHost) {
-    this.svg = svg;
-    if (parent instanceof SVGSVGElement) {
-      parent.append(svg);
-      this.shapeListService.shapeList.push(this);
-    } else {
-      parent.svg.append(svg);
-      parent.shapes.push(this);
-    }
-    this.isShapeFinished = true;
-  }
   //#endregion
 
   //#region export

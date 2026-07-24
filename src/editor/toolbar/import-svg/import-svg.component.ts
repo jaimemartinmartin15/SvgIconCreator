@@ -109,7 +109,7 @@ export class ImportSvgComponent {
           shapeHost = new GroupHost(this.elementsRefService, this.formsService, this.shapeListService);
           break;
         default:
-          console.error(`SVG with shapes of type ${svgShape.tagName} are not supported.`);
+          alert(`SVG with shapes of type "${svgShape.tagName}" are not supported. Shape will be ignored.`);
           return;
       }
 

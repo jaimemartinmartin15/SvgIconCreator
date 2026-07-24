@@ -29,6 +29,30 @@ export class ShapeListService {
     this.selectedShape$.next(this._selectedShape);
   }
 
+  public findListAndIndexOfShape(shapeHost: ShapeHost, shapeList: ShapeHost[] = this.shapeList): { shapeList: ShapeHost[]; index: number } {
+    if (shapeList.indexOf(shapeHost) >= 0) {
+      return { shapeList, index: shapeList.indexOf(shapeHost) };
+    }
+
+    for (let i = 0; i < shapeList.length; i++) {
+      const shape = shapeList[i];
+
+      if (!(shape instanceof GroupHost)) {
+        continue;
+      }
+
+      try {
+        return this.findListAndIndexOfShape(shapeHost, shape.shapes);
+      } catch (e) {
+        // fail silently, it might be that the shape is not found
+        // in the first group but it is in the next group
+      }
+    }
+
+    // this should never happen after iterating all groups recusively
+    throw new Error('Shape was not found recursively in the shape list.');
+  }
+
   public addShape(shapeHost: ShapeHost) {
     if (this.selectedGroup) {
       this.selectedGroup.svg.append(shapeHost.svg);

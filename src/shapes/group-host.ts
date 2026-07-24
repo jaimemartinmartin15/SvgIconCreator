@@ -2,12 +2,7 @@ import { Coord, CoordWithDelta, ElementsRefService } from '@jaimemartinmartin15/
 import { Shape } from '../models/shape';
 import { FormsService } from '../services/forms.service';
 import { ShapeListService } from '../services/shape-list.service';
-import { CircleHost } from './circle-host';
-import { LineHost } from './line-host';
-import { PathHost } from './path-host';
-import { RectHost } from './rect-host';
 import { ShapeHost } from './shape-host';
-import { TextHost } from './text-host';
 
 export class GroupHost extends ShapeHost {
   //#region path host vars
@@ -48,6 +43,25 @@ export class GroupHost extends ShapeHost {
   }
   public override updatePositionSvgEditPoints(): void {
     throw new Error('Method not implemented.');
+  }
+  //#endregion
+
+  //#region canvas
+  public override delete(): void {
+    while (this.shapes.length > 0) {
+      // not possible to use a for loop, because the next 'delete()' method
+      // removes elements from this array and the for loop messes up
+      this.shapes[0].delete();
+    }
+
+    this.removeFromCanvas();
+
+    const { shapeList, index } = this.shapeListService.findListAndIndexOfShape(this);
+    shapeList.splice(index, 1);
+
+    if (this.shapeListService.selectedGroup === this) {
+      this.shapeListService.selectedGroup = undefined;
+    }
   }
   //#endregion
 

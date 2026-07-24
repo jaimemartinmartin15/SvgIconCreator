@@ -59,10 +59,14 @@ export class ShapeGroupComponent implements OnInit, AfterViewInit {
 
   public deleteGroup(event: MouseEvent): void {
     event.stopPropagation();
-    const answer = confirm(`¿Eliminar el grupo ${this.groupHost.name}?`);
-    if (answer) {
-      this.groupHost.delete();
+
+    // ask confirmation only if the group has shapes
+    if (this.groupHost.shapes.length > 0) {
+      const answer = confirm(`¿Eliminar el grupo ${this.groupHost.name}?`);
+      if (!answer) return;
     }
+
+    this.groupHost.delete();
   }
 
   public onDroppedListElement(event: CdkDragDrop<any, any, any>) {
