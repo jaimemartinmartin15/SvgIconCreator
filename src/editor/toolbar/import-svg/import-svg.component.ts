@@ -9,6 +9,7 @@ import { GroupHost } from '../../../shapes/group-host';
 import { LineHost } from '../../../shapes/line-host';
 import { PathHost } from '../../../shapes/path-host';
 import { RectHost } from '../../../shapes/rect-host';
+import { ShapeHost } from '../../../shapes/shape-host';
 import { TextHost } from '../../../shapes/text-host';
 import { BurgerSvgComponent } from '../../../svg-output/burger.component';
 import { IconsSvgModule } from '../../../svg-output/icons-svg.module';
@@ -79,37 +80,54 @@ export class ImportSvgComponent {
       parentSvg = this.canvas;
     }
 
-    Array.from(svg.children).forEach((svgShape) => {
-      switch (svgShape.tagName) {
-        case 'rect':
-          const rectHost = new RectHost(this.elementsRefService, this.formsService, this.shapeListService);
-          rectHost.loadFromElementIntoParent(svgShape as SVGRectElement, parentSvg);
-          break;
-        case 'line':
-          const lineHost = new LineHost(this.elementsRefService, this.formsService, this.shapeListService);
-          lineHost.loadFromElementIntoParent(svgShape as SVGLineElement, parentSvg);
-          break;
-        case 'path':
-          const pathHost = new PathHost(this.elementsRefService, this.formsService, this.shapeListService);
-          pathHost.loadFromElementIntoParent(svgShape as SVGPathElement, parentSvg);
-          break;
-        case 'circle':
-          const circleHost = new CircleHost(this.elementsRefService, this.formsService, this.shapeListService);
-          circleHost.loadFromElementIntoParent(svgShape as SVGCircleElement, parentSvg);
-          break;
-        case 'text':
-          const textHost = new TextHost(this.elementsRefService, this.formsService, this.shapeListService);
-          textHost.loadFromElementIntoParent(svgShape as SVGTextElement, parentSvg);
-          break;
-        case 'g':
-          const groupHost = new GroupHost(this.elementsRefService, this.formsService, this.shapeListService);
-          groupHost.loadFromElementIntoParent(svgShape as SVGGElement, parentSvg);
-          break;
-      }
-    });
+    this.loadSvgShapesRecursively(svg.children, parentSvg);
 
     // close dialog after importing the svg file or text
     this.importSvgDialogElRef.nativeElement.close();
+  }
+
+  private loadSvgShapesRecursively(svgChildren: HTMLCollection, parent: SVGSVGElement | GroupHost): void {
+    Array.from(svgChildren).forEach((svgShape) => {
+      let shapeHost: ShapeHost;
+      switch (svgShape.tagName) {
+        case 'rect':
+          shapeHost = new RectHost(this.elementsRefService, this.formsService, this.shapeListService);
+          break;
+        case 'line':
+          shapeHost = new LineHost(this.elementsRefService, this.formsService, this.shapeListService);
+          break;
+        case 'path':
+          shapeHost = new PathHost(this.elementsRefService, this.formsService, this.shapeListService);
+          break;
+        case 'circle':
+          shapeHost = new CircleHost(this.elementsRefService, this.formsService, this.shapeListService);
+          break;
+        case 'text':
+          shapeHost = new TextHost(this.elementsRefService, this.formsService, this.shapeListService);
+          break;
+        case 'g':
+          shapeHost = new GroupHost(this.elementsRefService, this.formsService, this.shapeListService);
+          break;
+        default:
+          console.error(`SVG with shapes of type ${svgShape.tagName} are not supported.`);
+          return;
+      }
+
+      shapeHost.svg = svgShape as SVGSVGElement;
+      shapeHost.isShapeFinished = true;
+
+      if (parent instanceof SVGSVGElement) {
+        parent.append(shapeHost.svg);
+        this.shapeListService.shapeList.push(shapeHost);
+      } else if (parent instanceof GroupHost) {
+        parent.svg.append(shapeHost.svg);
+        parent.shapes.push(shapeHost);
+      }
+
+      if (shapeHost instanceof GroupHost) {
+        this.loadSvgShapesRecursively(shapeHost.svg.children, shapeHost);
+      }
+    });
   }
 
   public loadFile(e: Event) {

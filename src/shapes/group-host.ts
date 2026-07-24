@@ -66,41 +66,6 @@ export class GroupHost extends ShapeHost {
   }
   //#endregion
 
-  //#region import
-  public override loadFromElementIntoParent(svg: SVGElement, parent: SVGSVGElement | GroupHost): void {
-    super.loadFromElementIntoParent(svg, parent);
-
-    Array.from(svg.children).forEach((svgShape) => {
-      switch (svgShape.tagName) {
-        case 'rect':
-          const rectHost = new RectHost(this.elementsRefService, this.formsService, this.shapeListService);
-          rectHost.loadFromElementIntoParent(svgShape as SVGRectElement, parent);
-          break;
-        case 'line':
-          const lineHost = new LineHost(this.elementsRefService, this.formsService, this.shapeListService);
-          lineHost.loadFromElementIntoParent(svgShape as SVGLineElement, parent);
-          break;
-        case 'path':
-          const pathHost = new PathHost(this.elementsRefService, this.formsService, this.shapeListService);
-          pathHost.loadFromElementIntoParent(svgShape as SVGPathElement, parent);
-          break;
-        case 'circle':
-          const circleHost = new CircleHost(this.elementsRefService, this.formsService, this.shapeListService);
-          circleHost.loadFromElementIntoParent(svgShape as SVGCircleElement, parent);
-          break;
-        case 'text':
-          const textHost = new TextHost(this.elementsRefService, this.formsService, this.shapeListService);
-          textHost.loadFromElementIntoParent(svgShape as SVGTextElement, parent);
-          break;
-        case 'g':
-          const groupHost = new GroupHost(this.elementsRefService, this.formsService, this.shapeListService);
-          groupHost.loadFromElementIntoParent(svgShape as SVGGElement, this);
-          break;
-      }
-    });
-  }
-  //#endregion
-
   //#region export
   // TODO implement this region
   public override parseShapeToString(): string {
