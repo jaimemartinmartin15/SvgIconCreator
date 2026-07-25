@@ -42,6 +42,14 @@
       border-bottom: 2px solid black;
     }
   }
+
+  .remaining-space {
+    flex-grow: 1;
+  }
+
+  .trash {
+    margin-right: 11px;
+  }
 }
 
 ul {
