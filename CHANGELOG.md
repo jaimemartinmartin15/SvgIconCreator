@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## 3.5.0
+
+- Support group shape.
+- Fix grid when panning canvas and other grid improvements.
+- Allow to duplicate shapes and groups.
+
 ## 3.4.1
 
 - Fix export of data-*-binding attributes.
