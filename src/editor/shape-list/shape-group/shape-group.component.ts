@@ -49,6 +49,9 @@ export class ShapeGroupComponent implements OnInit, AfterViewInit {
   }
 
   public selectGroup(): void {
+    this.shapeListService.selectedShape?.clearEditPoints();
+    this.shapeListService.selectedShape = undefined;
+
     if (this.shapeListService.selectedGroup === this.groupHost) {
       this.shapeListService.selectedGroup = undefined;
       return;

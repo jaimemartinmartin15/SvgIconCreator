@@ -143,4 +143,13 @@ ${' '.repeat((indentationLevel + 1) * indentationSize)}${this.text}
 ${' '.repeat(indentationLevel * indentationSize)}</text>`;
   }
   //#endregion
+
+  //#region clone
+  public clone(): TextHost {
+    const textHost = new TextHost(this.elementsRefService, this.formsService, this.shapeListService);
+    textHost.svg = this.svg.cloneNode(true) as SVGTextElement;
+    textHost.isShapeFinished = true;
+    return textHost;
+  }
+  //#endregion
 }

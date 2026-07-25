@@ -215,6 +215,10 @@ export abstract class ShapeHost {
   }
   //#endregion
 
+  //#region clone
+  public abstract clone(): ShapeHost;
+  //#endregion
+
   //#region attributes
   public get name(): string {
     return this.getSvgAttributeAsString('name');

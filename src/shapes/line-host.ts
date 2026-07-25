@@ -164,6 +164,15 @@ export class LineHost extends ShapeHost {
   }
   //#endregion
 
+  //#region clone
+  public clone(): LineHost {
+    const lineHost = new LineHost(this.elementsRefService, this.formsService, this.shapeListService);
+    lineHost.svg = this.svg.cloneNode() as SVGLineElement;
+    lineHost.isShapeFinished = true;
+    return lineHost;
+  }
+  //#endregion
+
   //#region line host
   private updateFormWithCoords(coords: Coord[]) {
     this.formsService.x1Form.setValue(coords[0].x);

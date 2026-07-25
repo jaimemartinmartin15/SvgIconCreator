@@ -27,14 +27,31 @@ export class ShapeListComponent {
 
   //#region header
   public newGroup(): void {
+    this.shapeListService.selectedShape?.clearEditPoints();
+    this.shapeListService.selectedShape = undefined;
+
     const group = new GroupHost(this.elementsRefService, this.formsService, this.shapeListService);
     this.shapeListService.addShape(group);
     this.shapeListService.selectedGroup = group;
   }
 
   public duplicateShape(): void {
-    // TODO
-    alert('Method not implemented');
+    const shapeToClone = this.shapeListService.selectedShape ?? this.shapeListService.selectedGroup;
+    if (!shapeToClone) return;
+
+    // clone the shape or group, and add it to the list and the canvas
+    const clone = shapeToClone.clone();
+    const { shapeList, index } = this.shapeListService.findListAndIndexOfShape(shapeToClone);
+    shapeList.splice(index + 1, 0, clone);
+    clone.addToCanvas();
+
+    if (this.shapeListService.selectedShape === shapeToClone) {
+      shapeToClone.clearEditPoints();
+      clone.createEditPoints();
+      this.shapeListService.selectedShape = clone;
+    } else if (this.shapeListService.selectedGroup === shapeToClone) {
+      this.shapeListService.selectedGroup = clone as GroupHost;
+    }
   }
   //#endregion
 

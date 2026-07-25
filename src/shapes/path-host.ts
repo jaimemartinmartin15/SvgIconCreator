@@ -269,6 +269,15 @@ export class PathHost extends ShapeHost {
   }
   //#endregion
 
+  //#region clone
+  public clone(): PathHost {
+    const pathHost = new PathHost(this.elementsRefService, this.formsService, this.shapeListService);
+    pathHost.svg = this.svg.cloneNode() as SVGPathElement;
+    pathHost.isShapeFinished = true;
+    return pathHost;
+  }
+  //#endregion
+
   //#region path host
   private getFormControlsForSelectedEditPointIndex(): [FormControl<number>, FormControl<number>] {
     const commandControls = this.formsService.dForm.controls;

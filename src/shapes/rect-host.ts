@@ -203,6 +203,15 @@ export class RectHost extends ShapeHost {
   }
   //#endregion
 
+  //#region clone
+  public clone(): RectHost {
+    const rectHost = new RectHost(this.elementsRefService, this.formsService, this.shapeListService);
+    rectHost.svg = this.svg.cloneNode() as SVGRectElement;
+    rectHost.isShapeFinished = true;
+    return rectHost;
+  }
+  //#endregion
+
   //#region rect host
   private updateFormWithCoords(coords: Coord[]) {
     const x = Math.min(...coords.map((c) => c.x));

@@ -72,7 +72,7 @@ export class ImportSvgComponent {
     this.loadSvgShapesRecursively(svg.children, parentSvg);
 
     // update the viewBox to fit all shapes
-    const boundingBox = this.canvas.getBBox();
+    const boundingBox = this.canvas.getBBox({ stroke: true });
     this.formsService.canvasOptionsViewBoxForm.setValue({
       x: Math.ceil(boundingBox.x),
       y: Math.ceil(boundingBox.y),

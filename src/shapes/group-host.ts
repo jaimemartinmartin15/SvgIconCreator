@@ -98,4 +98,20 @@ export class GroupHost extends ShapeHost {
     throw new Error('Method not implemented.');
   }
   //#endregion
+
+  //#region clone
+  public clone(): GroupHost {
+    const groupHost = new GroupHost(this.elementsRefService, this.formsService, this.shapeListService);
+    groupHost.svg = this.svg.cloneNode() as SVGGElement;
+    groupHost.isShapeFinished = true;
+
+    this.shapes.forEach((shape) => {
+      const shapeHostClone = shape.clone();
+      groupHost.svg.append(shapeHostClone.svg);
+      groupHost.shapes.push(shapeHostClone);
+    });
+
+    return groupHost;
+  }
+  //#endregion
 }

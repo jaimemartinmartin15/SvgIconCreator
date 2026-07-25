@@ -147,6 +147,15 @@ export class CircleHost extends ShapeHost {
   }
   //#endregion
 
+  //#region clone
+  public clone(): CircleHost {
+    const circleHost = new CircleHost(this.elementsRefService, this.formsService, this.shapeListService);
+    circleHost.svg = this.svg.cloneNode() as SVGCircleElement;
+    circleHost.isShapeFinished = true;
+    return circleHost;
+  }
+  //#endregion
+
   //#region circle host
   private calculateRadius(p1: Coord, p2: Coord): number {
     const c1Power2 = Math.pow(Math.abs(p1.x - p2.x), 2);
