@@ -60,6 +60,10 @@ export class ShapeGroupComponent implements OnInit, AfterViewInit {
     this.shapeListService.selectedGroup = this.groupHost;
   }
 
+  public toggleVisibility(event: Event): void {
+    this.groupHost.setVisibility((event.target as HTMLInputElement).checked);
+  }
+
   public deleteGroup(event: MouseEvent): void {
     event.stopPropagation();
 

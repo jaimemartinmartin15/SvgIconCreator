@@ -10,8 +10,17 @@
       }
     </div>
 
+    <label class="visibility">
+      <input type="checkbox" checked (change)="toggleVisibility($event)" />
+      @if (groupHost.svg.style.display === '') {
+        <span>👁️</span>
+      } @else {
+        <span>👻</span>
+      }
+    </label>
+
     <input #shapeName class="shape-name" (input)="adaptShapeNameSize($event)" [formControl]="nameForm" (click)="$event.stopPropagation()" />
-    
+
     <span class="remaining-space"></span>
 
     <span (click)="deleteGroup($event)" class="trash">🗑️</span>
