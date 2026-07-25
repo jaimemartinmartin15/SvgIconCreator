@@ -17,7 +17,7 @@ export class LineHost extends ShapeHost {
 
   //#region mouse
   public override mouseDown(coord: Coord): void {
-    this.canvas.append(this.svg);
+    this.shapeListService.addShape(this);
     this.mouseDrag({ ...coord, dx: 0, dy: 0 });
   }
 
@@ -146,8 +146,8 @@ export class LineHost extends ShapeHost {
   //#endregion
 
   //#region export
-  public override parseShapeToString(): string {
-    let lineToString = '<line';
+  public override parseShapeToString(indentationLevel: number = 1, indentationSize: number = 2): string {
+    let lineToString = `${' '.repeat(indentationLevel * indentationSize)}<line`;
 
     lineToString += ` name="${this.name}"`;
     lineToString += ` x1="${this.x1}"`;
@@ -161,6 +161,15 @@ export class LineHost extends ShapeHost {
     lineToString += this.parseDataBindingAttributes();
 
     return `${lineToString} />`;
+  }
+  //#endregion
+
+  //#region clone
+  public clone(): LineHost {
+    const lineHost = new LineHost(this.elementsRefService, this.formsService, this.shapeListService);
+    lineHost.svg = this.svg.cloneNode() as SVGLineElement;
+    lineHost.isShapeFinished = true;
+    return lineHost;
   }
   //#endregion
 

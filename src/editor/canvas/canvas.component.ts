@@ -97,7 +97,7 @@ export class CanvasComponent {
   public resetViewBox() {
     const { x, y, width, height } = this.formsService.canvasOptionsViewBoxForm.value;
     this.canvasEl.setAttribute('viewBox', `${x} ${y} ${width} ${height}`);
-    AppEventsService.zoomUpdated$.next();
+    AppEventsService.viewboxUpdated$.next();
   }
   //#endregion
 
@@ -118,6 +118,7 @@ export class CanvasComponent {
       const newX = actualViewbox.x - coord.dx;
       const newY = actualViewbox.y - coord.dy;
       this.canvasEl.setAttribute('viewBox', `${newX} ${newY} ${actualViewbox.width} ${actualViewbox.height}`);
+      AppEventsService.viewboxUpdated$.next();
       return;
     }
 
@@ -138,7 +139,7 @@ export class CanvasComponent {
 
   public onWheel(coord: CoordWithDirection) {
     this.updateZoomViewBox(coord);
-    AppEventsService.zoomUpdated$.next(coord);
+    AppEventsService.viewboxUpdated$.next(coord);
   }
   //#endregion
 }

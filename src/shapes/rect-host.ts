@@ -22,7 +22,7 @@ export class RectHost extends ShapeHost {
 
   //#region mouse
   public override mouseDown(coord: Coord): void {
-    this.canvas.append(this.svg);
+    this.shapeListService.addShape(this);
     this.updateFormWithCoords([coord]);
   }
 
@@ -181,8 +181,8 @@ export class RectHost extends ShapeHost {
   //#endregion
 
   //#region export
-  public override parseShapeToString(): string {
-    let rectToString = '<rect';
+  public override parseShapeToString(indentationLevel: number = 1, indentationSize: number = 2): string {
+    let rectToString = `${' '.repeat(indentationLevel * indentationSize)}<rect`;
 
     rectToString += ` name="${this.name}"`;
     rectToString += ` x="${this.x}"`;
@@ -200,6 +200,15 @@ export class RectHost extends ShapeHost {
     rectToString += this.parseDataBindingAttributes();
 
     return `${rectToString} />`;
+  }
+  //#endregion
+
+  //#region clone
+  public clone(): RectHost {
+    const rectHost = new RectHost(this.elementsRefService, this.formsService, this.shapeListService);
+    rectHost.svg = this.svg.cloneNode() as SVGRectElement;
+    rectHost.isShapeFinished = true;
+    return rectHost;
   }
   //#endregion
 

@@ -1,3 +1,5 @@
+@use "../../../_mock-input-checkbox";
+
 :host {
   display: flex;
   flex-direction: column;
@@ -93,6 +95,17 @@ dialog {
         border: var(--border);
         padding: 5px 10px;
         cursor: pointer;
+      }
+    }
+
+    .create-new-group {
+      --not-checked-icon: "❌";
+      --checked-icon: "✅";
+
+      .info-message {
+        color: #909090;
+        font-size: 1rem;
+        margin: 0;
       }
     }
   }

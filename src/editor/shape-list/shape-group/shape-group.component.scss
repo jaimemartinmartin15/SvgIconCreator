@@ -1,0 +1,102 @@
+:host {
+  display: block;
+  background-color: #ffffff;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+
+  svg {
+    width: 20px;
+
+    &[appBurgerSvg] {
+      cursor: grab;
+    }
+
+    &[appChevronSvg] {
+      transition: transform 0.5s cubic-bezier(0, 0, 0.2, 1);
+
+      &.opened {
+        transform: rotate(180deg);
+      }
+    }
+  }
+
+  .selected-group {
+    border: var(--border);
+    border-radius: 5px;
+    min-width: 25px;
+    min-height: 25px;
+  }
+
+  .visibility {
+    cursor: pointer;
+  }
+
+  .shape-name {
+    border: none;
+    border-bottom: 2px solid transparent;
+    outline: none;
+    font-size: 1rem;
+    margin: 0px 15px 0 0;
+
+    &:focus {
+      border-bottom: 2px solid black;
+    }
+  }
+
+  .remaining-space {
+    flex-grow: 1;
+  }
+
+  .trash {
+    margin-right: 11px;
+  }
+}
+
+ul {
+  padding: 0 0 0 20px;
+  margin: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  position: relative;
+
+  &::before {
+    content: "";
+    position: absolute;
+    left: 9px;
+    top: 7px;
+    bottom: 0;
+    width: 2px;
+    background-color: #f0f1f2;
+  }
+
+  li:first-child {
+    margin-top: 7px;
+  }
+}
+
+/* Animate the elements in the list while the placeholder moves between them */
+.cdk-drop-list-dragging .cdk-drag {
+  transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
+}
+
+/* Animate an item that has been dropped */
+.cdk-drag-animating {
+  transition: transform 300ms cubic-bezier(0, 0, 0.2, 1);
+}
+
+/* The gap between the elements on the list where the element will be dropped */
+.cdk-drag-placeholder {
+  border: 2px dashed #bbbfc5;
+  border-radius: 5px;
+
+  app-shape-group,
+  app-shape-element {
+    visibility: hidden;
+  }
+}

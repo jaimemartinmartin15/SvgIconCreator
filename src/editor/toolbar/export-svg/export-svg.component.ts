@@ -94,7 +94,7 @@ export class ExportSvgComponent {
     // create a svg string from shapeList
     const svgVb = this.canvas.viewBox.baseVal;
     const svgTemplate = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="${svgVb.x} ${svgVb.y} ${svgVb.width} ${svgVb.height}">
-  ${this.shapeListService.shapeList.map((sp) => sp.parseShapeToString()).join('\n  ')}
+${this.shapeListService.shapeList.map((sp) => sp.parseShapeToString(1, 2)).join('\n')}
 </svg>`;
 
     // download the file

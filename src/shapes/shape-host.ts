@@ -105,13 +105,13 @@ export abstract class ShapeHost {
     this.canvas.append(this.svg);
     if (this.shapeListService.selectedShape === this) {
       // wait all shapes to be added to the canvas, and then paint the edit points on top of all shapes
-      setTimeout(() => this.svgEditPoints.forEach((ep) => this.canvas.append(ep)), 0);
+      setTimeout(() => this.createEditPoints(), 0);
     }
   }
 
   public removeFromCanvas() {
     this.svg.remove();
-    this.svgEditPoints.forEach((ep) => ep.remove());
+    this.clearEditPoints();
   }
 
   public setVisibility(isVisible: boolean) {
@@ -121,15 +121,14 @@ export abstract class ShapeHost {
   }
 
   public delete(): void {
-    const index = this.shapeListService.shapeList.indexOf(this);
-    this.shapeListService.shapeList.splice(index, 1);
+    this.removeFromCanvas();
+
+    const { shapeList, index } = this.shapeListService.findListAndIndexOfShape(this);
+    shapeList.splice(index, 1);
 
     if (this.shapeListService.selectedShape === this) {
       this.shapeListService.selectedShape = undefined;
     }
-
-    this.svg.remove();
-    this.clearEditPoints();
   }
   //#endregion
 
@@ -161,17 +160,8 @@ export abstract class ShapeHost {
   public abstract moveShapeLeft(amount: number): void;
   //#endregion
 
-  //#region import
-  public loadFromElement(svg: SVGElement) {
-    this.svg = svg;
-    this.shapeListService.shapeList.push(this);
-    this.addToCanvas();
-    this.isShapeFinished = true;
-  }
-  //#endregion
-
   //#region export
-  public abstract parseShapeToString(): string;
+  public abstract parseShapeToString(indentationLevel: number, indentationSize: number): string;
 
   protected parseDataBindingAttributes(): string {
     // parse data-* attributes
@@ -209,7 +199,7 @@ export abstract class ShapeHost {
   public abstract onCreatingNewShape(): void;
   //#endregion
 
-  //#region animation
+  //#region data bindings
   public onBindingChanged(bindings: Partial<{ attribute: string; binding: string }>[]): void {
     // delete all existing data-*-binding attributes
     [...this.svg.attributes].filter((a) => a.name.startsWith('data-') && a.name.endsWith('-binding')).forEach((attr) => this.svg.removeAttribute(attr.name));
@@ -223,6 +213,10 @@ export abstract class ShapeHost {
       .filter((a) => a.name.startsWith('data-') && a.name.endsWith('-binding'))
       .map((a) => ({ attribute: a.name.replace('data-', '').replace('-binding', ''), binding: a.value }));
   }
+  //#endregion
+
+  //#region clone
+  public abstract clone(): ShapeHost;
   //#endregion
 
   //#region attributes
@@ -427,11 +421,11 @@ export abstract class ShapeHost {
   }
 
   public get text(): string {
-    return this.svg.innerHTML;
+    return this.svg.innerHTML.trim();
   }
 
   public set text(value: string) {
-    this.svg.innerHTML = value;
+    this.svg.innerHTML = value.trim();
   }
 
   public get fontSize(): number {

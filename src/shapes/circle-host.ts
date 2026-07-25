@@ -17,7 +17,7 @@ export class CircleHost extends ShapeHost {
 
   //#region mouse
   public override mouseDown(coord: Coord): void {
-    this.canvas.append(this.svg);
+    this.shapeListService.addShape(this);
     this.mouseDrag({ ...coord, dx: 0, dy: 0 });
   }
 
@@ -129,8 +129,8 @@ export class CircleHost extends ShapeHost {
   //#endregion
 
   //#region export
-  public override parseShapeToString(): string {
-    let circleToString = '<circle';
+  public override parseShapeToString(indentationLevel: number = 1, indentationSize: number = 2): string {
+    let circleToString = `${' '.repeat(indentationLevel * indentationSize)}<circle`;
 
     circleToString += ` name="${this.name}"`;
     circleToString += ` cx="${this.cx}"`;
@@ -144,6 +144,15 @@ export class CircleHost extends ShapeHost {
     circleToString += this.parseDataBindingAttributes();
 
     return `${circleToString} />`;
+  }
+  //#endregion
+
+  //#region clone
+  public clone(): CircleHost {
+    const circleHost = new CircleHost(this.elementsRefService, this.formsService, this.shapeListService);
+    circleHost.svg = this.svg.cloneNode() as SVGCircleElement;
+    circleHost.isShapeFinished = true;
+    return circleHost;
   }
   //#endregion
 

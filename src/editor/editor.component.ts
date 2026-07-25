@@ -86,7 +86,6 @@ export class EditorComponent {
         this.shapeListService.selectedShape?.clearEditPoints();
         const newShape = this.instantiateNewShapeHost();
         this.shapeListService.selectedShape = newShape;
-        this.shapeListService.shapeList.push(newShape);
         this.shapeListService.selectedShape.mouseDown(coord);
       }
     });
@@ -157,7 +156,10 @@ export class EditorComponent {
 
     if (this.shapeListService.selectedShape) {
       // move only selected shape
-      this.shapeListService.selectedShape?.moveShape(event);
+      this.shapeListService.selectedShape.moveShape(event);
+    } else if (this.shapeListService.selectedGroup) {
+      // move only selected group
+      this.shapeListService.selectedGroup.moveShape(event);
     } else {
       // move all shapes
       this.shapeListService.shapeList.forEach((shapeHost) => shapeHost.moveShape(event));
@@ -177,5 +179,7 @@ export class EditorComponent {
       case Shape.TEXT:
         return new TextHost(this.elementsRefService, this.formsService, this.shapeListService);
     }
+
+    throw new Error('Unknown shape to instantiate. You should not see this error.');
   }
 }

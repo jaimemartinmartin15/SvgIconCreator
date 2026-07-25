@@ -39,7 +39,7 @@ export class PathHost extends ShapeHost {
   //#region mouse down
   public override mouseDown(coord: Coord): void {
     if (this.svg.parentElement === null) {
-      this.canvas.append(this.svg);
+      this.shapeListService.addShape(this);
     }
 
     if (this.drawingStep === 0) {
@@ -252,8 +252,8 @@ export class PathHost extends ShapeHost {
   //#endregion
 
   //#region export
-  public override parseShapeToString(): string {
-    let pathToString = '<path';
+  public override parseShapeToString(indentationLevel: number = 1, indentationSize: number = 2): string {
+    let pathToString = `${' '.repeat(indentationLevel * indentationSize)}<path`;
 
     pathToString += ` name="${this.name}"`;
     pathToString += ` d="${this.d.map((command) => `${command.instruction}${command.parameters.join(' ')}`).join('')}"`;
@@ -266,6 +266,15 @@ export class PathHost extends ShapeHost {
     pathToString += this.parseDataBindingAttributes();
 
     return `${pathToString} />`;
+  }
+  //#endregion
+
+  //#region clone
+  public clone(): PathHost {
+    const pathHost = new PathHost(this.elementsRefService, this.formsService, this.shapeListService);
+    pathHost.svg = this.svg.cloneNode() as SVGPathElement;
+    pathHost.isShapeFinished = true;
+    return pathHost;
   }
   //#endregion
 

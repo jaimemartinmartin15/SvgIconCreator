@@ -47,7 +47,7 @@ export class CanvasOptionsComponent implements OnInit {
       this.updateGridLines();
     });
     this.showGridForm.valueChanges.subscribe((v) => this.toggleGrid(v));
-    AppEventsService.zoomUpdated$.subscribe(() => this.updateGridLines());
+    AppEventsService.viewboxUpdated$.subscribe(() => this.updateGridLines());
     this.keyboardService.windowKeyUp$
       .pipe(
         filter((e) => {
@@ -127,12 +127,12 @@ export class CanvasOptionsComponent implements OnInit {
   //#endregion
 
   //#region grid
-  private createGridLine(x1: number, y1: number, x2: number, y2: number): void {
+  private createGridLine(x1: number, y1: number, x2: number, y2: number, thicker: boolean): void {
     const viewBox = this.canvasEl.viewBox.baseVal as ViewBoxModel;
     const vLine = document.createElementNS('http://www.w3.org/2000/svg', 'line');
     vLine.classList.add('grid-line');
     vLine.setAttribute('stroke', 'gray');
-    vLine.setAttribute('stroke-width', `${(Math.max(viewBox.width, viewBox.height) / 100) * 0.05}`);
+    vLine.setAttribute('stroke-width', `${(Math.max(viewBox.width, viewBox.height) / 100) * (thicker ? 0.15 : 0.05)}`);
     vLine.setAttribute('x1', `${x1}`);
     vLine.setAttribute('y1', `${y1}`);
     vLine.setAttribute('x2', `${x2}`);
@@ -156,11 +156,13 @@ export class CanvasOptionsComponent implements OnInit {
 
     // add vertical lines
     for (let i = Math.ceil(viewBox.x / interval) * interval; i < viewBox.x + viewBox.width; i += interval) {
-      this.createGridLine(i, viewBox.y, i, viewBox.y + viewBox.height);
+      const thicker = (i % (interval * 10)) === 0;
+      this.createGridLine(i, viewBox.y, i, viewBox.y + viewBox.height, thicker);
     }
     // add horizontal lines
     for (let i = Math.ceil(viewBox.y / interval) * interval; i < viewBox.y + viewBox.height; i += interval) {
-      this.createGridLine(viewBox.x, i, viewBox.x + viewBox.width, i);
+      const thicker = (i % (interval * 10)) === 0;
+      this.createGridLine(viewBox.x, i, viewBox.x + viewBox.width, i, thicker);
     }
   }
 

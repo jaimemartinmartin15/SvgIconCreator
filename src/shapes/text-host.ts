@@ -17,7 +17,7 @@ export class TextHost extends ShapeHost {
 
   //#region mouse
   public override mouseDown(coord: Coord): void {
-    this.canvas.append(this.svg);
+    this.shapeListService.addShape(this);
     this.mouseDrag({ ...coord, dx: 0, dy: 0 });
   }
 
@@ -121,8 +121,8 @@ export class TextHost extends ShapeHost {
   //#endregion
 
   //#region export
-  public override parseShapeToString(): string {
-    let textToString = '<text';
+  public override parseShapeToString(indentationLevel: number = 1, indentationSize: number = 2): string {
+    let textToString = `${' '.repeat(indentationLevel * indentationSize)}<text`;
 
     textToString += ` name="${this.name}"`;
     textToString += ` x="${this.x}"`;
@@ -139,8 +139,17 @@ export class TextHost extends ShapeHost {
     textToString += this.parseDataBindingAttributes();
 
     return `${textToString}>
-    ${this.text}
-  </text>`;
+${' '.repeat((indentationLevel + 1) * indentationSize)}${this.text}
+${' '.repeat(indentationLevel * indentationSize)}</text>`;
+  }
+  //#endregion
+
+  //#region clone
+  public clone(): TextHost {
+    const textHost = new TextHost(this.elementsRefService, this.formsService, this.shapeListService);
+    textHost.svg = this.svg.cloneNode(true) as SVGTextElement;
+    textHost.isShapeFinished = true;
+    return textHost;
   }
   //#endregion
 }

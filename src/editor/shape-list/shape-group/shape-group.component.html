@@ -1,0 +1,50 @@
+<jei-collapsible [isOpen]="true" #collapsible>
+  <div class="header" jeiCollapsibleToggleAction>
+    <svg appChevronSvg [ngClass]="{ opened: collapsible.isOpen }"></svg>
+
+    <svg appBurgerSvg cdkDragHandle (click)="$event.stopPropagation()"></svg>
+
+    <div class="selected-group" (click)="selectGroup()" (click)="$event.stopPropagation()">
+      @if (isThisSelectedGroup) {
+        📍
+      }
+    </div>
+
+    <label class="visibility">
+      <input type="checkbox" checked (change)="toggleVisibility($event)" />
+      @if (groupHost.svg.style.display === '') {
+        <span>👁️</span>
+      } @else {
+        <span>👻</span>
+      }
+    </label>
+
+    <input #shapeName class="shape-name" (input)="adaptShapeNameSize($event)" [formControl]="nameForm" (click)="$event.stopPropagation()" />
+
+    <span class="remaining-space"></span>
+
+    <span (click)="deleteGroup($event)" class="trash">🗑️</span>
+  </div>
+
+  <ul
+    [id]="groupHost.cdkDropListId"
+    jeiCollapsibleContent
+    cdkDropList
+    cdkDropListLockAxis="y"
+    [cdkDropListData]="groupHost.shapes"
+    (cdkDropListDropped)="onDroppedListElement($event)"
+    [cdkDropListConnectedTo]="cdkListIds"
+  >
+    @for (shape of groupHost.shapes; track shape) {
+      @if (shapeIsGroup(shape)) {
+        <li cdkDrag>
+          <app-shape-group [groupHost]="shape" (openBindingsDialog)="openBindingsDialog.next()"></app-shape-group>
+        </li>
+      } @else {
+        <li cdkDrag>
+          <app-shape-element [shapeHost]="shape" (openBindingsDialog)="openBindingsDialog.next()"></app-shape-element>
+        </li>
+      }
+    }
+  </ul>
+</jei-collapsible>
