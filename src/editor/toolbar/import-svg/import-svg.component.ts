@@ -59,17 +59,7 @@ export class ImportSvgComponent {
     mockDiv.innerHTML = svgText;
     const svg: SVGSVGElement = mockDiv.querySelector('svg') as SVGSVGElement;
 
-    // TODO update viewBox to fit all shapes
-    if (this.shapeListService.shapeList.length === 0) {
-      const viewBox = svg.viewBox.baseVal;
-      this.formsService.canvasOptionsViewBoxForm.setValue({
-        x: viewBox.x,
-        y: viewBox.y,
-        width: viewBox.width,
-        height: viewBox.height,
-      });
-    }
-
+    // load the shapes in the svg and the shape list
     let parentSvg: SVGSVGElement | GroupHost;
     if (this.createNewGroupForm.value) {
       const groupHost = new GroupHost(this.elementsRefService, this.formsService, this.shapeListService);
@@ -79,8 +69,16 @@ export class ImportSvgComponent {
     } else {
       parentSvg = this.canvas;
     }
-
     this.loadSvgShapesRecursively(svg.children, parentSvg);
+
+    // update the viewBox to fit all shapes
+    const boundingBox = this.canvas.getBBox();
+    this.formsService.canvasOptionsViewBoxForm.setValue({
+      x: Math.ceil(boundingBox.x),
+      y: Math.ceil(boundingBox.y),
+      width: Math.ceil(boundingBox.width),
+      height: Math.ceil(boundingBox.height),
+    });
 
     // close dialog after importing the svg file or text
     this.importSvgDialogElRef.nativeElement.close();
