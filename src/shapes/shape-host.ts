@@ -105,13 +105,13 @@ export abstract class ShapeHost {
     this.canvas.append(this.svg);
     if (this.shapeListService.selectedShape === this) {
       // wait all shapes to be added to the canvas, and then paint the edit points on top of all shapes
-      setTimeout(() => this.svgEditPoints.forEach((ep) => this.canvas.append(ep)), 0);
+      setTimeout(() => this.createEditPoints(), 0);
     }
   }
 
   public removeFromCanvas() {
     this.svg.remove();
-    this.svgEditPoints.forEach((ep) => ep.remove());
+    this.clearEditPoints();
   }
 
   public setVisibility(isVisible: boolean) {
