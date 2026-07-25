@@ -156,12 +156,12 @@ export class CanvasOptionsComponent implements OnInit {
 
     // add vertical lines
     for (let i = Math.ceil(viewBox.x / interval) * interval; i < viewBox.x + viewBox.width; i += interval) {
-      const thicker = (i % (interval * 10)) === 0;
+      const thicker = i % (interval * 10) === 0;
       this.createGridLine(i, viewBox.y, i, viewBox.y + viewBox.height, thicker);
     }
     // add horizontal lines
     for (let i = Math.ceil(viewBox.y / interval) * interval; i < viewBox.y + viewBox.height; i += interval) {
-      const thicker = (i % (interval * 10)) === 0;
+      const thicker = i % (interval * 10) === 0;
       this.createGridLine(viewBox.x, i, viewBox.x + viewBox.width, i, thicker);
     }
   }

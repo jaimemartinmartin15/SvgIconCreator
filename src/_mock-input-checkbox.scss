@@ -24,14 +24,14 @@
 
   &:has(:not(:checked)) {
     &::after {
-      content: var(--not-checked-icon, "❌");
+      content: var(--not-checked-icon, '❌');
       margin-left: 40px;
     }
   }
 
   &:has(:checked) {
     &::after {
-      content: var(--checked-icon, "✅");
+      content: var(--checked-icon, '✅');
       margin-left: 0;
     }
   }
