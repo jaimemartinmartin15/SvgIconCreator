@@ -129,8 +129,8 @@ export class CircleHost extends ShapeHost {
   //#endregion
 
   //#region export
-  public override parseShapeToString(): string {
-    let circleToString = '<circle';
+  public override parseShapeToString(indentationLevel: number = 1, indentationSize: number = 2): string {
+    let circleToString = `${' '.repeat(indentationLevel * indentationSize)}<circle`;
 
     circleToString += ` name="${this.name}"`;
     circleToString += ` cx="${this.cx}"`;

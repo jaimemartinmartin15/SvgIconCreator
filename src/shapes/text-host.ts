@@ -121,8 +121,8 @@ export class TextHost extends ShapeHost {
   //#endregion
 
   //#region export
-  public override parseShapeToString(): string {
-    let textToString = '<text';
+  public override parseShapeToString(indentationLevel: number = 1, indentationSize: number = 2): string {
+    let textToString = `${' '.repeat(indentationLevel * indentationSize)}<text`;
 
     textToString += ` name="${this.name}"`;
     textToString += ` x="${this.x}"`;
@@ -139,8 +139,8 @@ export class TextHost extends ShapeHost {
     textToString += this.parseDataBindingAttributes();
 
     return `${textToString}>
-    ${this.text}
-  </text>`;
+${' '.repeat((indentationLevel + 1) * indentationSize)}${this.text}
+${' '.repeat(indentationLevel * indentationSize)}</text>`;
   }
   //#endregion
 }

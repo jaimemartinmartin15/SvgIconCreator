@@ -81,9 +81,12 @@ export class GroupHost extends ShapeHost {
   //#endregion
 
   //#region export
-  // TODO implement this region
-  public override parseShapeToString(): string {
-    throw new Error('Method not implemented.');
+  public override parseShapeToString(indentationLevel: number = 1, indentationSize: number = 2): string {
+    let groupToString = `${' '.repeat(indentationLevel * indentationSize)}<g name="${this.name}">\n`;
+
+    groupToString += this.shapes.map((shape) => shape.parseShapeToString(indentationLevel + 1, indentationSize)).join('\n');
+
+    return (groupToString += `\n${' '.repeat(indentationLevel * indentationSize)}</g>`);
   }
   //#endregion
 

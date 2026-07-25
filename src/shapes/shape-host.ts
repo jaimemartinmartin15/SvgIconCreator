@@ -161,7 +161,7 @@ export abstract class ShapeHost {
   //#endregion
 
   //#region export
-  public abstract parseShapeToString(): string;
+  public abstract parseShapeToString(indentationLevel: number, indentationSize: number): string;
 
   protected parseDataBindingAttributes(): string {
     // parse data-* attributes
@@ -417,11 +417,11 @@ export abstract class ShapeHost {
   }
 
   public get text(): string {
-    return this.svg.innerHTML;
+    return this.svg.innerHTML.trim();
   }
 
   public set text(value: string) {
-    this.svg.innerHTML = value;
+    this.svg.innerHTML = value.trim();
   }
 
   public get fontSize(): number {

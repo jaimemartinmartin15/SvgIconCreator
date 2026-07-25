@@ -181,8 +181,8 @@ export class RectHost extends ShapeHost {
   //#endregion
 
   //#region export
-  public override parseShapeToString(): string {
-    let rectToString = '<rect';
+  public override parseShapeToString(indentationLevel: number = 1, indentationSize: number = 2): string {
+    let rectToString = `${' '.repeat(indentationLevel * indentationSize)}<rect`;
 
     rectToString += ` name="${this.name}"`;
     rectToString += ` x="${this.x}"`;

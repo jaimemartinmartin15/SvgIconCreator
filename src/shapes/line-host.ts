@@ -146,8 +146,8 @@ export class LineHost extends ShapeHost {
   //#endregion
 
   //#region export
-  public override parseShapeToString(): string {
-    let lineToString = '<line';
+  public override parseShapeToString(indentationLevel: number = 1, indentationSize: number = 2): string {
+    let lineToString = `${' '.repeat(indentationLevel * indentationSize)}<line`;
 
     lineToString += ` name="${this.name}"`;
     lineToString += ` x1="${this.x1}"`;

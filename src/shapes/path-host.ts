@@ -252,8 +252,8 @@ export class PathHost extends ShapeHost {
   //#endregion
 
   //#region export
-  public override parseShapeToString(): string {
-    let pathToString = '<path';
+  public override parseShapeToString(indentationLevel: number = 1, indentationSize: number = 2): string {
+    let pathToString = `${' '.repeat(indentationLevel * indentationSize)}<path`;
 
     pathToString += ` name="${this.name}"`;
     pathToString += ` d="${this.d.map((command) => `${command.instruction}${command.parameters.join(' ')}`).join('')}"`;
