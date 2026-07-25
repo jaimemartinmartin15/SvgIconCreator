@@ -82,6 +82,7 @@ export class ShapeGroupComponent implements OnInit, AfterViewInit {
     }
 
     this.shapeListService.addAllShapesToCanvas();
+    this.shapeListService.selectedShape?.createEditPoints();
   }
 
   public get cdkListIds(): string[] {

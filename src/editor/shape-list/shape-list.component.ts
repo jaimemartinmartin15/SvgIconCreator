@@ -79,6 +79,7 @@ export class ShapeListComponent {
     }
 
     this.shapeListService.addAllShapesToCanvas();
+    this.shapeListService.selectedShape?.createEditPoints();
   }
   //#endregion
 }
