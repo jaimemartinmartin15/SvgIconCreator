@@ -1,6 +1,6 @@
 # CHANGELOG
 
-## Unreleased
+## 3.6.0
 
 - Allow to scale shapes with `+` and `-` keyboard keys.
 - Added parameters dialog to set the factor for scale, move shapes and decimal precision.
