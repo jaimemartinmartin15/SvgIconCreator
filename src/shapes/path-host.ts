@@ -254,59 +254,59 @@ export class PathHost extends ShapeHost {
   //#region scale shape
   public override scaleShape(factor: number, origin: Coord = this.svg.getBBox({ stroke: true })): void {
     super.scaleShape(factor, origin);
-    
+
     const commands = this.d;
     commands.forEach((command) => {
       if (['M', 'L', 'C', 'S', 'Q', 'T'].includes(command.instruction)) {
         for (let i = 0; i < command.parameters.length; i += 2) {
-          command.parameters[i] = +(origin.x + (command.parameters[i] - origin.x) * factor).toFixed(2);
-          command.parameters[i + 1] = +(origin.y + (command.parameters[i + 1] - origin.y) * factor).toFixed(2);
+          command.parameters[i] = this.toFixed(origin.x + (command.parameters[i] - origin.x) * factor);
+          command.parameters[i + 1] = this.toFixed(origin.y + (command.parameters[i + 1] - origin.y) * factor);
         }
       }
 
       if (['m', 'l', 'c', 's', 'q', 't'].includes(command.instruction)) {
         for (let i = 0; i < command.parameters.length; i += 2) {
-          command.parameters[i] = +(command.parameters[i] * factor).toFixed(2);
-          command.parameters[i + 1] = +(command.parameters[i + 1] * factor).toFixed(2);
+          command.parameters[i] = this.toFixed(command.parameters[i] * factor);
+          command.parameters[i + 1] = this.toFixed(command.parameters[i + 1] * factor);
         }
       }
 
       if (['H'].includes(command.instruction)) {
         for (let i = 0; i < command.parameters.length; i++) {
-          command.parameters[i] = +(origin.x + (command.parameters[i] - origin.x) * factor).toFixed(2);
+          command.parameters[i] = this.toFixed(origin.x + (command.parameters[i] - origin.x) * factor);
         }
       }
       if (['h'].includes(command.instruction)) {
         for (let i = 0; i < command.parameters.length; i++) {
-          command.parameters[i] = +(command.parameters[i] * factor).toFixed(2);
+          command.parameters[i] = this.toFixed(command.parameters[i] * factor);
         }
       }
 
       if (['V'].includes(command.instruction)) {
         for (let i = 0; i < command.parameters.length; i++) {
-          command.parameters[i] = +(origin.y + (command.parameters[i] - origin.y) * factor).toFixed(2);
+          command.parameters[i] = this.toFixed(origin.y + (command.parameters[i] - origin.y) * factor);
         }
       }
       if (['v'].includes(command.instruction)) {
         for (let i = 0; i < command.parameters.length; i++) {
-          command.parameters[i] = +(command.parameters[i] * factor).toFixed(2);
+          command.parameters[i] = this.toFixed(command.parameters[i] * factor);
         }
       }
 
       if (['A'].includes(command.instruction)) {
         for (let i = 5; i < command.parameters.length; i += 7) {
-          command.parameters[i - 5] = +(command.parameters[i - 5] * factor).toFixed(2);
-          command.parameters[i - 4] = +(command.parameters[i - 4] * factor).toFixed(2);
-          command.parameters[i] = +(origin.x + (command.parameters[i] - origin.x) * factor).toFixed(2);
-          command.parameters[i + 1] = +(origin.y + (command.parameters[i + 1] - origin.y) * factor).toFixed(2);
+          command.parameters[i - 5] = this.toFixed(command.parameters[i - 5] * factor);
+          command.parameters[i - 4] = this.toFixed(command.parameters[i - 4] * factor);
+          command.parameters[i] = this.toFixed(origin.x + (command.parameters[i] - origin.x) * factor);
+          command.parameters[i + 1] = this.toFixed(origin.y + (command.parameters[i + 1] - origin.y) * factor);
         }
       }
       if (['a'].includes(command.instruction)) {
         for (let i = 5; i < command.parameters.length; i += 7) {
-          command.parameters[i - 5] = +(command.parameters[i - 5] * factor).toFixed(2);
-          command.parameters[i - 4] = +(command.parameters[i - 4] * factor).toFixed(2);
-          command.parameters[i] = +(command.parameters[i] * factor).toFixed(2);
-          command.parameters[i + 1] = +(command.parameters[i + 1] * factor).toFixed(2);
+          command.parameters[i - 5] = this.toFixed(command.parameters[i - 5] * factor);
+          command.parameters[i - 4] = this.toFixed(command.parameters[i - 4] * factor);
+          command.parameters[i] = this.toFixed(command.parameters[i] * factor);
+          command.parameters[i + 1] = this.toFixed(command.parameters[i + 1] * factor);
         }
       }
     });

@@ -2,7 +2,7 @@ import { CdkDrag, CdkDragHandle } from '@angular/cdk/drag-drop';
 import { Overlay, OverlayConfig, OverlayRef } from '@angular/cdk/overlay';
 import { TemplatePortal } from '@angular/cdk/portal';
 import { CommonModule } from '@angular/common';
-import { Component, OnInit, TemplateRef, ViewChild, ViewContainerRef, ChangeDetectionStrategy } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, TemplateRef, ViewChild, ViewContainerRef } from '@angular/core';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { ColorPickerComponent, InputNumberDirective, ToFormType } from '@jaimemartinmartin15/jei-devkit-angular-shared';
 import { Command, COMMAND_SPECS, PATH_INSTRUCTIONS, PathInstruction } from '../../models/path.model';

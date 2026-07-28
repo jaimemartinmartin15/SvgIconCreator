@@ -134,9 +134,9 @@ export abstract class ShapeHost {
 
   //#region move shape
   public moveShape(event: KeyboardEvent): void {
-    let amountToMove = 1;
-    if (event.shiftKey) amountToMove = 10;
-    else if (event.altKey) amountToMove = 0.1;
+    let amountToMove = this.formsService.moveNormalForm.value;
+    if (event.shiftKey) amountToMove = this.formsService.moveShiftForm.value;
+    else if (event.altKey) amountToMove = this.formsService.moveAltForm.value;
 
     switch (event.key.toUpperCase()) {
       case 'ARROWUP':
@@ -162,7 +162,11 @@ export abstract class ShapeHost {
 
   //#region scale shape
   public scaleShape(factor: number, _?: Coord): void {
-    this.strokeWidth = +(this.strokeWidth * factor).toFixed(2);
+    this.strokeWidth = this.toFixed(this.strokeWidth * factor);
+
+    if (this.shapeListService.selectedShape === this) {
+      this.formsService.strokeWidthForm.setValue(this.strokeWidth);
+    }
   }
   //#endregion
 
@@ -182,9 +186,8 @@ export abstract class ShapeHost {
     return this.elementsRefService.getNativeElement<SVGSVGElement>('canvas');
   }
 
-  protected toFixed(n: number, def: number = 0): number {
-    // when form is cleared, n can be null
-    return +(n ?? def).toFixed(1);
+  protected toFixed(n: number | string, precision = this.formsService.decimalPrecisionForm.value): number {
+    return +(+n).toFixed(precision);
   }
 
   protected getSvgAttributeAsNumber(name: string, element: SVGElement = this.svg): number {

@@ -1,185 +1,119 @@
 @use '@jaimemartinmartin15/jei-devkit-angular-shared/styles/_utils.scss';
+@use '../../../styles/dialogs';
 
-:host {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 10px;
-}
+.format {
+  .export-radio-buttons-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
 
-.open-dialog-button {
-  width: 35px;
-  height: 35px;
-  border: none;
-  background-color: transparent;
-  cursor: pointer;
-  padding: 0;
+    .mock-radio-button {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 5px 10px;
+      border: var(--border);
+      border-radius: 5px;
+      height: 40px;
+      box-sizing: border-box;
+      cursor: pointer;
 
-  svg {
-    width: 100%;
-    height: 100%;
+      &:has(:checked) {
+        background-color: #d8a72c;
+        border-color: #d8a72c;
+        color: white;
+      }
+    }
+  }
+
+  .info-message {
+    color: #909090;
+    font-size: 1rem;
+    margin: 0;
+  }
+
+  .png-inputs {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+
+    input {
+      max-width: 75px;
+    }
   }
 }
 
-dialog {
-  border-radius: 5px;
-  width: 375px;
-
-  .content {
+.file-name {
+  .input-and-button {
     display: flex;
-    flex-direction: column;
-    gap: 10px;
+    align-items: center;
+    gap: 15px;
 
-    .header {
+    input[type='text'] {
+      flex-grow: 1;
+      text-align: start;
+    }
+
+    .download-button {
+      border: none;
+      padding: 10px 15px;
+      border-radius: 5px;
+      background-color: #d8a72c;
+      color: white;
+      font-size: 1rem;
+      cursor: pointer;
+    }
+  }
+}
+
+.predefined-sizes {
+  .radio-buttons-container {
+    display: grid;
+    gap: 15px;
+    grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+    padding: 4px 0;
+
+    label {
       display: flex;
+      gap: 10px;
       align-items: center;
-      justify-content: space-between;
-      margin-bottom: 5px;
+      cursor: pointer;
+      font-size: 1.025rem;
 
-      .drag-dialog-handler {
-        width: 25px;
-        cursor: move;
-      }
-
-      .title {
-        font-size: 1rem;
-        font-weight: bold;
-      }
-
-      .close-dialog-button {
-        transform: rotate(45deg);
-        width: 25px;
-        cursor: pointer;
-      }
-    }
-
-    form {
-      display: flex;
-      flex-direction: column;
-      gap: 25px;
-    }
-
-    .form-element {
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-    }
-
-    .format {
-      .export-radio-buttons-container {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 10px;
-
-        .mock-radio-button {
-          display: flex;
-          justify-content: center;
-          align-items: center;
-          padding: 5px 10px;
-          border: var(--border);
-          border-radius: 5px;
-          height: 40px;
-          box-sizing: border-box;
-          cursor: pointer;
-
-          &:has(:checked) {
-            background-color: #d8a72c;
-            border-color: #d8a72c;
-            color: white;
-          }
-        }
-      }
-
-      .info-message {
-        color: #909090;
-        font-size: 1rem;
-        margin: 0;
-      }
-
-      .png-inputs {
+      .mock-radio-button {
+        flex-shrink: 0;
+        width: 15px;
+        height: 15px;
+        border-radius: 4px;
+        border: 2px solid black;
         display: flex;
         align-items: center;
-        gap: 5px;
-
-        input {
-          max-width: 75px;
-        }
-      }
-    }
-
-    .file-name {
-      .input-and-button {
-        display: flex;
-        align-items: center;
-        gap: 15px;
-
-        input[type='text'] {
-          flex-grow: 1;
-          text-align: start;
-        }
-
-        .download-button {
-          border: none;
-          padding: 10px 15px;
-          border-radius: 5px;
-          background-color: #d8a72c;
-          color: white;
-          font-size: 1rem;
-          cursor: pointer;
-        }
-      }
-    }
-
-    .predefined-sizes {
-      .radio-buttons-container {
-        display: grid;
-        gap: 15px;
-        grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
-        padding: 4px 0;
-
-        label {
-          display: flex;
-          gap: 10px;
-          align-items: center;
-          cursor: pointer;
-          font-size: 1.025rem;
-
-          .mock-radio-button {
-            flex-shrink: 0;
-            width: 15px;
-            height: 15px;
-            border-radius: 4px;
-            border: 2px solid black;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-          }
-
-          &:has(:checked) .mock-radio-button::before {
-            content: '';
-            width: 8px;
-            height: 8px;
-            border-radius: 50%;
-            background-color: #d8a72c;
-          }
-
-          .full-name {
-            font-size: 0.6rem;
-            color: #909090;
-          }
-        }
+        justify-content: center;
       }
 
-      .download-button {
-        border: none;
-        padding: 10px 15px;
-        border-radius: 5px;
+      &:has(:checked) .mock-radio-button::before {
+        content: '';
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
         background-color: #d8a72c;
-        color: white;
-        font-size: 1rem;
-        cursor: pointer;
-        align-self: start;
+      }
+
+      .full-name {
+        font-size: 0.6rem;
+        color: #909090;
       }
     }
+  }
+
+  .download-button {
+    border: none;
+    padding: 10px 15px;
+    border-radius: 5px;
+    background-color: #d8a72c;
+    color: white;
+    font-size: 1rem;
+    cursor: pointer;
+    align-self: start;
   }
 }

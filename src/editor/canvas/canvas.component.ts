@@ -85,10 +85,10 @@ export class CanvasComponent {
 
     // update the values to make them nice to see in the screen
     this.currentViewBox = {
-      x: +this.currentViewBox.x.toFixed(1),
-      y: +this.currentViewBox.y.toFixed(1),
-      width: +this.currentViewBox.width.toFixed(1),
-      height: +this.currentViewBox.height.toFixed(1),
+      x: +this.currentViewBox.x.toFixed(this.formsService.decimalPrecisionForm.value),
+      y: +this.currentViewBox.y.toFixed(this.formsService.decimalPrecisionForm.value),
+      width: +this.currentViewBox.width.toFixed(this.formsService.decimalPrecisionForm.value),
+      height: +this.currentViewBox.height.toFixed(this.formsService.decimalPrecisionForm.value),
     };
 
     return isModified;

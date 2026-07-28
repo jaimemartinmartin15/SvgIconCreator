@@ -1,0 +1,66 @@
+:host {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+
+.open-dialog-button {
+  width: 35px;
+  height: 35px;
+  border: none;
+  background-color: transparent;
+  cursor: pointer;
+  padding: 0;
+
+  svg {
+    width: 100%;
+    height: 100%;
+  }
+}
+
+dialog {
+  border-radius: 5px;
+  width: 375px;
+
+  .content {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+
+    .header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 5px;
+
+      .drag-dialog-handler {
+        width: 25px;
+        cursor: move;
+      }
+
+      .title {
+        font-size: 1rem;
+        font-weight: bold;
+      }
+
+      .close-dialog-button {
+        transform: rotate(45deg);
+        width: 25px;
+        cursor: pointer;
+      }
+    }
+
+    form {
+      display: flex;
+      flex-direction: column;
+      gap: 25px;
+    }
+
+    .form-element {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+  }
+}

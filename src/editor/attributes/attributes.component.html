@@ -35,7 +35,7 @@
         <line x1="15" y1="17" x2="45" y2="17" stroke="black" [attr.stroke-width]="formsService.strokeWidthForm.value" stroke-linecap="round"></line>
       </svg>
 
-      <input type="text" [formControl]="formsService.strokeWidthForm" jeiInputNumber [maxDecimalDigits]="3" [min]="0" />
+      <input type="text" [formControl]="formsService.strokeWidthForm" jeiInputNumber [maxDecimalDigits]="formsService.decimalPrecisionForm.value" [min]="0" />
     </div>
   </label>
 
@@ -71,7 +71,7 @@
     <div class="stroke-dasharray-control">
       @for (control of formsService.strokeDasharrayForm.controls; track control; let i = $index) {
         <div class="input-container">
-          <input type="text" jeiInputNumber [formControl]="control" />
+          <input type="text" jeiInputNumber [maxDecimalDigits]="formsService.decimalPrecisionForm.value" [formControl]="control" />
           <svg appTrashCanSvg color="black" class="delete" (click)="deleteStrokeDasharray(i)"></svg>
         </div>
       }
@@ -99,32 +99,32 @@
   <form class="attribute-group" (submit)="$event.preventDefault()">
     <label class="label-and-control">
       <span class="label">X</span>
-      <input type="text" jeiInputNumber [formControl]="formsService.xForm" />
+      <input type="text" jeiInputNumber [maxDecimalDigits]="formsService.decimalPrecisionForm.value" [formControl]="formsService.xForm" />
     </label>
 
     <label class="label-and-control">
       <span class="label">Y</span>
-      <input type="text" jeiInputNumber [formControl]="formsService.yForm" />
+      <input type="text" jeiInputNumber [maxDecimalDigits]="formsService.decimalPrecisionForm.value" [formControl]="formsService.yForm" />
     </label>
 
     <label class="label-and-control">
       <span class="label">WIDTH</span>
-      <input type="text" jeiInputNumber [min]="0" [formControl]="formsService.widthForm" />
+      <input type="text" jeiInputNumber [maxDecimalDigits]="formsService.decimalPrecisionForm.value" [min]="0" [formControl]="formsService.widthForm" />
     </label>
 
     <label class="label-and-control">
       <span class="label">HEIGHT</span>
-      <input type="text" jeiInputNumber [min]="0" [formControl]="formsService.heightForm" />
+      <input type="text" jeiInputNumber [maxDecimalDigits]="formsService.decimalPrecisionForm.value" [min]="0" [formControl]="formsService.heightForm" />
     </label>
 
     <label class="label-and-control">
       <span class="label">RX</span>
-      <input type="text" jeiInputNumber [min]="0" [formControl]="formsService.rxForm" />
+      <input type="text" jeiInputNumber [maxDecimalDigits]="formsService.decimalPrecisionForm.value" [min]="0" [formControl]="formsService.rxForm" />
     </label>
 
     <label class="label-and-control">
       <span class="label">RY</span>
-      <input type="text" jeiInputNumber [min]="0" [formControl]="formsService.ryForm" />
+      <input type="text" jeiInputNumber [maxDecimalDigits]="formsService.decimalPrecisionForm.value" [min]="0" [formControl]="formsService.ryForm" />
     </label>
   </form>
 }
@@ -134,22 +134,22 @@
   <form class="attribute-group" (submit)="$event.preventDefault()">
     <label class="label-and-control">
       <span class="label">X1</span>
-      <input type="text" jeiInputNumber [formControl]="formsService.x1Form" />
+      <input type="text" jeiInputNumber [maxDecimalDigits]="formsService.decimalPrecisionForm.value" [formControl]="formsService.x1Form" />
     </label>
 
     <label class="label-and-control">
       <span class="label">Y1</span>
-      <input type="text" jeiInputNumber [formControl]="formsService.y1Form" />
+      <input type="text" jeiInputNumber [maxDecimalDigits]="formsService.decimalPrecisionForm.value" [formControl]="formsService.y1Form" />
     </label>
 
     <label class="label-and-control">
       <span class="label">X2</span>
-      <input type="text" jeiInputNumber [formControl]="formsService.x2Form" />
+      <input type="text" jeiInputNumber [maxDecimalDigits]="formsService.decimalPrecisionForm.value" [formControl]="formsService.x2Form" />
     </label>
 
     <label class="label-and-control">
       <span class="label">Y2</span>
-      <input type="text" jeiInputNumber [formControl]="formsService.y2Form" />
+      <input type="text" jeiInputNumber [maxDecimalDigits]="formsService.decimalPrecisionForm.value" [formControl]="formsService.y2Form" />
     </label>
   </form>
 }
@@ -212,6 +212,7 @@
               <input
                 type="text"
                 jeiInputNumber
+                [maxDecimalDigits]="formsService.decimalPrecisionForm.value"
                 [formControlName]="parmi"
                 [class.point-highlighted]="highlightInputPoint(cmdi, parmi)"
                 [ngClass]="'shape-' + commandControl.value.instruction?.toLowerCase()"
@@ -238,17 +239,17 @@
   <form class="attribute-group" (submit)="$event.preventDefault()">
     <label class="label-and-control">
       <span class="label">CX</span>
-      <input type="text" jeiInputNumber [formControl]="formsService.cxForm" />
+      <input type="text" jeiInputNumber [maxDecimalDigits]="formsService.decimalPrecisionForm.value" [formControl]="formsService.cxForm" />
     </label>
 
     <label class="label-and-control">
       <span class="label">CY</span>
-      <input type="text" jeiInputNumber [formControl]="formsService.cyForm" />
+      <input type="text" jeiInputNumber [maxDecimalDigits]="formsService.decimalPrecisionForm.value" [formControl]="formsService.cyForm" />
     </label>
 
     <label class="label-and-control">
       <span class="label">R</span>
-      <input type="text" jeiInputNumber [min]="0" [formControl]="formsService.rForm" />
+      <input type="text" jeiInputNumber [maxDecimalDigits]="formsService.decimalPrecisionForm.value" [min]="0" [formControl]="formsService.rForm" />
     </label>
   </form>
 }
@@ -258,12 +259,12 @@
   <form class="attribute-group" (submit)="$event.preventDefault()">
     <label class="label-and-control">
       <span class="label">X</span>
-      <input type="text" jeiInputNumber [formControl]="formsService.xForm" />
+      <input type="text" jeiInputNumber [maxDecimalDigits]="formsService.decimalPrecisionForm.value" [formControl]="formsService.xForm" />
     </label>
 
     <label class="label-and-control">
       <span class="label">Y</span>
-      <input type="text" jeiInputNumber [formControl]="formsService.yForm" />
+      <input type="text" jeiInputNumber [maxDecimalDigits]="formsService.decimalPrecisionForm.value" [formControl]="formsService.yForm" />
     </label>
 
     <label class="label-and-control">
@@ -273,7 +274,14 @@
 
     <label class="label-and-control">
       <span class="label">FONT SIZE</span>
-      <input type="text" jeiInputNumber [min]="0" [shiftStep]="3" [formControl]="formsService.fontSizeForm" />
+      <input
+        type="text"
+        jeiInputNumber
+        [maxDecimalDigits]="formsService.decimalPrecisionForm.value"
+        [min]="0"
+        [shiftStep]="3"
+        [formControl]="formsService.fontSizeForm"
+      />
     </label>
 
     <label class="label-and-control">
