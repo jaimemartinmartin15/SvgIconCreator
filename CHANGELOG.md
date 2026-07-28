@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## Unreleased
+
+- Allow to scale shapes with `+` and `-` keyboard keys.
+
 ## 3.5.0
 
 - Support group shape.
