@@ -26,6 +26,10 @@ export class KeyboardService {
     return this.keysDown.has('Shift');
   }
 
+  public get altKey() {
+    return this.keysDown.has('Alt');
+  }
+
   public get useMayus(): boolean {
     return this.shiftKey !== this._capsLockOn;
   }

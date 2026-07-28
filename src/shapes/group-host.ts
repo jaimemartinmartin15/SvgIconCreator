@@ -80,6 +80,12 @@ export class GroupHost extends ShapeHost {
   }
   //#endregion
 
+  //#region scale shape
+  public override scaleShape(factor: number, origin: Coord): void {
+    this.shapes.forEach((shape) => shape.scaleShape(factor, origin));
+  }
+  //#endregion
+
   //#region export
   public override parseShapeToString(indentationLevel: number = 1, indentationSize: number = 2): string {
     let groupToString = `${' '.repeat(indentationLevel * indentationSize)}<g name="${this.name}">\n`;

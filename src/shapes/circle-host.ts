@@ -128,6 +128,19 @@ export class CircleHost extends ShapeHost {
   }
   //#endregion
 
+  //#region scale shape
+  public override scaleShape(factor: number, origin: Coord = { x: this.cx, y: this.cy }): void {
+    this.cx = +(origin.x + (this.cx - origin.x) * factor).toFixed(2);
+    this.cy = +(origin.y + (this.cy - origin.y) * factor).toFixed(2);
+    this.r = +(this.r * factor).toFixed(2);
+
+    if (this.shapeListService.selectedShape === this) {
+      this.updateForm({ x: this.cx, y: this.cy }, this.r);
+      this.updatePositionSvgEditPoints();
+    }
+  }
+  //#endregion
+
   //#region export
   public override parseShapeToString(indentationLevel: number = 1, indentationSize: number = 2): string {
     let circleToString = `${' '.repeat(indentationLevel * indentationSize)}<circle`;

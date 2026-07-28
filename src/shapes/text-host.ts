@@ -120,6 +120,19 @@ export class TextHost extends ShapeHost {
   }
   //#endregion
 
+  //#region scale shape
+  public override scaleShape(factor: number, origin: Coord = { x: this.x, y: this.y }): void {
+    this.x = +(origin.x + (this.x - origin.x) * factor).toFixed(2);
+    this.y = +(origin.y + (this.y - origin.y) * factor).toFixed(2);
+    this.fontSize = +(this.fontSize * factor).toFixed(2);
+
+    if (this.shapeListService.selectedShape === this) {
+      this.formsService.fontSizeForm.setValue(this.fontSize);
+      this.updatePositionSvgEditPoints();
+    }
+  }
+  //#endregion
+
   //#region export
   public override parseShapeToString(indentationLevel: number = 1, indentationSize: number = 2): string {
     let textToString = `${' '.repeat(indentationLevel * indentationSize)}<text`;

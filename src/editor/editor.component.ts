@@ -7,6 +7,7 @@ import { isPathInstruction } from '../models/path.model';
 import { Shape } from '../models/shape';
 import { CanvasEventsService } from '../services/canvas-events.service';
 import { FormsService } from '../services/forms.service';
+import { KeyboardService } from '../services/keyboard.service';
 import { ShapeListService } from '../services/shape-list.service';
 import { CircleHost } from '../shapes/circle-host';
 import { LineHost } from '../shapes/line-host';
@@ -50,6 +51,7 @@ export class EditorComponent {
     private readonly canvasEventsService: CanvasEventsService,
     private readonly elementsRefService: ElementsRefService,
     private readonly formsService: FormsService,
+    private readonly keyboardService: KeyboardService,
   ) {}
 
   public ngOnInit(): void {
@@ -116,6 +118,9 @@ export class EditorComponent {
 
       // allow to move all points of the selected shape using the arrows
       this.handleKeyboardEventsToMoveShapes(event);
+
+      // allow to scale shapes and groups
+      this.handleKeyboardEventsToScaleShapes(event);
     });
   }
 
@@ -163,6 +168,36 @@ export class EditorComponent {
     } else {
       // move all shapes
       this.shapeListService.shapeList.forEach((shapeHost) => shapeHost.moveShape(event));
+    }
+  }
+
+  private handleKeyboardEventsToScaleShapes(event: KeyboardEvent): void {
+    const key = event.key.toUpperCase();
+
+    // if the sign is pressed when editing the input form, avoid changing the sign of the number
+    if (!['+', '-'].includes(key) || event.target instanceof HTMLInputElement || event.target instanceof HTMLTextAreaElement) return;
+
+    // calculate how much to scale
+    let factor = key === '-' ? 0.9 : 1 / 0.9;
+    if (this.keyboardService.shiftKey) {
+      factor = key === '-' ? 0.75 : 1 / 0.75;
+    } else if (this.keyboardService.altKey) {
+      factor = key === '-' ? 0.995 : 1 / 0.995;
+    }
+
+    // scale shape, group or all shapes
+    if (this.shapeListService.selectedShape) {
+      this.shapeListService.selectedShape.scaleShape(factor);
+    } else if (this.shapeListService.selectedGroup) {
+      const origin = this.shapeListService.selectedGroup.svg.getBBox({ stroke: true });
+      this.shapeListService.selectedGroup.scaleShape(factor, origin);
+    } else {
+      this.shapeListService.shapeList.forEach((shape) =>
+        shape.scaleShape(factor, {
+          x: this.formsService.canvasOptionsViewBoxForm.controls.x.value,
+          y: this.formsService.canvasOptionsViewBoxForm.controls.y.value,
+        }),
+      );
     }
   }
 

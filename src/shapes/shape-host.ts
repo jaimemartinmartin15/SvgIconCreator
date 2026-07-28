@@ -160,6 +160,11 @@ export abstract class ShapeHost {
   public abstract moveShapeLeft(amount: number): void;
   //#endregion
 
+  //#region scale shape
+  // TODO scale also stroke-width? or only for text?
+  public abstract scaleShape(factor: number, origin?: Coord): void;
+  //#endregion
+
   //#region export
   public abstract parseShapeToString(indentationLevel: number, indentationSize: number): string;
 

@@ -145,6 +145,23 @@ export class LineHost extends ShapeHost {
   }
   //#endregion
 
+  //#region scale shape
+  public override scaleShape(factor: number, origin: Coord = { x: this.x1, y: this.y1 }): void {
+    this.x1 = +(origin.x + (this.x1 - origin.x) * factor).toFixed(2);
+    this.y1 = +(origin.y + (this.y1 - origin.y) * factor).toFixed(2);
+    this.x2 = +(origin.x + (this.x2 - origin.x) * factor).toFixed(2);
+    this.y2 = +(origin.y + (this.y2 - origin.y) * factor).toFixed(2);
+
+    if (this.shapeListService.selectedShape === this) {
+      this.updateFormWithCoords([
+        { x: this.x1, y: this.y1 },
+        { x: this.x2, y: this.y2 },
+      ]);
+      this.updatePositionSvgEditPoints();
+    }
+  }
+  //#endregion
+
   //#region export
   public override parseShapeToString(indentationLevel: number = 1, indentationSize: number = 2): string {
     let lineToString = `${' '.repeat(indentationLevel * indentationSize)}<line`;
