@@ -178,11 +178,14 @@ export class EditorComponent {
     if (!['+', '-'].includes(key) || event.target instanceof HTMLInputElement || event.target instanceof HTMLTextAreaElement) return;
 
     // calculate how much to scale
-    let factor = key === '-' ? 0.9 : 1 / 0.9;
+    let factor = this.formsService.scaleNormalForm.value;
     if (this.keyboardService.shiftKey) {
-      factor = key === '-' ? 0.75 : 1 / 0.75;
+      factor = this.formsService.scaleShiftForm.value;
     } else if (this.keyboardService.altKey) {
-      factor = key === '-' ? 0.995 : 1 / 0.995;
+      factor = this.formsService.scaleAltForm.value;
+    }
+    if (key === '-') {
+      factor = 1 / factor;
     }
 
     // scale shape, group or all shapes

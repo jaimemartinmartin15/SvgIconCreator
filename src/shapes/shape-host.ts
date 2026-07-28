@@ -162,7 +162,11 @@ export abstract class ShapeHost {
 
   //#region scale shape
   public scaleShape(factor: number, _?: Coord): void {
-    this.strokeWidth = +(this.strokeWidth * factor).toFixed(2);
+    this.strokeWidth = +(this.strokeWidth * factor).toFixed(this.formsService.decimalPrecisionForm.value);
+
+    if (this.shapeListService.selectedShape === this) {
+      this.formsService.strokeWidthForm.setValue(this.strokeWidth);
+    }
   }
   //#endregion
 

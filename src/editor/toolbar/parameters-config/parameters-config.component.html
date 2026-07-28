@@ -19,17 +19,17 @@
         <div class="labels-and-inputs">
           <div class="alt">
             <span>alt</span>
-            <input type="text" jeiInputNumber [formControl]="formsService.scaleAltForm" />
+            <input type="text" jeiInputNumber [min]="1" [formControl]="formsService.scaleAltForm" />
           </div>
 
           <div class="normal">
             <span>normal</span>
-            <input type="text" jeiInputNumber [formControl]="formsService.scaleNormalForm" />
+            <input type="text" jeiInputNumber [min]="1" [formControl]="formsService.scaleNormalForm" />
           </div>
 
           <div class="shift">
             <span>shift</span>
-            <input type="text" jeiInputNumber [formControl]="formsService.scaleShiftForm" />
+            <input type="text" jeiInputNumber [min]="1" [formControl]="formsService.scaleShiftForm" />
           </div>
         </div>
       </div>
