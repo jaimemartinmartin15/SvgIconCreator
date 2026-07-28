@@ -3,6 +3,7 @@
 ## Unreleased
 
 - Allow to scale shapes with `+` and `-` keyboard keys.
+- Added parameters dialog to set the factor for scale, move shapes and decimal precision.
 
 ## 3.5.0
 
