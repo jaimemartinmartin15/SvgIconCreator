@@ -1,0 +1,38 @@
+<button class="open-dialog-button" (click)="showDialog()">
+  <svg appGearSvg></svg>
+</button>
+
+<span class="app-control-label">PARÁMETROS</span>
+
+<dialog class="dialog" #parametersConfigDialog cdkDrag>
+  <div class="content">
+    <div class="header">
+      <svg appBurgerSvg color="black" class="drag-dialog-handler" cdkDragHandle></svg>
+      <span class="title">PARÁMETROS</span>
+      <svg appPlusSvg class="close-dialog-button" (click)="parametersConfigDialog.close()"></svg>
+    </div>
+
+    <form>
+      <div class="app-label-and-input scale">
+        <span class="app-control-label">ESCALA</span>
+
+        <div class="labels-and-inputs">
+          <div class="alt">
+            <span>ALT</span>
+            <input type="text" jeiInputNumber [formControl]="formsService.scaleAltForm" />
+          </div>
+
+          <div class="normal">
+            <span>NORMAL</span>
+            <input type="text" jeiInputNumber [formControl]="formsService.scaleNormalForm" />
+          </div>
+
+          <div class="shift">
+            <span>SHIFT</span>
+            <input type="text" jeiInputNumber [formControl]="formsService.scaleShiftForm" />
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+</dialog>

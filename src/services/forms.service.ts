@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { FormArray, FormControl, FormGroup } from '@angular/forms';
 import { ExtractFormGroupControls, ToFormType } from '@jaimemartinmartin15/jei-devkit-angular-shared';
+import { LOCAL_STORE_KEYS } from '../constants/local-storage-keys';
 import { Command } from '../models/path.model';
 import { Shape } from '../models/shape';
 import { ViewBoxModel } from '../models/view-box.model';
@@ -18,6 +19,12 @@ export class FormsService {
     height: new FormControl(100, { nonNullable: true }),
   });
   public readonly showGridForm = new FormControl<boolean>(false, { nonNullable: true });
+  //#endregion
+
+  //#region parameters config
+  public readonly scaleAltForm = new FormControl<number>(+(localStorage.getItem(LOCAL_STORE_KEYS.SCALE_ALT) ?? 1.005), { nonNullable: true });
+  public readonly scaleNormalForm = new FormControl<number>(+(localStorage.getItem(LOCAL_STORE_KEYS.SCALE_NORMAL) ?? 1.1), { nonNullable: true });
+  public readonly scaleShiftForm = new FormControl<number>(+(localStorage.getItem(LOCAL_STORE_KEYS.SCALE_SHIFT) ?? 1.33), { nonNullable: true });
   //#endregion
 
   //#region svg attributes forms
