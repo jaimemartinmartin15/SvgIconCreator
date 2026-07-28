@@ -25,6 +25,9 @@ export class FormsService {
   public readonly scaleAltForm = new FormControl<number>(+(localStorage.getItem(LOCAL_STORE_KEYS.SCALE_ALT) ?? 1.005), { nonNullable: true });
   public readonly scaleNormalForm = new FormControl<number>(+(localStorage.getItem(LOCAL_STORE_KEYS.SCALE_NORMAL) ?? 1.1), { nonNullable: true });
   public readonly scaleShiftForm = new FormControl<number>(+(localStorage.getItem(LOCAL_STORE_KEYS.SCALE_SHIFT) ?? 1.33), { nonNullable: true });
+  public readonly moveAltForm = new FormControl<number>(+(localStorage.getItem(LOCAL_STORE_KEYS.MOVE_ALT) ?? 0.1), { nonNullable: true });
+  public readonly moveNormalForm = new FormControl<number>(+(localStorage.getItem(LOCAL_STORE_KEYS.MOVE_NORMAL) ?? 1), { nonNullable: true });
+  public readonly moveShiftForm = new FormControl<number>(+(localStorage.getItem(LOCAL_STORE_KEYS.MOVE_SHIFT) ?? 10), { nonNullable: true });
   //#endregion
 
   //#region svg attributes forms

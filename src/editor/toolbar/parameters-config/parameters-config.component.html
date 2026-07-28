@@ -18,18 +18,39 @@
 
         <div class="labels-and-inputs">
           <div class="alt">
-            <span>ALT</span>
+            <span>alt</span>
             <input type="text" jeiInputNumber [formControl]="formsService.scaleAltForm" />
           </div>
 
           <div class="normal">
-            <span>NORMAL</span>
+            <span>normal</span>
             <input type="text" jeiInputNumber [formControl]="formsService.scaleNormalForm" />
           </div>
 
           <div class="shift">
-            <span>SHIFT</span>
+            <span>shift</span>
             <input type="text" jeiInputNumber [formControl]="formsService.scaleShiftForm" />
+          </div>
+        </div>
+      </div>
+
+      <div class="app-label-and-input move">
+        <span class="app-control-label">MOVER FIGURAS</span>
+
+        <div class="labels-and-inputs">
+          <div class="alt">
+            <span>alt</span>
+            <input type="text" jeiInputNumber [formControl]="formsService.moveAltForm" />
+          </div>
+
+          <div class="normal">
+            <span>normal</span>
+            <input type="text" jeiInputNumber [formControl]="formsService.moveNormalForm" />
+          </div>
+
+          <div class="shift">
+            <span>shift</span>
+            <input type="text" jeiInputNumber [formControl]="formsService.moveShiftForm" />
           </div>
         </div>
       </div>

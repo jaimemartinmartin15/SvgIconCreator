@@ -66,6 +66,7 @@ dialog {
       gap: 8px;
     }
 
+    .move,
     .scale {
       .labels-and-inputs {
         display: flex;
@@ -81,6 +82,7 @@ dialog {
           span {
             font-size: 0.8rem;
             font-weight: bold;
+            color: gray;
           }
         }
       }

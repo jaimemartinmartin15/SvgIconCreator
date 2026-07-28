@@ -30,6 +30,15 @@ export class ParametersConfigComponent implements OnInit {
     this.formsService.scaleShiftForm.valueChanges.subscribe((v) => {
       localStorage.setItem(LOCAL_STORE_KEYS.SCALE_SHIFT, `${v}`);
     });
+    this.formsService.moveAltForm.valueChanges.subscribe((v) => {
+      localStorage.setItem(LOCAL_STORE_KEYS.MOVE_ALT, `${v}`);
+    });
+    this.formsService.moveNormalForm.valueChanges.subscribe((v) => {
+      localStorage.setItem(LOCAL_STORE_KEYS.MOVE_NORMAL, `${v}`);
+    });
+    this.formsService.moveShiftForm.valueChanges.subscribe((v) => {
+      localStorage.setItem(LOCAL_STORE_KEYS.MOVE_SHIFT, `${v}`);
+    });
   }
 
   public showDialog() {
