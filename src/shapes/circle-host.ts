@@ -130,6 +130,8 @@ export class CircleHost extends ShapeHost {
 
   //#region scale shape
   public override scaleShape(factor: number, origin: Coord = { x: this.cx, y: this.cy }): void {
+    super.scaleShape(factor, origin);
+    
     this.cx = +(origin.x + (this.cx - origin.x) * factor).toFixed(2);
     this.cy = +(origin.y + (this.cy - origin.y) * factor).toFixed(2);
     this.r = +(this.r * factor).toFixed(2);

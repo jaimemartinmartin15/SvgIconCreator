@@ -253,6 +253,8 @@ export class PathHost extends ShapeHost {
 
   //#region scale shape
   public override scaleShape(factor: number, origin: Coord = this.svg.getBBox({ stroke: true })): void {
+    super.scaleShape(factor, origin);
+    
     const commands = this.d;
     commands.forEach((command) => {
       if (['M', 'L', 'C', 'S', 'Q', 'T'].includes(command.instruction)) {

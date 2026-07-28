@@ -182,6 +182,8 @@ export class RectHost extends ShapeHost {
 
   //#region scale shape
   public override scaleShape(factor: number, origin: Coord = { x: this.x, y: this.y }): void {
+    super.scaleShape(factor, origin);
+    
     this.x = +(origin.x + (this.x - origin.x) * factor).toFixed(2);
     this.y = +(origin.y + (this.y - origin.y) * factor).toFixed(2);
     this.width = +(this.width * factor).toFixed(2);

@@ -161,8 +161,9 @@ export abstract class ShapeHost {
   //#endregion
 
   //#region scale shape
-  // TODO scale also stroke-width? or only for text?
-  public abstract scaleShape(factor: number, origin?: Coord): void;
+  public scaleShape(factor: number, _?: Coord): void {
+    this.strokeWidth = +(this.strokeWidth * factor).toFixed(2);
+  }
   //#endregion
 
   //#region export

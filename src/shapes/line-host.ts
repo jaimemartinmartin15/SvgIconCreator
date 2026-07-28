@@ -147,6 +147,8 @@ export class LineHost extends ShapeHost {
 
   //#region scale shape
   public override scaleShape(factor: number, origin: Coord = { x: this.x1, y: this.y1 }): void {
+    super.scaleShape(factor, origin);
+    
     this.x1 = +(origin.x + (this.x1 - origin.x) * factor).toFixed(2);
     this.y1 = +(origin.y + (this.y1 - origin.y) * factor).toFixed(2);
     this.x2 = +(origin.x + (this.x2 - origin.x) * factor).toFixed(2);
