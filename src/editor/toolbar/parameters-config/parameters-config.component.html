@@ -54,6 +54,12 @@
           </div>
         </div>
       </div>
+
+      <div class="app-label-and-input decimal-precision">
+        <span class="app-control-label">PRECISIÓN DECIMALES</span>
+
+        <input type="text" jeiInputNumber [min]="0" [max]="5" [altStep]="1" [shiftStep]="1" [maxDecimalDigits]="0" [formControl]="formsService.decimalPrecisionForm" />
+      </div>
     </form>
   </div>
 </dialog>

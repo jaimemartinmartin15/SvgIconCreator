@@ -39,6 +39,9 @@ export class ParametersConfigComponent implements OnInit {
     this.formsService.moveShiftForm.valueChanges.subscribe((v) => {
       localStorage.setItem(LOCAL_STORE_KEYS.MOVE_SHIFT, `${v}`);
     });
+    this.formsService.decimalPrecisionForm.valueChanges.subscribe((v) => {
+      localStorage.setItem(LOCAL_STORE_KEYS.DECIMAL_PRECISION, `${v}`);
+    });
   }
 
   public showDialog() {

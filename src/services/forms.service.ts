@@ -28,6 +28,7 @@ export class FormsService {
   public readonly moveAltForm = new FormControl<number>(+(localStorage.getItem(LOCAL_STORE_KEYS.MOVE_ALT) ?? 0.1), { nonNullable: true });
   public readonly moveNormalForm = new FormControl<number>(+(localStorage.getItem(LOCAL_STORE_KEYS.MOVE_NORMAL) ?? 1), { nonNullable: true });
   public readonly moveShiftForm = new FormControl<number>(+(localStorage.getItem(LOCAL_STORE_KEYS.MOVE_SHIFT) ?? 10), { nonNullable: true });
+  public readonly decimalPrecisionForm = new FormControl<number>(+(localStorage.getItem(LOCAL_STORE_KEYS.DECIMAL_PRECISION) ?? 1), { nonNullable: true });
   //#endregion
 
   //#region svg attributes forms
