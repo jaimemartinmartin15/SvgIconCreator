@@ -160,6 +160,12 @@ export abstract class ShapeHost {
   public abstract moveShapeLeft(amount: number): void;
   //#endregion
 
+  //#region scale shape
+  public scaleShape(factor: number, _?: Coord): void {
+    this.strokeWidth = +(this.strokeWidth * factor).toFixed(2);
+  }
+  //#endregion
+
   //#region export
   public abstract parseShapeToString(indentationLevel: number, indentationSize: number): string;
 

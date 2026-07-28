@@ -180,6 +180,25 @@ export class RectHost extends ShapeHost {
   }
   //#endregion
 
+  //#region scale shape
+  public override scaleShape(factor: number, origin: Coord = { x: this.x, y: this.y }): void {
+    super.scaleShape(factor, origin);
+    
+    this.x = +(origin.x + (this.x - origin.x) * factor).toFixed(2);
+    this.y = +(origin.y + (this.y - origin.y) * factor).toFixed(2);
+    this.width = +(this.width * factor).toFixed(2);
+    this.height = +(this.height * factor).toFixed(2);
+
+    if (this.shapeListService.selectedShape === this) {
+      this.updateFormWithCoords([
+        { x: this.x, y: this.y },
+        { x: this.x + this.width, y: this.y + this.height },
+      ]);
+      this.updatePositionSvgEditPoints();
+    }
+  }
+  //#endregion
+
   //#region export
   public override parseShapeToString(indentationLevel: number = 1, indentationSize: number = 2): string {
     let rectToString = `${' '.repeat(indentationLevel * indentationSize)}<rect`;

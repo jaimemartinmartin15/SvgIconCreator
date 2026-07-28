@@ -251,6 +251,75 @@ export class PathHost extends ShapeHost {
   }
   //#endregion
 
+  //#region scale shape
+  public override scaleShape(factor: number, origin: Coord = this.svg.getBBox({ stroke: true })): void {
+    super.scaleShape(factor, origin);
+    
+    const commands = this.d;
+    commands.forEach((command) => {
+      if (['M', 'L', 'C', 'S', 'Q', 'T'].includes(command.instruction)) {
+        for (let i = 0; i < command.parameters.length; i += 2) {
+          command.parameters[i] = +(origin.x + (command.parameters[i] - origin.x) * factor).toFixed(2);
+          command.parameters[i + 1] = +(origin.y + (command.parameters[i + 1] - origin.y) * factor).toFixed(2);
+        }
+      }
+
+      if (['m', 'l', 'c', 's', 'q', 't'].includes(command.instruction)) {
+        for (let i = 0; i < command.parameters.length; i += 2) {
+          command.parameters[i] = +(command.parameters[i] * factor).toFixed(2);
+          command.parameters[i + 1] = +(command.parameters[i + 1] * factor).toFixed(2);
+        }
+      }
+
+      if (['H'].includes(command.instruction)) {
+        for (let i = 0; i < command.parameters.length; i++) {
+          command.parameters[i] = +(origin.x + (command.parameters[i] - origin.x) * factor).toFixed(2);
+        }
+      }
+      if (['h'].includes(command.instruction)) {
+        for (let i = 0; i < command.parameters.length; i++) {
+          command.parameters[i] = +(command.parameters[i] * factor).toFixed(2);
+        }
+      }
+
+      if (['V'].includes(command.instruction)) {
+        for (let i = 0; i < command.parameters.length; i++) {
+          command.parameters[i] = +(origin.y + (command.parameters[i] - origin.y) * factor).toFixed(2);
+        }
+      }
+      if (['v'].includes(command.instruction)) {
+        for (let i = 0; i < command.parameters.length; i++) {
+          command.parameters[i] = +(command.parameters[i] * factor).toFixed(2);
+        }
+      }
+
+      if (['A'].includes(command.instruction)) {
+        for (let i = 5; i < command.parameters.length; i += 7) {
+          command.parameters[i - 5] = +(command.parameters[i - 5] * factor).toFixed(2);
+          command.parameters[i - 4] = +(command.parameters[i - 4] * factor).toFixed(2);
+          command.parameters[i] = +(origin.x + (command.parameters[i] - origin.x) * factor).toFixed(2);
+          command.parameters[i + 1] = +(origin.y + (command.parameters[i + 1] - origin.y) * factor).toFixed(2);
+        }
+      }
+      if (['a'].includes(command.instruction)) {
+        for (let i = 5; i < command.parameters.length; i += 7) {
+          command.parameters[i - 5] = +(command.parameters[i - 5] * factor).toFixed(2);
+          command.parameters[i - 4] = +(command.parameters[i - 4] * factor).toFixed(2);
+          command.parameters[i] = +(command.parameters[i] * factor).toFixed(2);
+          command.parameters[i + 1] = +(command.parameters[i + 1] * factor).toFixed(2);
+        }
+      }
+    });
+
+    this.d = commands;
+
+    if (this.shapeListService.selectedShape === this) {
+      this.formsService.dForm.setValue(this.d);
+      this.updatePositionSvgEditPoints();
+    }
+  }
+  //#endregion
+
   //#region export
   public override parseShapeToString(indentationLevel: number = 1, indentationSize: number = 2): string {
     let pathToString = `${' '.repeat(indentationLevel * indentationSize)}<path`;
