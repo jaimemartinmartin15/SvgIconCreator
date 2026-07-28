@@ -1,112 +1,46 @@
-@use '../../../_mock-input-checkbox';
+@use '../../../styles/mock-input-checkbox';
+@use '../../../styles/dialogs';
 
-:host {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 10px;
-}
+.texto-svg {
+  textarea {
+    border: var(--border);
+    height: 200px;
+    resize: none;
+    white-space: nowrap;
+  }
 
-.open-dialog-button {
-  width: 35px;
-  height: 35px;
-  border: none;
-  background-color: transparent;
-  cursor: pointer;
-  padding: 0;
-
-  svg {
-    width: 100%;
-    height: 100%;
+  .load-button {
+    border: none;
+    padding: 10px;
+    border-radius: 5px;
+    background-color: #ff6363ff;
+    color: white;
+    font-size: 1.1rem;
+    cursor: pointer;
   }
 }
 
-dialog {
-  border-radius: 5px;
-  width: 375px;
-
-  .content {
+.file-svg {
+  .mock-input-file {
     display: flex;
-    flex-direction: column;
-    gap: 10px;
+    justify-content: center;
+    align-items: center;
+    min-height: 40px;
+    min-width: 90px;
+    border-radius: 5px;
+    border: var(--border);
+    padding: 5px 10px;
+    cursor: pointer;
+  }
+}
 
-    .header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      margin-bottom: 5px;
+.create-new-group {
+  --not-checked-icon: '❌';
+  --checked-icon: '✅';
 
-      .drag-dialog-handler {
-        width: 25px;
-        cursor: move;
-      }
-
-      .title {
-        font-size: 1rem;
-        font-weight: bold;
-      }
-
-      .close-dialog-button {
-        transform: rotate(45deg);
-        width: 25px;
-        cursor: pointer;
-      }
-    }
-
-    form {
-      display: flex;
-      flex-direction: column;
-      gap: 25px;
-    }
-
-    .form-element {
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-    }
-
-    .texto-svg {
-      textarea {
-        border: var(--border);
-        height: 200px;
-        resize: none;
-        white-space: nowrap;
-      }
-
-      .load-button {
-        border: none;
-        padding: 10px;
-        border-radius: 5px;
-        background-color: #ff6363ff;
-        color: white;
-        font-size: 1.1rem;
-        cursor: pointer;
-      }
-    }
-
-    .file-svg {
-      .mock-input-file {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        min-height: 40px;
-        min-width: 90px;
-        border-radius: 5px;
-        border: var(--border);
-        padding: 5px 10px;
-        cursor: pointer;
-      }
-    }
-
-    .create-new-group {
-      --not-checked-icon: '❌';
-      --checked-icon: '✅';
-
-      .info-message {
-        color: #909090;
-        font-size: 1rem;
-        margin: 0;
-      }
-    }
+  .info-message {
+    color: #909090;
+    font-size: 1rem;
+    margin: 0;
   }
 }

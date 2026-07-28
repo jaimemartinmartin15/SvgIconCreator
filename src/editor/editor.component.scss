@@ -1,9 +1,12 @@
+@use '../styles/dialogs';
+
 :host {
   width: 100%;
   height: 100%;
   display: flex;
   flex-direction: column;
   justify-content: center;
+  align-items: unset; // override host dialogs
   gap: 40px;
 }
 
@@ -29,101 +32,69 @@
 }
 
 .bindings-dialog {
-  border-radius: 5px;
-  width: 375px;
+  .info-message {
+    color: #909090;
+    font-size: 1rem;
+    margin: 0;
+    margin-bottom: 10px;
+  }
 
-  .content {
+  ul {
     display: flex;
     flex-direction: column;
     gap: 10px;
+    list-style: none;
+    padding: 0;
+    margin: 0;
 
-    .header {
+    .two-columns {
       display: flex;
-      align-items: center;
-      justify-content: space-between;
-      margin-bottom: 5px;
-
-      .drag-dialog-handler {
-        width: 25px;
-        cursor: move;
-      }
-
-      .title {
-        font-size: 1rem;
-        font-weight: bold;
-      }
-
-      .close-dialog-button {
-        transform: rotate(45deg);
-        width: 25px;
-        cursor: pointer;
-      }
-    }
-
-    .info-message {
-      color: #909090;
-      font-size: 1rem;
-      margin: 0;
-      margin-bottom: 10px;
-    }
-
-    ul {
-      display: flex;
-      flex-direction: column;
       gap: 10px;
-      list-style: none;
-      padding: 0;
-      margin: 0;
+      justify-content: space-between;
+      align-items: center;
+      position: relative;
 
-      .two-columns {
-        display: flex;
-        gap: 10px;
-        justify-content: space-between;
-        align-items: center;
-        position: relative;
+      .column-1,
+      .column-2 {
+        flex: 1;
 
-        .column-1,
-        .column-2 {
-          flex: 1;
-
-          &--title {
-            align-self: center;
-            text-align: center;
-            font-size: 0.9rem;
-            font-weight: 700;
-            color: #595959;
-          }
-
-          &--input {
-            text-align: start;
-          }
+        &--title {
+          align-self: center;
+          text-align: center;
+          font-size: 0.9rem;
+          font-weight: 700;
+          color: #595959;
         }
 
-        .delete-binding {
-          display: none;
-          position: absolute;
-          left: 50%;
-          transform: translateX(-50%) rotate(45deg);
-          cursor: pointer;
-          width: 25px;
-          background-color: white;
-          border-radius: 50%;
-        }
-
-        &:hover .delete-binding {
-          display: block;
+        &--input {
+          text-align: start;
         }
       }
-    }
 
-    .add-binding {
-      width: 25px;
-      align-self: center;
-      border: 2px solid gray;
-      border-radius: 50%;
-      padding: 3px;
-      margin-top: 6px;
-      cursor: pointer;
+      .delete-binding {
+        display: none;
+        position: absolute;
+        left: 50%;
+        transform: translateX(-50%) rotate(45deg);
+        cursor: pointer;
+        width: 25px;
+        background-color: white;
+        border-radius: 50%;
+      }
+
+      &:hover .delete-binding {
+        display: block;
+      }
     }
+  }
+
+  .add-binding {
+    width: 25px;
+    align-self: center;
+    border: 2px solid gray;
+    border-radius: 50%;
+    padding: 3px;
+    margin-top: 6px;
+    cursor: pointer;
   }
 }
