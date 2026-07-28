@@ -55,6 +55,8 @@ export class ImportSvgComponent {
       return;
     }
 
+    const wasCanvasEmpty = this.shapeListService.shapeList.length === 0;
+
     const mockDiv = document.createElement('div');
     mockDiv.innerHTML = svgText;
     const svg: SVGSVGElement = mockDiv.querySelector('svg') as SVGSVGElement;
@@ -71,8 +73,13 @@ export class ImportSvgComponent {
     }
     this.loadSvgShapesRecursively(svg.children, parentSvg);
 
-    // update the viewBox to fit all shapes
-    const boundingBox = this.canvas.getBBox({ stroke: true });
+    // update the viewBox to imported svg or to fit all shapes
+    let boundingBox;
+    if (wasCanvasEmpty) {
+      boundingBox = svg.viewBox.baseVal;
+    } else {
+      boundingBox = this.canvas.getBBox({ stroke: true });
+    }
     this.formsService.canvasOptionsViewBoxForm.setValue({
       x: Math.ceil(boundingBox.x),
       y: Math.ceil(boundingBox.y),
