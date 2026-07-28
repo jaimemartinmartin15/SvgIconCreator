@@ -131,10 +131,10 @@ export class CircleHost extends ShapeHost {
   //#region scale shape
   public override scaleShape(factor: number, origin: Coord = { x: this.cx, y: this.cy }): void {
     super.scaleShape(factor, origin);
-    
-    this.cx = +(origin.x + (this.cx - origin.x) * factor).toFixed(2);
-    this.cy = +(origin.y + (this.cy - origin.y) * factor).toFixed(2);
-    this.r = +(this.r * factor).toFixed(2);
+
+    this.cx = this.toFixed(origin.x + (this.cx - origin.x) * factor);
+    this.cy = this.toFixed(origin.y + (this.cy - origin.y) * factor);
+    this.r = this.toFixed(this.r * factor);
 
     if (this.shapeListService.selectedShape === this) {
       this.updateForm({ x: this.cx, y: this.cy }, this.r);
@@ -176,7 +176,7 @@ export class CircleHost extends ShapeHost {
     const c1Power2 = Math.pow(Math.abs(p1.x - p2.x), 2);
     const c2Power2 = Math.pow(Math.abs(p1.y - p2.y), 2);
     const squareRoot = Math.sqrt(c1Power2 + c2Power2);
-    return +squareRoot.toFixed(1);
+    return this.toFixed(squareRoot);
   }
 
   private updateForm(center: Coord, radius: number) {

@@ -148,11 +148,11 @@ export class LineHost extends ShapeHost {
   //#region scale shape
   public override scaleShape(factor: number, origin: Coord = { x: this.x1, y: this.y1 }): void {
     super.scaleShape(factor, origin);
-    
-    this.x1 = +(origin.x + (this.x1 - origin.x) * factor).toFixed(2);
-    this.y1 = +(origin.y + (this.y1 - origin.y) * factor).toFixed(2);
-    this.x2 = +(origin.x + (this.x2 - origin.x) * factor).toFixed(2);
-    this.y2 = +(origin.y + (this.y2 - origin.y) * factor).toFixed(2);
+
+    this.x1 = this.toFixed(origin.x + (this.x1 - origin.x) * factor);
+    this.y1 = this.toFixed(origin.y + (this.y1 - origin.y) * factor);
+    this.x2 = this.toFixed(origin.x + (this.x2 - origin.x) * factor);
+    this.y2 = this.toFixed(origin.y + (this.y2 - origin.y) * factor);
 
     if (this.shapeListService.selectedShape === this) {
       this.updateFormWithCoords([

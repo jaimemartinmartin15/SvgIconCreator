@@ -162,7 +162,7 @@ export abstract class ShapeHost {
 
   //#region scale shape
   public scaleShape(factor: number, _?: Coord): void {
-    this.strokeWidth = +(this.strokeWidth * factor).toFixed(this.formsService.decimalPrecisionForm.value);
+    this.strokeWidth = this.toFixed(this.strokeWidth * factor);
 
     if (this.shapeListService.selectedShape === this) {
       this.formsService.strokeWidthForm.setValue(this.strokeWidth);
@@ -186,9 +186,8 @@ export abstract class ShapeHost {
     return this.elementsRefService.getNativeElement<SVGSVGElement>('canvas');
   }
 
-  protected toFixed(n: number, def: number = 0): number {
-    // when form is cleared, n can be null
-    return +(n ?? def).toFixed(1);
+  protected toFixed(n: number | string, precision = this.formsService.decimalPrecisionForm.value): number {
+    return +(+n).toFixed(precision);
   }
 
   protected getSvgAttributeAsNumber(name: string, element: SVGElement = this.svg): number {
