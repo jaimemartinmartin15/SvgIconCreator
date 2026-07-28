@@ -134,9 +134,9 @@ export abstract class ShapeHost {
 
   //#region move shape
   public moveShape(event: KeyboardEvent): void {
-    let amountToMove = 1;
-    if (event.shiftKey) amountToMove = 10;
-    else if (event.altKey) amountToMove = 0.1;
+    let amountToMove = this.formsService.moveNormalForm.value;
+    if (event.shiftKey) amountToMove = this.formsService.moveShiftForm.value;
+    else if (event.altKey) amountToMove = this.formsService.moveAltForm.value;
 
     switch (event.key.toUpperCase()) {
       case 'ARROWUP':
